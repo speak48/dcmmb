@@ -1,7 +1,7 @@
 clc;
 clear all;
 
-agc.accum_length = 4096;
+agc.accum_length = 1024;%4096;
 agc.weight = 128;
 agc.num = 20;
 agc.gain = 0;
@@ -9,7 +9,6 @@ agc.ajust_step = 30/128;
 vga.range = 20;
 agc.voltage = 0.5;
 para = 1/agc.weight;
-num = agc.accum_length*agc.num;
 ref_dB = 45.125; % 20*log10(128*2^0.5) = 45.154 log_fun()=45.125
 
 % Signal generator
@@ -48,10 +47,10 @@ for i=1:length(x)
 %    lpd_energy2 = (lpd_energy2/2^4);
     
 % Logagrithm
-    if mod(i,128) == 0 %agc.accum_length) == 0
+    if mod(i,agc.accum_length) == 0
         temp(k)=(lpd_energy)-lpd_energy2;
         pwr_log(k) = 20*log10(lpd_energy);
-        r = log_fun(lpd_energy2); %10 bit i, 9 bit o 
+        r = log_ten(lpd_energy2); %10 bit i, 9 bit o 
         pwr_dB(k) = double(r)./(2^3); %9 bit o ( 6 bit integer + 3 bit fraction )
         
 % PWM generator        
@@ -79,3 +78,29 @@ for i=1:length(x)
     end
     
 end
+
+clear figure
+H = SUBPLOT(2,2,1);
+plot(abs(x),'.-')
+axis([1 length(x) 0 600])
+xlabel('N sample')
+ylabel('Magnitude sample value')
+grid on
+H = SUBPLOT(2,2,2);
+plot(abs(y),'.-')
+axis([1 length(x) 0 600])
+xlabel('N sample')
+ylabel('Magnitude sample value')
+grid on
+H = SUBPLOT(2,2,3);
+plot(pwr_dB,'.-r')
+axis([1 length(pwr_dB) 35 60])
+xlabel('N period')
+ylabel('Energy Estimation dB')
+grid on
+H = SUBPLOT(2,2,4);
+plot(v,'.-m')
+axis([1 length(pwr_dB) 0.3 1.0])
+xlabel('N period')
+ylabel('VGA input voltage V')
+grid on
