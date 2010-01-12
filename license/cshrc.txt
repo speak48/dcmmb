@@ -1,0 +1,31 @@
+alias cd 'cd \!*;echo -n "^[]0;${cwd}^G"'
+set pxp = `whoami`
+set path =($path ./)
+
+setenv SYNPLCTYD_LICENSE_FILE 2000@localhost.localdomain
+
+setenv SYNPLIFY_PATH /mnt/hgfs/linux/fpgac/linux/fpga_c200906sp1
+set path =($path $SYNPLIFY_PATH/bin $SYNPLIFY_PATH/linux)
+
+setenv XILINX /mnt/hgfs/linux/xilinx/ISE
+set path =($path $XILINX/bin/lin)
+
+setenv NOVAS /tools/novas
+set path =($path $NOVAS/platform/LINUX/bin)
+
+setenv LM_LICENSE_FILE 28001@localhost.localdomain
+
+setenv SNPSLMD_LICENSE_FILE 27001@loaclhost.localdomain
+
+setenv SYNOPSYS /tools/synopsys/dc200712_sp2
+
+set path =($path $SYNOPSYS/linux/syn/bin)
+set path =($path $SYNOPSYS/linux/bin)
+set path =($path $SYNOPSYS/linux/tcl/bin)
+
+setenv VERPLEX_HOME /tools/cadence/lec.4.2.2.a
+set path =($path $VERPLEX_HOME/bin)
+setenv VERPLEX_LICENSE_FILE 27000@localhost.localdomain
+
+#set path =($path /tools/synopsys/bin)
+#setenv LM_LICENCE_FILE 28000@localhost.localdomain
