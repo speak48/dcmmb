@@ -1,7 +1,7 @@
 `timescale 1ns/1ns
 module agc_sim();
 parameter CLK_PRD = 10;
-parameter DATA_DEP = 16384;
+parameter DATA_DEP = 16384*5;
 
 reg clk;
 reg reset_n;
@@ -63,21 +63,30 @@ initial
 	read_data_in; 
     join
 
+reg  pwm_ena;    
+initial
+begin
+    pwm_ena = 0;
+    #(40*CLK_PRD)    
+    pwm_ena = 1'b1;
+end
+
 agc u_agc(
     .clk        (clk),
     .reset_n    (reset_n),
     .data_I_in  (data_I_in),
     .data_Q_in  (data_Q_in),
     .agc_en     (1'b1),
+    .pwr_req_val(9'b10_1101_001),
     .pwr_est_prd(2'b00),
     .pwr_est_val(),
     .agc_fix    (),
-    .pwm_step   (),
-    .pwm_ena    (),
-    .pwm_inv    (),
-    .pwm_th_ena (),
-    .pwm_th_in  (),
-    .pwm_max_val(),
+    .pwm_step   (2'b1),
+    .pwm_ena    (pwm_ena),
+    .pwm_inv    (1'b0),
+    .pwm_th_ena (1'b0),
+    .pwm_th_in  (8'h3f),
+    .pwm_max_val(8'h7f),
     .pwm_th_out ()
 );
 

@@ -8,7 +8,7 @@ module power_est(
     data_i,
     data_q,
     agc_en,
-    log_start,
+    pwr_est_prd,
     pwr_est_dB,
     pwr_est_end
 );
@@ -18,7 +18,7 @@ input                reset_n    ;
 input   [6:0]        data_i     ;
 input   [6:0]        data_q     ;
 input                agc_en     ;
-input                log_start  ;
+input   [1:0]        pwr_est_prd;
 
 output  [8:0]        pwr_est_dB ;
 output               pwr_est_end;
@@ -38,7 +38,11 @@ reg     [11:0]       data_y_n   ;
 reg     [8:0]        pwr_est_dB ;
 reg                  pwr_est_end;
 reg     [10:0]       log_start_d;
+reg                  log_start  ;
+reg    [13:0]        pwr_est_cnt;
 
+wire   [13:0]        pwr_est_time;
+wire                 pwr_rst_cnt ;
 wire    [6:0]        abs_i_data ;
 wire    [6:0]        abs_q_data ;
 wire                 max_iq_cmp ;
@@ -61,6 +65,32 @@ assign lpd_energy_w = lpd_energy - { 3'h0, lpd_energy[13:7] } + { 7'h0, energy_e
 assign data_x2 = {1'b0,data_xn}+{1'b0,shift_data_xn};
 assign shift_en = | log_start_d[8:1] ;
 assign dbm = $unsigned(data_y_n) * $unsigned(13'h1815);
+assign pwr_est_time = pwr_est_prd[1] ? (pwr_est_prd[0] ? 14'h3fff : 14'h1fff )
+                                     : (pwr_est_prd[0] ? 14'hfff  : 14'h7ff  );
+assign pwr_rst_cnt = ( pwr_est_time == pwr_est_cnt );
+
+// Log start control
+always @ (posedge clk or negedge reset_n)
+begin : pwr_est_cnt_r
+    if(!reset_n)
+        pwr_est_cnt <= 14'h0;
+    else if(agc_en) begin
+        if(pwr_rst_cnt)
+        pwr_est_cnt <= 14'h0;
+        else
+        pwr_est_cnt <= #1 pwr_est_cnt + 1'b1;
+        end
+    else
+        pwr_est_cnt <= 14'h0;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : log_start_r
+    if(!reset_n)
+         log_start <= #1 1'b0;
+    else
+         log_start <= #1 pwr_rst_cnt;
+end
 
 // synchornous input data
 always @ (posedge clk or negedge reset_n)
