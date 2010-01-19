@@ -1,0 +1,321 @@
+#-- Synplicity, Inc.
+#-- Version C-2009.03
+#-- Project file D:\Design\test\spi\fpga\syn\spi.prj
+#-- Written on Tue Jan 19 16:14:29 2010
+
+
+#project files
+add_file -verilog "../../hdl/spi_fifo.v"
+add_file -verilog "../../hdl/spi_master_ctrl.v"
+add_file -verilog "../../hdl/spi_sfr.v"
+add_file -verilog "../../hdl/spi_slave_ctrl.v"
+add_file -verilog "../../hdl/spi_switch.v"
+add_file -verilog "../../hdl/SPIP08V100.v"
+add_file -verilog "../../hdl/bydin_sim.v"
+add_file -verilog "../../hdl/demo_reg.v"
+add_file -verilog "../../hdl/spi_fpga.v"
+add_file -constraint "../sdc/spi.sdc"
+add_file -constraint "../sdc/spi_v4.sdc"
+
+
+#implementation: "rev_1"
+impl -add rev_1 -type fpga
+
+#device options
+set_option -technology Virtex2
+set_option -part XC2V6000
+set_option -package FF1152
+set_option -speed_grade -4
+set_option -part_companion ""
+
+#compilation/mapping options
+set_option -use_fsm_explorer 0
+set_option -top_module "spi_fpga"
+
+# sequential_optimization_options
+set_option -symbolic_fsm_compiler 1
+
+# Compiler Options
+set_option -compiler_compatible 0
+set_option -resource_sharing 0
+
+# mapper_options
+set_option -frequency 100.000000
+set_option -write_verilog 1
+set_option -write_vhdl 0
+
+# xilinx_options
+set_option -par_use_xflow 1
+set_option -enhanced_optimization 0
+
+# Xilinx Virtex2
+set_option -run_prop_extract 1
+set_option -maxfan 10000
+set_option -disable_io_insertion 0
+set_option -pipe 0
+set_option -update_models_cp 0
+set_option -retiming 0
+set_option -no_sequential_opt 0
+set_option -fixgatedclocks 3
+set_option -fixgeneratedclocks 3
+
+# NFilter
+set_option -popfeed 0
+set_option -constprop 0
+set_option -createhierarchy 0
+
+#VIF options
+set_option -write_vif 1
+
+#automatic place and route (vendor) options
+set_option -write_apr_constraint 1
+
+#set result format/file last
+project -result_file "./rev_1/spi_fpga.edf"
+
+#
+#implementation attributes
+
+set_option -vlog_std v2001
+set_option -project_relative_includes 1
+
+#set constraint files
+set_option -constraint -clear
+set_option -constraint -enable "D:/Design/test/spi/fpga/sdc/spi.sdc"
+
+#pr_1 attributes
+set_option -job pr_1 -add par
+set_option -job pr_1 -option enable_run 1
+set_option -job pr_1 -option run_backannotation 0
+
+#design plan options
+set_option -nfilter_user_path ""
+
+
+#implementation: "rev_2"
+impl -add rev_2 -type fpga
+
+#device options
+set_option -technology Virtex2
+set_option -part XC2V6000
+set_option -package FF1152
+set_option -speed_grade -4
+set_option -part_companion ""
+
+#compilation/mapping options
+set_option -use_fsm_explorer 0
+set_option -top_module "spi_fpga"
+
+# sequential_optimization_options
+set_option -symbolic_fsm_compiler 1
+
+# Compiler Options
+set_option -compiler_compatible 0
+set_option -resource_sharing 0
+
+# mapper_options
+set_option -frequency 100
+set_option -write_verilog 0
+set_option -write_vhdl 0
+set_option -identify_debug_mode 1
+
+# xilinx_options
+set_option -par_use_xflow 1
+set_option -enhanced_optimization 0
+
+# Xilinx Virtex2
+set_option -run_prop_extract 1
+set_option -maxfan 10000
+set_option -disable_io_insertion 0
+set_option -pipe 0
+set_option -update_models_cp 0
+set_option -retiming 0
+set_option -no_sequential_opt 0
+set_option -fixgatedclocks 3
+set_option -fixgeneratedclocks 3
+
+# NFilter
+set_option -popfeed 0
+set_option -constprop 0
+set_option -createhierarchy 0
+
+#VIF options
+set_option -write_vif 1
+
+#automatic place and route (vendor) options
+set_option -write_apr_constraint 1
+
+#set result format/file last
+project -result_file "./rev_2/spi_fpga.edf"
+
+#
+#implementation attributes
+
+set_option -vlog_std v2001
+set_option -project_relative_includes 1
+
+#set constraint files
+set_option -constraint -clear
+set_option -constraint -enable "D:/Design/test/spi/fpga/sdc/spi.sdc"
+
+#pr_1 attributes
+set_option -job pr_1 -add par
+set_option -job pr_1 -option enable_run 1
+set_option -job pr_1 -option run_backannotation 0
+
+#design plan options
+set_option -nfilter_user_path ""
+
+
+#implementation: "rev_3"
+impl -add rev_3 -type fpga
+
+#device options
+set_option -technology Virtex4
+set_option -part XC4VLX160
+set_option -package FF1148
+set_option -speed_grade -10
+set_option -part_companion ""
+
+#compilation/mapping options
+set_option -use_fsm_explorer 0
+set_option -top_module "spi_fpga"
+
+# sequential_optimization_options
+set_option -symbolic_fsm_compiler 1
+
+# Compiler Options
+set_option -compiler_compatible 0
+set_option -resource_sharing 0
+
+# mapper_options
+set_option -frequency 100.000000
+set_option -write_verilog 1
+set_option -write_vhdl 0
+
+# xilinx_options
+set_option -par_use_xflow 1
+set_option -enhanced_optimization 0
+
+# Xilinx Virtex2
+set_option -run_prop_extract 1
+set_option -maxfan 10000
+set_option -disable_io_insertion 0
+set_option -pipe 0
+set_option -update_models_cp 0
+set_option -verification_mode 1
+set_option -retiming 0
+set_option -no_sequential_opt 0
+set_option -fixgatedclocks 3
+set_option -fixgeneratedclocks 3
+
+# NFilter
+set_option -popfeed 0
+set_option -constprop 0
+set_option -createhierarchy 0
+
+#VIF options
+set_option -write_vif 1
+
+#automatic place and route (vendor) options
+set_option -write_apr_constraint 1
+
+#set result format/file last
+project -result_file "./rev_3/spi_fpga.edf"
+
+#
+#implementation attributes
+
+set_option -vlog_std v2001
+set_option -project_relative_includes 1
+set_option -hdl_define -set FPGA=1
+
+#set constraint files
+set_option -constraint -clear
+set_option -constraint -enable "D:/Design/test/spi/fpga/sdc/spi_v4.sdc"
+
+#pr_1 attributes
+set_option -job pr_1 -add par
+set_option -job pr_1 -option enable_run 1
+set_option -job pr_1 -option run_backannotation 0
+
+#design plan options
+set_option -nfilter_user_path ""
+
+
+#implementation: "rev_4"
+impl -add rev_4 -type fpga
+
+#device options
+set_option -technology Virtex4
+set_option -part XC4VLX160
+set_option -package FF1148
+set_option -speed_grade -10
+set_option -part_companion ""
+
+#compilation/mapping options
+set_option -use_fsm_explorer 0
+set_option -top_module "spi_fpga"
+
+# sequential_optimization_options
+set_option -symbolic_fsm_compiler 1
+
+# Compiler Options
+set_option -compiler_compatible 0
+set_option -resource_sharing 0
+
+# mapper_options
+set_option -frequency 100.000000
+set_option -write_verilog 1
+set_option -write_vhdl 0
+set_option -identify_debug_mode 1
+
+# xilinx_options
+set_option -par_use_xflow 1
+set_option -enhanced_optimization 0
+
+# Xilinx Virtex2
+set_option -run_prop_extract 1
+set_option -maxfan 10000
+set_option -disable_io_insertion 0
+set_option -pipe 0
+set_option -update_models_cp 0
+set_option -verification_mode 1
+set_option -retiming 0
+set_option -no_sequential_opt 0
+set_option -fixgatedclocks 3
+set_option -fixgeneratedclocks 3
+
+# NFilter
+set_option -popfeed 0
+set_option -constprop 0
+set_option -createhierarchy 0
+
+#VIF options
+set_option -write_vif 1
+
+#automatic place and route (vendor) options
+set_option -write_apr_constraint 1
+
+#set result format/file last
+project -result_file "./rev_4/spi_fpga.edf"
+
+#
+#implementation attributes
+
+set_option -vlog_std v2001
+set_option -project_relative_includes 1
+set_option -hdl_define -set FPGA=1
+
+#set constraint files
+set_option -constraint -clear
+set_option -constraint -enable "D:/Design/test/spi/fpga/sdc/spi_v4.sdc"
+
+#pr_1 attributes
+set_option -job pr_1 -add par
+set_option -job pr_1 -option enable_run 1
+set_option -job pr_1 -option run_backannotation 0
+
+#design plan options
+set_option -nfilter_user_path ""
+impl -active "rev_4"

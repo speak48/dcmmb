@@ -1,0 +1,6 @@
+../hdl/spi_slave_ctrl.v
+../hdl/spi_master_ctrl.v
+../hdl/spi_switch.v
+../hdl/spi_fifo.v
+../hdl/spi_sfr.v
+../hdl/SPIP08V100.v
