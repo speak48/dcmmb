@@ -1,0 +1,144 @@
+register DESCNTRL_REG {
+  field start @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field encrypt @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field key_sel @2 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field des_mode @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field op_mode @5 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @7 {
+    bits 25;
+  }
+}
+
+register DESRAND_REG0 {
+  field DESRAND_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESRAND_REG1 {
+  field DESRAND_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESIV_REG0 {
+  field DESIV_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESIV_REG1 {
+  field DESIV_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESDATA_REG0 {
+  field DESDATA0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESDATA_REG1 {
+  field DESDATA1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESKEY1_REG0 {
+  field DESKEY1_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESKEY1_REG1 {
+  field DESKEY1_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESKEY2_REG0 {
+  field DESKEY2_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESKEY2_REG1 {
+  field DESKEY2_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESKEY3_REG0 {
+  field DESKEY3_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+register DESKEY3_REG1 {
+  field DESKEY3_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+
+block DES {
+  bytes 128;
+  register DESCNTRL_REG @0x0;
+  register DESDATA_REG0 @0x20;
+  register DESDATA_REG1 @0x24;
+  register DESIV_REG0 @0x18;
+  register DESIV_REG1 @0x1C;
+  register DESKEY1_REG0 @0x28;
+  register DESKEY1_REG1 @0x2C;
+  register DESKEY2_REG0 @0x30;
+  register DESKEY2_REG1 @0x34;
+  register DESKEY3_REG0 @0x38;
+  register DESKEY3_REG1 @0x3C;
+  register DESRAND_REG0 @0x10;
+  register DESRAND_REG1 @0x14;
+}
+

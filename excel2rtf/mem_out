@@ -1,0 +1,39 @@
+memory SRAM {
+  bits 32;
+  size 2048;
+  access rw;
+}
+memory TROM1 {
+  bits 32;
+  size 8192;
+  access ro;
+}
+memory TROM2 {
+  bits 32;
+  size 8192;
+  access ro;
+}
+memory EEPROM {
+  bits 32;
+  size 18432;
+  access rw;
+}
+memory PROM_T {
+  bits 32;
+  size 18432;
+  access rw;
+}
+memory PROM_P {
+  bits 32;
+  size 18432;
+  access rw;
+}
+block MEM {
+  bytes 163840;
+  memory EEPROM @0x80000;
+  memory PROM_P @0x0;
+  memory PROM_T @0x10000;
+  memory SRAM @0xD0000;
+  memory TROM1 @0x0;
+  memory TROM2 @0x78000;
+}

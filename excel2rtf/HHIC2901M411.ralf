@@ -1,0 +1,3867 @@
+register DESCNTRL_REG {
+  field start @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field encrypt @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field key_sel @2 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field des_mode @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field op_mode @5 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @7 {
+    bits 25;
+  }
+}
+register DESRAND_REG0 {
+  field DESRAND_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESRAND_REG1 {
+  field DESRAND_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESIV_REG0 {
+  field DESIV_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESIV_REG1 {
+  field DESIV_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESDATA_REG0 {
+  field DESDATA0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESDATA_REG1 {
+  field DESDATA1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESKEY1_REG0 {
+  field DESKEY1_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESKEY1_REG1 {
+  field DESKEY1_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESKEY2_REG0 {
+  field DESKEY2_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESKEY2_REG1 {
+  field DESKEY2_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESKEY3_REG0 {
+  field DESKEY3_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register DESKEY3_REG1 {
+  field DESKEY3_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+block DES {
+  bytes 128;
+  register DESCNTRL_REG @0x0;
+  register DESDATA_REG0 @0x20;
+  register DESDATA_REG1 @0x24;
+  register DESIV_REG0 @0x18;
+  register DESIV_REG1 @0x1C;
+  register DESKEY1_REG0 @0x28;
+  register DESKEY1_REG1 @0x2C;
+  register DESKEY2_REG0 @0x30;
+  register DESKEY2_REG1 @0x34;
+  register DESKEY3_REG0 @0x38;
+  register DESKEY3_REG1 @0x3C;
+  register DESRAND_REG0 @0x10;
+  register DESRAND_REG1 @0x14;
+}
+register WDTCtrl {
+  field WDT_EN @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field RMOD @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field RPL @2 {
+    bits 3;
+    access rw;
+    reset 0x0;
+  }
+  field unused @5 {
+    bits 27;
+  }
+}
+register WDTTORR {
+  field TOP @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register WDTCCVR {
+  field WDT_CCVR @0 {
+    bits 32;
+    access ro;
+    reset 0x200000;
+  }
+}
+register WDTCRR {
+  field WDT_CRR @0 {
+    bits 8;
+    access wo;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register WDTSTAT {
+  field WDT_INTSTAT @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register WDTEOI {
+  field WDT_EOI @0 {
+    bits 1;
+    access rc;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+block WDT {
+  bytes 64;
+  register WDTCCVR @0x08;
+  register WDTCRR @0x18;
+  register WDTCtrl @0x0;
+  register WDTEOI @0x14;
+  register WDTSTAT @0x10;
+  register WDTTORR @0x04;
+}
+register SCIMODHW {
+  field tmode_sel @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field dirc_sel @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field outtyp_sel @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field etu_sel @3 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field retry_sel @5 {
+    bits 3;
+    access rw;
+    reset 0x2;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register SCICTRL {
+  field IOMOD_SEL @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field IOPAD1_EN @1 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field unused @2 {
+    bits 1;
+  }
+  field retry_en @3 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field rx_fifo_clr @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field tx_fifo_clr @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @6 {
+    bits 26;
+  }
+}
+register SCISTAT {
+  field rx_fifo_empty @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rx_fifo_full @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rx_error @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field tx_fifo_empty @3 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field tx_fifo_full @4 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field tx_error @5 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field bgt_flag @6 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field cwt_flag @7 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register SCIINTIO1 {
+  field iopad_int @0 {
+    bits 1;
+    access w1c;
+    reset 0x0;
+  }
+  field rx_int @1 {
+    bits 1;
+    access w1c;
+    reset 0x0;
+  }
+  field tx_int @2 {
+    bits 1;
+    access w1c;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register SCIEDCCTRL {
+  field edc_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register SCIBGTCTRL {
+  field bgt_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field cwt_en @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @2 {
+    bits 30;
+  }
+}
+register SCIBUFHW {
+  field SCIBUFHW @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register SCIETUDATA {
+  field ETUDATA @0 {
+    bits 13;
+    access rw;
+    reset 0x174;
+  }
+  field unused @13 {
+    bits 19;
+  }
+}
+register SCIBGTDATA {
+  field BGTDATA @0 {
+    bits 5;
+    access rw;
+    reset 0x16;
+  }
+  field unused @5 {
+    bits 27;
+  }
+}
+register SCICWTDATA {
+  field wtdata @0 {
+    bits 16;
+    access wo;
+    reset 0x2580;
+  }
+  field unused @16 {
+    bits 16;
+  }
+}
+register SCIEDCDATA {
+  field EDCDATA @0 {
+    bits 8;
+    access wo;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+block SCI7816 {
+  bytes 128;
+  register SCIBGTCTRL @0x1C;
+  register SCIBGTDATA @0x2C;
+  register SCIBUFHW @0x20;
+  register SCICTRL @0x08;
+  register SCICWTDATA @0x30;
+  register SCIEDCCTRL @0x18;
+  register SCIEDCDATA @0x34;
+  register SCIETUDATA @0x28;
+  register SCIINTIO1 @0x10;
+  register SCIMODHW @0x0;
+  register SCISTAT @0x0C;
+}
+register IRQ_inten {
+  field sci_rx_int_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sci_tx_int_en @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field gpio_int_en @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rf_int_en @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer0_int_en @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer1_int_en @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer2_int_en @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ee_int_en @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rsa_int_en @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register IRQIntMsk {
+  field sci_rx_int_mask @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sci_tx_int_mask @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field gpio_int_mask @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rf_int_mask @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer0_int_mask @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer1_int_mask @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer2_int_mask @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ee_int_mask @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rsa_int_mask @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register IRQIntForce {
+  field sci_rx_int_force @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sci_tx_int_force @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field gpio_int_force @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rf_int_force @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer0_int_force @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer1_int_force @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer2_int_force @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ee_int_force @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rsa_int_force @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register IRQRawStat {
+  field sci_rx_int_source @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field sci_tx_int_source @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field gpio_int_source @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rf_int_source @3 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer0_int_source @4 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer1_int_source @5 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer2_int_source @6 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field ee_int_source @7 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rsa_int_source @8 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register IRQStat {
+  field sci_rx_int_status @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field sci_tx_int_status @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field gpio_int_status @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rf_int_status @3 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer0_int_status @4 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer1_int_status @5 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer2_int_status @6 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field ee_int_status @7 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rsa_int_status @8 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register IRQMaskStat {
+  field sci_rx_int_maskstatus @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field sci_tx_int_maskstatus @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field gpio_int_maskstatus @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rf_int_maskstatus @3 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer0_int_maskstatus @4 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer1_int_maskstatus @5 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer2_int_maskstatus @6 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field ee_int_maskstatus @7 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rsa_int_maskstatus @8 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register IRQFinalStat {
+  field sci_rx_int_finalstatus @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field sci_tx_int_finalstatus @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field gpio_int_finalstatus @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rf_int_finalstatus @3 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer0_int_finalstatus @4 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer1_int_finalstatus @5 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field timer2_int_finalstatus @6 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field ee_int_finalstatus @7 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field rsa_int_finalstatus @8 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register IRQVector {
+  field IRQ_Vec_Current @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register IRQVector0 {
+  field IRQ_Vec_0 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector1 {
+  field IRQ_Vec_1 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector2 {
+  field IRQ_Vec_2 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector3 {
+  field IRQ_Vec_3 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector4 {
+  field IRQ_Vec_4 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector5 {
+  field IRQ_Vec_5 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector6 {
+  field IRQ_Vec_6 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector7 {
+  field IRQ_Vec_7 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector8 {
+  field IRQ_Vec_8 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector9 {
+  field IRQ_Vec_9 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector10 {
+  field IRQ_Vec_10 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector11 {
+  field IRQ_Vec_11 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector12 {
+  field IRQ_Vec_12 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector13 {
+  field IRQ_Vec_13 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector14 {
+  field IRQ_Vec_14 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register IRQVector15 {
+  field IRQ_Vec_15 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register FIQ_inten {
+  field wdt_int_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register FIQ_intmask {
+  field wdt_int_mask @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register FIQintforce {
+  field WDT_int_force @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register FIQRawStat {
+  field WDT_Int_source @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register FIQStat {
+  field WDT_Int_status @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register FIQFinalStat {
+  field WDT_int_finalstat @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register IRQPLevel {
+  field IRQPLevel @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset0 {
+  field IRQ_Prio_0 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset1 {
+  field IRQ_Prio_1 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset2 {
+  field IRQ_Prio_2 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset3 {
+  field IRQ_Prio_3 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset4 {
+  field IRQ_Prio_4 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset5 {
+  field IRQ_Prio_5 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset6 {
+  field IRQ_Prio_6 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset7 {
+  field IRQ_Prio_7 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset8 {
+  field IRQ_Prio_8 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset9 {
+  field IRQ_Prio_9 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset10 {
+  field IRQ_Prio_10 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset11 {
+  field IRQ_Prio_11 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset12 {
+  field IRQ_Prio_12 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset13 {
+  field IRQ_Prio_12 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset14 {
+  field IRQ_Prio_14 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register IRQ_P_N_offset15 {
+  field IRQ_Prio_15 @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+block ICTL {
+  bytes 1024;
+  register FIQFinalStat @0xD4;
+  register FIQRawStat @0xCC;
+  register FIQStat @0xD0;
+  register FIQ_inten @0xC0;
+  register FIQ_intmask @0xC4;
+  register FIQintforce @0xC8;
+  register IRQFinalStat @0x30;
+  register IRQIntForce @0x010;
+  register IRQIntMsk @0x08;
+  register IRQMaskStat @0x28;
+  register IRQPLevel @0xD8;
+  register IRQRawStat @0x18;
+  register IRQStat @0x20;
+  register IRQVector @0x38;
+  register IRQVector0 @0x40;
+  register IRQVector1 @0x48;
+  register IRQVector10 @0x90;
+  register IRQVector11 @0x98;
+  register IRQVector12 @0xA0;
+  register IRQVector13 @0xA8;
+  register IRQVector14 @0xB0;
+  register IRQVector15 @0xB8;
+  register IRQVector2 @0x50;
+  register IRQVector3 @0x58;
+  register IRQVector4 @0x60;
+  register IRQVector5 @0x68;
+  register IRQVector6 @0x70;
+  register IRQVector7 @0x78;
+  register IRQVector8 @0x80;
+  register IRQVector9 @0x88;
+  register IRQ_P_N_offset0 @0xE8;
+  register IRQ_P_N_offset1 @0xEC;
+  register IRQ_P_N_offset10 @0x110;
+  register IRQ_P_N_offset11 @0x114;
+  register IRQ_P_N_offset12 @0x118;
+  register IRQ_P_N_offset13 @0x11C;
+  register IRQ_P_N_offset14 @0x120;
+  register IRQ_P_N_offset15 @0x124;
+  register IRQ_P_N_offset2 @0xF0;
+  register IRQ_P_N_offset3 @0xF4;
+  register IRQ_P_N_offset4 @0xF8;
+  register IRQ_P_N_offset5 @0xFC;
+  register IRQ_P_N_offset6 @0x100;
+  register IRQ_P_N_offset7 @0x104;
+  register IRQ_P_N_offset8 @0x108;
+  register IRQ_P_N_offset9 @0x10C;
+  register IRQ_inten @0x0;
+}
+register GPIODATA {
+  field GPIODATA @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIODIR {
+  field GPIODIR @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIOCtrl {
+  field GPIOAFSEL @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIOIntEn {
+  field GPIOIntEn @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIOMask {
+  field GPIOMask @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIOIS {
+  field GPIOIS @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIOIEV {
+  field GPIOIEV @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIOMIS {
+  field GPIOMIS @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIORIS {
+  field GPIORIS @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register GPIOIC {
+  field GPIOIC @0 {
+    bits 1;
+    access w1c;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+block GPIO {
+  bytes 128;
+  register GPIOCtrl @0x08;
+  register GPIODATA @0x0;
+  register GPIODIR @0x4;
+  register GPIOIC @0x4C;
+  register GPIOIEV @0x3C;
+  register GPIOIS @0x38;
+  register GPIOIntEn @0x30;
+  register GPIOMIS @0x40;
+  register GPIOMask @0x34;
+  register GPIORIS @0x44;
+}
+register RNGCtrlReg {
+  field rngcir_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field trng_run @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field prng_run @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register RNGModeReg {
+  field trng_load @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field trng_fdbk @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field trng_cnt @2 {
+    bits 3;
+    access rw;
+    reset 0x4;
+  }
+  field unused @5 {
+    bits 27;
+  }
+}
+register rngseqreg {
+  field prng_cap @0 {
+    bits 1;
+    access wo;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 7;
+  }
+  field prng_data @8 {
+    bits 16;
+    access ro;
+    reset 0x0;
+  }
+  field unused @24 {
+    bits 8;
+  }
+}
+register RNGDataReg0 {
+  field RNGDataReg0 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register RNGDataReg1 {
+  field RNGDataReg1 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+block RNG {
+  bytes 32;
+  register RNGCtrlReg @0x0;
+  register RNGDataReg0 @0x0C;
+  register RNGDataReg1 @0x10;
+  register RNGModeReg @0x04;
+  register rngseqreg @0x08;
+}
+register Timer1LoadCount {
+  field Timer1LoadCount @0 {
+    bits 20;
+    access rw;
+    reset 0x0;
+  }
+  field unused @20 {
+    bits 12;
+  }
+}
+register Timer1CurValue {
+  field Timer1CurValue @0 {
+    bits 20;
+    access ro;
+    reset 0x0;
+  }
+  field unused @20 {
+    bits 12;
+  }
+}
+register Timer1Ctrl {
+  field Time1_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Timer1_mode @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Timer_mask @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register Timer1_EOI {
+  field Timer1_EOI @0 {
+    bits 1;
+    access rc;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register Timer1_intStat {
+  field Timer1_intStat @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register Timer2LoadCount {
+  field Timer2LoadCount @0 {
+    bits 16;
+    access rw;
+    reset 0x0;
+  }
+  field unused @16 {
+    bits 16;
+  }
+}
+register Timer2CurValue {
+  field Timer2CurValue @0 {
+    bits 16;
+    access ro;
+    reset 0x0;
+  }
+  field unused @16 {
+    bits 16;
+  }
+}
+register Timer2Ctrl {
+  field Time2_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Timer2_mode @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Timer2mask @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register Timer2_EOI {
+  field Timer2_EOI @0 {
+    bits 1;
+    access rc;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register Timer2_intStat {
+  field Timer2_intStat @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register Timer3LoadCount {
+  field Timer3LoadCount @0 {
+    bits 16;
+    access rw;
+    reset 0x0;
+  }
+  field unused @16 {
+    bits 16;
+  }
+}
+register Timer3CurValue {
+  field Timer3CurValue @0 {
+    bits 16;
+    access ro;
+    reset 0x0;
+  }
+  field unused @16 {
+    bits 16;
+  }
+}
+register Timer3Ctrl {
+  field Time3_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Timer3_mode @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Timer3mask @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register Timer3_EOI {
+  field Timer3_EOI @0 {
+    bits 1;
+    access rc;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register Timer3_intStat {
+  field Timer3_intStat @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register Timers_int_status {
+  field Time1_int_status @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field Time2_int_status @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field Time3_int_status @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register Timers_EOI {
+  field Timer1_EOI @0 {
+    bits 1;
+    access rc;
+    reset 0x0;
+  }
+  field Timer2_EOI @1 {
+    bits 1;
+    access rc;
+    reset 0x0;
+  }
+  field Timer3_EOI @2 {
+    bits 1;
+    access rc;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register Timers_intStat {
+  field Timer1_rawintStat @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field Timer2_rawintStat @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field Timer3_rawintStat @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+block TIMER {
+  bytes 512;
+  register Timer1Ctrl @0x08;
+  register Timer1CurValue @0x04;
+  register Timer1LoadCount @0x0;
+  register Timer1_EOI @0x0C;
+  register Timer1_intStat @0x10;
+  register Timer2Ctrl @0x1C;
+  register Timer2CurValue @0x18;
+  register Timer2LoadCount @0x14;
+  register Timer2_EOI @0x20;
+  register Timer2_intStat @0x24;
+  register Timer3Ctrl @0x30;
+  register Timer3CurValue @0x2C;
+  register Timer3LoadCount @0x28;
+  register Timer3_EOI @0x34;
+  register Timer3_intStat @0x38;
+  register Timers_EOI @0xA4;
+  register Timers_intStat @0xA8;
+  register Timers_int_status @0xA0;
+}
+register TRICKReg {
+  field TRICKReg @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+block TRICKBOX {
+  bytes 16;
+  register TRICKReg @0x7C;
+}
+register SM1CNTRL_REG {
+  field start @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field skey_sel @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field encrypt @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field round_sel @3 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @5 {
+    bits 27;
+  }
+}
+register SM1EKEY_REG0 {
+  field SM1EKEY_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1EKEY_REG1 {
+  field SM1EKEY_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1EKEY_REG2 {
+  field SM1EKEY_REG2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1EKEY_REG3 {
+  field SM1EKEY_REG3 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1AKEY_REG0 {
+  field SM1AKEY_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1AKEY_REG1 {
+  field SM1AKEY_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1AKEY_REG2 {
+  field DESKEY1_REG2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1AKEY_REG3 {
+  field SM1AKEY_REG3 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1KEY_REG0 {
+  field SM1KEY_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1KEY_REG1 {
+  field SM1KEY_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1KEY_REG2 {
+  field SM1KEY_REG2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1KEY_REG3 {
+  field SM1KEY_REG3 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM1DATA_REG0 {
+  field SM1DATA_REG0 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register SM1DATA_REG1 {
+  field SM1DATA_REG1 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register SM1DATA_REG2 {
+  field SM1DATA_REG2 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register SM1DATA_REG3 {
+  field SM1DATA_REG3 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+block SM1 {
+  bytes 128;
+  register SM1AKEY_REG0 @0x20;
+  register SM1AKEY_REG1 @0x24;
+  register SM1AKEY_REG2 @0x28;
+  register SM1AKEY_REG3 @0x2C;
+  register SM1CNTRL_REG @0x0;
+  register SM1DATA_REG0 @0x40;
+  register SM1DATA_REG1 @0x44;
+  register SM1DATA_REG2 @0x48;
+  register SM1DATA_REG3 @0x4C;
+  register SM1EKEY_REG0 @0x10;
+  register SM1EKEY_REG1 @0x14;
+  register SM1EKEY_REG2 @0x18;
+  register SM1EKEY_REG3 @0x1C;
+  register SM1KEY_REG0 @0x30;
+  register SM1KEY_REG1 @0x34;
+  register SM1KEY_REG2 @0x38;
+  register SM1KEY_REG3 @0x3C;
+}
+register SSF33CNTRL_REG {
+  field ssf33_start @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ssf33ken_gen @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ssf33key_sel @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ssf33_encrypt @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register SSF33SKey_REG0 {
+  field DESRAND_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SSF33SKey_REG1 {
+  field SSF33SKey_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SSF33SKey_REG2 {
+  field SSF33SKey_REG2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SSF33SKey_REG3 {
+  field SSF33SKey_REG3 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SSF33Mkey_REG0 {
+  field SSF33Mkey_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SSF33Mkey_REG1 {
+  field SSF33Mkey_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SSF33Mkey_REG2 {
+  field SSF33Mkey_REG2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SSF33Mkey_REG3 {
+  field SSF33Mkey_REG3 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SSF33DATA_REG0 {
+  field SSF33DATA_REG0 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register SSF33DATA_REG1 {
+  field SSF33DATA_REG1 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register SSF33DATA_REG2 {
+  field SSF33DATA_REG3 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register SSF33DATA_REG3 {
+  field SSF33DATA_REG3 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+block SSF33 {
+  bytes 128;
+  register SSF33CNTRL_REG @0x0;
+  register SSF33DATA_REG0 @0x30;
+  register SSF33DATA_REG1 @0x34;
+  register SSF33DATA_REG2 @0x38;
+  register SSF33DATA_REG3 @0x3C;
+  register SSF33Mkey_REG0 @0x20;
+  register SSF33Mkey_REG1 @0x24;
+  register SSF33Mkey_REG2 @0x28;
+  register SSF33Mkey_REG3 @0x2C;
+  register SSF33SKey_REG0 @0x10;
+  register SSF33SKey_REG1 @0x14;
+  register SSF33SKey_REG2 @0x18;
+  register SSF33SKey_REG3 @0x1C;
+}
+register CRCREG {
+  field crcReg @0 {
+    bits 16;
+    access rw;
+    reset 0xFFFF;
+  }
+  field crcflag @16 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @17 {
+    bits 15;
+  }
+}
+register CrcDataReg0 {
+  field CrcDataReg0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg1 {
+  field CrcDataReg1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg2 {
+  field CrcDataReg2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg3 {
+  field CrcDataReg3 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg4 {
+  field CrcDataReg4 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg5 {
+  field CrcDataReg5 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg6 {
+  field CrcDataReg6 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg7 {
+  field CrcDataReg7 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg8 {
+  field CrcDataReg8 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg9 {
+  field CrcDataReg9 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg10 {
+  field CrcDataReg10 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register CrcDataReg11 {
+  field CrcDataReg11 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+block CRC {
+  bytes 512;
+  register CRCREG @0x0;
+  register CrcDataReg0 @0x80;
+  register CrcDataReg1 @0x84;
+  register CrcDataReg10 @0xA8;
+  register CrcDataReg11 @0xAC;
+  register CrcDataReg2 @0x88;
+  register CrcDataReg3 @0x8C;
+  register CrcDataReg4 @0x90;
+  register CrcDataReg5 @0x94;
+  register CrcDataReg6 @0x98;
+  register CrcDataReg7 @0x9C;
+  register CrcDataReg8 @0xA0;
+  register CrcDataReg9 @0xA4;
+}
+register EECTRLTIMEPARA {
+  field Trspra @0 {
+    bits 8;
+    access rw;
+    reset 0x2C;
+  }
+  field Trdpara @8 {
+    bits 8;
+    access rw;
+    reset 0x1D;
+  }
+  field T1dpara @16 {
+    bits 8;
+    access rw;
+    reset 0x02;
+  }
+  field Twepara @24 {
+    bits 8;
+    access rw;
+    reset 0x06;
+  }
+}
+register eectrlrdmode {
+  field readmode @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register EECTRLWRMODE {
+  field HwEwStart @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field HwErOrWr @1 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field HwEWMode @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field EW_En @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @5 {
+    bits 27;
+  }
+}
+register EECTRLWRCTRL {
+  field BUF_CLR @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field PROGRAM_EN @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ERASE @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field WRITE @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register EECTRLCFG {
+  field WR_MODE @0 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field EVPP_EN @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field SEL_OTP @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field SEL32 @4 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @6 {
+    bits 1;
+  }
+  field KEY_LOAD @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field TC @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field TEST_SEL @9 {
+    bits 5;
+    access rw;
+    reset 0x0;
+  }
+  field unused @14 {
+    bits 18;
+  }
+}
+register EECTRLINT {
+  field EE_Int @0 {
+    bits 1;
+    access w1c;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+block EECTRL {
+  bytes 128;
+  register EECTRLCFG @0x10;
+  register EECTRLINT @0x14;
+  register EECTRLTIMEPARA @0x0;
+  register EECTRLWRCTRL @0x0C;
+  register EECTRLWRMODE @0x08;
+  register eectrlrdmode @0x04;
+}
+register SM3CNTRL_REG {
+  field sm3_start @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field hash_sel @1 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field first_group @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @4 {
+    bits 28;
+  }
+}
+register SM3HASH_REG0 {
+  field SM3HASH_REG0 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register SM3HASH_REG1 {
+  field SM3HASH_REG1 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register SM3HASH_REG2 {
+  field SM3HASH_REG2 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register SM3HASH_REG3 {
+  field SM3HASH_REG3 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register SM3HASH_REG4 {
+  field SM3HASH_REG4 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register SM3HASH_REG5 {
+  field SM3HASH_REG5 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register SM3HASH_REG6 {
+  field SM3HASH_REG6 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register SM3HASH_REG7 {
+  field SM3HASH_REG7 @0 {
+    bits 32;
+    access ro;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG0 {
+  field SM3DATA_REG0 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG1 {
+  field SM3DATA_REG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG2 {
+  field SM3DATA_REG2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG3 {
+  field SM3DATA_REG3 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG4 {
+  field SM3DATA_REG4 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG5 {
+  field SM3DATA_REG5 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG6 {
+  field SM3DATA_REG6 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG7 {
+  field SM3DATA_REG7 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG8 {
+  field SM3DATA_REG8 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG9 {
+  field SM3DATA_REG9 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG10 {
+  field SM3DATA_REG10 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG11 {
+  field SM3DATA_REG11 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG12 {
+  field SM3DATA_REG12 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG13 {
+  field SM3DATA_REG13 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG14 {
+  field SM3DATA_REG14 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register SM3DATA_REG15 {
+  field SM3DATA_REG15 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+block SM3 {
+  bytes 352;
+  register SM3CNTRL_REG @0x0;
+  register SM3DATA_REG0 @0x40;
+  register SM3DATA_REG1 @0x44;
+  register SM3DATA_REG10 @0x68;
+  register SM3DATA_REG11 @0x6C;
+  register SM3DATA_REG12 @0x70;
+  register SM3DATA_REG13 @0x74;
+  register SM3DATA_REG14 @0x78;
+  register SM3DATA_REG15 @0x7C;
+  register SM3DATA_REG2 @0x48;
+  register SM3DATA_REG3 @0x4C;
+  register SM3DATA_REG4 @0x50;
+  register SM3DATA_REG5 @0x54;
+  register SM3DATA_REG6 @0x58;
+  register SM3DATA_REG7 @0x5C;
+  register SM3DATA_REG8 @0x60;
+  register SM3DATA_REG9 @0x64;
+  register SM3HASH_REG0 @0x20;
+  register SM3HASH_REG1 @0x24;
+  register SM3HASH_REG2 @0x28;
+  register SM3HASH_REG3 @0x2C;
+  register SM3HASH_REG4 @0x30;
+  register SM3HASH_REG5 @0x34;
+  register SM3HASH_REG6 @0x38;
+  register SM3HASH_REG7 @0x3C;
+}
+register RFFIFODATA {
+  field RFDATA @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RFFIFOWRPTR {
+  field RFWPTR @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RFFIFORDPTR {
+  field RFRPTR @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RFBAUT {
+  field RX_BAUD @0 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @2 {
+    bits 2;
+  }
+  field TX_BAUD @4 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @6 {
+    bits 26;
+  }
+}
+register RFCTRLR {
+  field ERR @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field ACB @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ARX @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field F_F @3 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field TX @4 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field F_E @5 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field RX @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field RFP @7 {
+    bits 1;
+    access wo;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RFSTATE {
+  field CRCERR @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field FERR @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field EGTERR @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field BERR @3 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field PERR @4 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @5 {
+    bits 27;
+  }
+}
+register RFMODE {
+  field TXOSM @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field RXOSM @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field RXOSM_TIM @2 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field TXOSM_TIM @4 {
+    bits 3;
+    access rw;
+    reset 0x0;
+  }
+  field RFPTX @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RFFEATURE {
+  field RFION @0 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field TA @1 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field TB @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 3;
+  }
+  field AUTO_SEL @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field TYPE_ERR @7 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RFCONFIG {
+  field SWUPTX_TIM @0 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field CRC_EN @2 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field DIS_INT_ON_ERR @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ACB_AUTO_CLOSE @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ACB_VALUE @5 {
+    bits 3;
+    access rw;
+    reset 0x3;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RFTYPEACFG {
+  field SWUPTX_TIM @0 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field CRC_EN @2 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field DIS_INT_ON_ERR @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ACB_AUTO_CLOSE @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ACB_VALUE @5 {
+    bits 3;
+    access rw;
+    reset 0x3;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RFTYPEACTRL {
+  field AUTH_START @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field SET_IDLE @1 {
+    bits 1;
+    access w1;
+    reset 0x0;
+  }
+  field SET_HALT @2 {
+    bits 1;
+    access w1;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register RFTYPEASTAT {
+  field M1_VALID @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field HH_VALID @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @2 {
+    bits 30;
+  }
+}
+register RFTYPEADATA1 {
+  field UID0 @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field UID1 @8 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field UID2 @16 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field UID3 @24 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+}
+register RFTYPEADATA2 {
+  field UID4 @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field UID5 @8 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field UID6 @16 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field UID7 @24 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+}
+register RFTYPEADATA3 {
+  field UID8 @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field UID9 @8 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field PCODE @16 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field SAK @24 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+}
+register RFTYPEBCFG {
+  field RFIntMode @0 {
+    bits 1;
+    access w1c;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register RFM1AUTH1REG {
+  field M1AUTHREG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register RFM1AUTH2REG {
+  field M1AUTHREG2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register RFHHAUTH1REG {
+  field HHAUTHREG1 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register RFHHAUTH2REG {
+  field HHAUTHREG2 @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+block RFCTRL {
+  bytes 512;
+  register RFBAUT @0x0C;
+  register RFCONFIG @0x20;
+  register RFCTRLR @0x10;
+  register RFFEATURE @0x1C;
+  register RFFIFODATA @0x0;
+  register RFFIFORDPTR @0x08;
+  register RFFIFOWRPTR @0x04;
+  register RFHHAUTH1REG @0xF8;
+  register RFHHAUTH2REG @0xFC;
+  register RFM1AUTH1REG @0xF0;
+  register RFM1AUTH2REG @0xF4;
+  register RFMODE @0x18;
+  register RFSTATE @0x14;
+  register RFTYPEACFG @0x24;
+  register RFTYPEACTRL @0x28;
+  register RFTYPEADATA1 @0x30;
+  register RFTYPEADATA2 @0x34;
+  register RFTYPEADATA3 @0x38;
+  register RFTYPEASTAT @0x2C;
+  register RFTYPEBCFG @0x44;
+}
+register RstEnReg {
+  field sw_rst_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field wd_rst_en @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field tdh_rst_en @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field tdl_rst_en @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field fdh_rst_en @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field fdl_rst_en @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field light_rst_en @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field md_rst_en @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field shield_rst_en @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field vdh_rst_en @9 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @10 {
+    bits 22;
+  }
+}
+register RstTypReg {
+  field sw_rst_typ @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field wd_rst_typ @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field tdh_rst_typ @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field tdl_rst_typ @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field fdh_rst_typ @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field fdl_rst_typ @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field light_rst_typ @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field md_rst_typ @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field shield_rst_typ @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sci7816_rst_typ @9 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field vdh_rst_typ @10 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @11 {
+    bits 21;
+  }
+}
+register SWGenReg {
+  field SWGenReg @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register ModuleRstReg {
+  field Rst_sec @0 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_int @1 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_rng @2 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_crc @3 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_pit @4 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field unused @5 {
+    bits 1;
+  }
+  field Rst_wdt @6 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_eectrl @7 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_rf @8 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_des @9 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_rsa @10 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_ssf33 @11 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_gpio @12 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_uart @13 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_sm1 @14 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field Rst_sm3 @15 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field unused @16 {
+    bits 16;
+  }
+}
+register PrivCtrlReg {
+  field System_user @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field secure_user @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field crc_user @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field eeprom_user @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rf_user @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field des_user @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rsa_user @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field clk_user @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ssf33_user @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sm1_user @9 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sm3_user @10 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @11 {
+    bits 21;
+  }
+}
+register DrvParaReg0 {
+  field DrvParaReg0 @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field RFD_HDET_CON @8 {
+    bits 4;
+    access rw;
+    reset 0xa;
+  }
+  field RFD_LIMIT_EN @12 {
+    bits 3;
+    access rw;
+    reset 0x7;
+  }
+  field RFD_LIMIT_CON @15 {
+    bits 6;
+    access rw;
+    reset 0x2a;
+  }
+  field VDOPT @21 {
+    bits 4;
+    access rw;
+    reset 0x3;
+  }
+  field LDOPT @25 {
+    bits 7;
+    access rw;
+    reset 0x1;
+  }
+}
+register DrvParaReg1 {
+  field PMV11_PMOPT @0 {
+    bits 16;
+    access rw;
+    reset 0x0;
+  }
+  field ATV11_EN_OPT @16 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field ATV11_AA_OPT @17 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field ATV11_DA_OPT @21 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field unused @25 {
+    bits 7;
+  }
+}
+register DrvParaReg2 {
+  field VCO_30m_q @0 {
+    bits 4;
+    access rw;
+    reset 0x04;
+  }
+  field TD_OPT @4 {
+    bits 4;
+    access rw;
+    reset 0x05;
+  }
+  field EEIREFSEL @8 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field EEVREFSEL @10 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @12 {
+    bits 20;
+  }
+}
+register DrvParaReg3 {
+  field DrvParaReg3 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register DrvParaReg4 {
+  field DrvParaReg4 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register DrvParaReg5 {
+  field drvParaReg5 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register DrvParaReg6 {
+  field DrvParaReg6 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register DrvParaReg7 {
+  field DrvParaReg7 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register PowerAvailReg {
+  field PowerAvailReg @0 {
+    bits 2;
+    access ro;
+    reset 0x0;
+  }
+  field unused @2 {
+    bits 30;
+  }
+}
+register testfuse {
+  field testfuse @0 {
+    bits 1;
+    access ro;
+    reset 0x1;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register romswitch {
+  field romswitch @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register SDCntrlReg {
+  field MD_open @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field FD_open @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field FDH_en @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field FDL_en @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Light_en @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field TD_open @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field TDH_en @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field TDL_en @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field VD_open @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field VDH_en @9 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field VHL_en @10 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field MD_en @11 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field LD_en @12 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field RNI_en @13 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field RNI_sel @14 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @16 {
+    bits 16;
+  }
+}
+register shield1data {
+  field shield1_din @0 {
+    bits 9;
+    access rw;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register shield2data {
+  field shield2_din @0 {
+    bits 9;
+    access rw;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register shield1stat {
+  field shield1_dout @0 {
+    bits 9;
+    access ro;
+    reset 0x0;
+  }
+  field valid1 @9 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field alarm1 @10 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @11 {
+    bits 21;
+  }
+}
+register shield2stat {
+  field shield2_dout @0 {
+    bits 9;
+    access ro;
+    reset 0x0;
+  }
+  field valid2 @9 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field alarm2 @10 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @11 {
+    bits 21;
+  }
+}
+register med_con {
+  field ram_en @0 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field ee_en @1 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field rom_en @2 {
+    bits 1;
+    access rw;
+    reset 0x1;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register ramkey_cap {
+  field ramkey_cap @0 {
+    bits 32;
+    access wo;
+    reset 0x0;
+  }
+}
+register ClkselReg {
+  field Clksel  @0 {
+    bits 2;
+    access ro;
+    reset 0x0;
+  }
+  field clkavailcl @2 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field clkavailcb @3 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field ClkPrior @4 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field Clkmaskcl @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field clkmaskcb @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field clkmaskps @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @9 {
+    bits 23;
+  }
+}
+register HclkConReg {
+  field Hclk_sel @0 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @2 {
+    bits 1;
+  }
+  field Fmax @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ClkvocDiv @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @5 {
+    bits 27;
+  }
+}
+register PclkselReg {
+  field Pclksel @0 {
+    bits 2;
+    access rw;
+    reset 0x2;
+  }
+  field unused @2 {
+    bits 30;
+  }
+}
+register ClkVcoConReg {
+  field vcoclk_en @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register ClkRsaSelReg {
+  field clkRsaSel  @0 {
+    bits 4;
+    access rw;
+    reset 0x0;
+  }
+  field Clktime1sel @4 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field Clktime2sel @6 {
+    bits 2;
+    access rw;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register ClkClsReg {
+  field Secure_cls @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field int_cls @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rng_cls @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field crc_cls @3 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field timer_cls @4 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field wdt_cls @5 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field eectrl_cls @6 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rf_cls @7 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field des_cls @8 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field rsa_cls @9 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field ssf33_cls @10 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field gpio_cls @11 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sci7816 @12 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sm1_cls @13 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field sm3_cls @14 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @15 {
+    bits 17;
+  }
+}
+register PowerModeReg {
+  field idle @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field stop @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @2 {
+    bits 30;
+  }
+}
+register ClkTestReg {
+  field Testrun @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 7;
+  }
+  field VCO_Count @8 {
+    bits 12;
+    access rw;
+    reset 0x0;
+  }
+  field unused @20 {
+    bits 12;
+  }
+}
+block SYSCTRL {
+  bytes 4096;
+  register ClkClsReg @0x214;
+  register ClkRsaSelReg @0x210;
+  register ClkTestReg @0x2FC;
+  register ClkVcoConReg @0x20C;
+  register ClkselReg @0x200;
+  register DrvParaReg0 @0x80;
+  register DrvParaReg1 @0x84;
+  register DrvParaReg2 @0x88;
+  register DrvParaReg3 @0x8C;
+  register DrvParaReg4 @0x90;
+  register DrvParaReg5 @0x94;
+  register DrvParaReg6 @0x98;
+  register DrvParaReg7 @0x9C;
+  register HclkConReg @0x204;
+  register ModuleRstReg @0x0C;
+  register PclkselReg @0x208;
+  register PowerAvailReg @0xF4;
+  register PowerModeReg @0x218;
+  register PrivCtrlReg @0x10;
+  register RstEnReg @0x0;
+  register RstTypReg @0x04;
+  register SDCntrlReg @0x100;
+  register SWGenReg @0x08;
+  register med_con @0x114;
+  register ramkey_cap @0x118;
+  register romswitch @0xFC;
+  register shield1data @0x104;
+  register shield1stat @0x10C;
+  register shield2data @0x108;
+  register shield2stat @0x110;
+  register testfuse @0xF8;
+}
+register RECR {
+  field rsa_start @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field idle_run @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @2 {
+    bits 30;
+  }
+}
+register RESR {
+  field Error_flag @0 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field Overflow @1 {
+    bits 1;
+    access ro;
+    reset 0x0;
+  }
+  field unused @2 {
+    bits 30;
+  }
+}
+register REFR {
+  field Function_ID @0 {
+    bits 8;
+    access rw;
+    reset 0x0;
+  }
+  field unused @8 {
+    bits 24;
+  }
+}
+register RESCR {
+  field Fix_time @0 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Rnd_multi @1 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field Extra_exp @2 {
+    bits 1;
+    access rw;
+    reset 0x0;
+  }
+  field unused @3 {
+    bits 29;
+  }
+}
+register REDQR {
+  field REDQR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REINT {
+  field RSA_int @0 {
+    bits 1;
+    access w1c;
+    reset 0x0;
+  }
+  field unused @1 {
+    bits 31;
+  }
+}
+register REDAR {
+  field REDAR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDAR31 {
+  field REDAR31 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDXR {
+  field REDXR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDXR31 {
+  field REDXR31 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDBR {
+  field REDBR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDBR31 {
+  field REDBR31 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDYR {
+  field REDBR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDYR31 {
+  field REDYR31 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDCR {
+  field REDBR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDCR31 {
+  field REDCR31 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDPR {
+  field REDPR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDPR31 {
+  field REDPR31 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDUR {
+  field REDUR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDUR31 {
+  field REDUR31 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDVR {
+  field REDVR @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+register REDVR31 {
+  field REDVR31 @0 {
+    bits 32;
+    access rw;
+    reset 0x0;
+  }
+}
+block RSA {
+  bytes 4096;
+  register RECR @0x0;
+  register REDAR @0x100;
+  register REDAR31 @0x17C;
+  register REDBR @0x200;
+  register REDBR31 @0x27C;
+  register REDCR @0x300;
+  register REDCR31 @0x3FC;
+  register REDPR @0x400;
+  register REDPR31 @0x4FC;
+  register REDQR @0x10;
+  register REDUR @0x500;
+  register REDUR31 @0x5FC;
+  register REDVR @0x600;
+  register REDVR31 @0x67C;
+  register REDXR @0x180;
+  register REDXR31 @0x1FC;
+  register REDYR @0x280;
+  register REDYR31 @0x2FC;
+  register REFR @0x08;
+  register REINT @0x14;
+  register RESCR @0x0C;
+  register RESR @0x04;
+}
+system CHIP2901M4 {
+  bytes 1048576;
+  block WDT @0xF0000
+  block SCI7816 @0xF0400
+  block ICTL @0xF0C00
+  block GPIO @0xF1000
+  block RNG @0xF1800
+  block TIMER @0xF1C00
+  block TRICKBOX @0xF3C00
+  block DES @0xF4000
+  block SM1 @0xF4400
+  block SSF33 @0xF4800
+  block SM3 @0xF5000
+  block CRC @0xF5400
+  block RSA @0xF5800
+  block SYSCTRL @0xF7000
+  block EECTRL @0xF8000
+  block RFCTRL @0xF9400
+}
