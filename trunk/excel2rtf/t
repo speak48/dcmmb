@@ -1,0 +1,158 @@
+input file = 2901sfr1.xls
+output file = HHIC2901M411.ralf
+input file is /export/home/project/yangnx/HHIC2901M411/verification/Tiger/sim/sb_tb_subsystem/tools/ral_tool/2901sfr1.xls
+Number of sheets = 17
+the sys out file sys_out exist
+INFO: Read "2901sfr1.xls" ...
+INFO: Creat final output "HHIC2901M411.ralf" ...
+INFO: Creat system output "" ...
+------------Processing SHEET:HHIC2901M411
+The sheet is system sheet, name is HHIC2901M411
+head string is 
+the string row is 0
+the string column is 0
+Warning!: The cell not match any situation.
+head string is 
+the string row is 1
+the string column is 0
+Warning!: The cell not match any situation.
+head string is system name
+the string row is 2
+the string column is 0
+head string is system bytes
+the string row is 3
+the string column is 0
+head string is WDT
+the string row is 4
+the string column is 0
+head string is SCI7816
+the string row is 5
+the string column is 0
+head string is ICTL
+the string row is 6
+the string column is 0
+head string is GPIO
+the string row is 7
+the string column is 0
+head string is RNG
+the string row is 8
+the string column is 0
+head string is TIMER
+the string row is 9
+the string column is 0
+head string is TRICKBOX
+the string row is 10
+the string column is 0
+head string is DES
+the string row is 11
+the string column is 0
+head string is SM1
+the string row is 12
+the string column is 0
+head string is SSF33
+the string row is 13
+the string column is 0
+head string is SM3
+the string row is 14
+the string column is 0
+head string is CRC
+the string row is 15
+the string column is 0
+head string is RSA
+the string row is 16
+the string column is 0
+head string is SYSCTRL
+the string row is 17
+the string column is 0
+head string is EECTRL
+the string row is 18
+the string column is 0
+head string is RFCTRL
+the string row is 19
+the string column is 0
+------------Processing SHEET:des
+The sheet is block sheet, name is des
+the sheet Min row number is 0, Max row number is 109
+current processing row number is 0
+head string is 
+the string row is 0
+the string column is 0
+I don't know what happened!!
+current processing row number is 1
+head string is 
+the string row is 1
+the string column is 0
+I don't know what happened!!
+current processing row number is 2
+head string is 
+the string row is 2
+the string column is 0
+I don't know what happened!!
+current processing row number is 3
+head string is 
+the string row is 3
+the string column is 0
+I don't know what happened!!
+current processing row number is 4
+head string is 
+the string row is 4
+the string column is 0
+I don't know what happened!!
+current processing row number is 5
+head string is register name
+the string row is 5
+the string column is 0
+DEBUG: find reg name "register name" 
+current processing row number is 6
+head string is register address(offset)
+the string row is 6
+the string column is 0
+DEBUG: find reg offset"register address(offset)" 
+DEBUG: find regname is DESCNTRL_REG, offset is 0x0
+current processing row number is 7
+head string is Bits
+the string row is 7
+the string column is 0
+I don't know what happened!!
+current processing row number is 8
+head string is [0]
+the string row is 8
+the string column is 0
+DEBUG: find reg field "[0]" 
+bits count is 1
+current processing row number is 9
+head string is [1]
+the string row is 9
+the string column is 0
+DEBUG: find reg field "[1]" 
+bits count is 2
+current processing row number is 10
+head string is [3:2]
+the string row is 10
+the string column is 0
+DEBUG: find reg field "[3:2]" 
+bits count is 4
+current processing row number is 11
+head string is [4]
+the string row is 11
+the string column is 0
+DEBUG: find reg field "[4]" 
+bits count is 5
+current processing row number is 12
+head string is [6:5]
+the string row is 12
+the string column is 0
+DEBUG: find reg field "[6:5]" 
+bits count is 7
+current processing row number is 13
+head string is [31:7]
+the string row is 13
+the string column is 0
+DEBUG: find reg field "[31:7]" 
+bits count is 32
+register generated for DESCNTRL_REG, bits count is 32
+current processing row number is 14
+head string is 
+the string row is 14
+the string column is 0
+I don't know what happened!!

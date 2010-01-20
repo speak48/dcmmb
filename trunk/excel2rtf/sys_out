@@ -1,0 +1,21 @@
+system CHIP2901M4 {
+  bytes 1048576;
+  block WDT @0xF0000
+  block SCI7816 @0xF0400
+  block ICTL @0xF0C00
+  block GPIO @0xF1000
+  block RNG @0xF1800
+  block TIMER @0xF1C00
+  block TRICKBOX @0xF3C00
+  block DES @0xF4000
+  block SM1 @0xF4400
+  block SSF33 @0xF4800
+  block SM7 @0xF4C00
+  block SM3 @0xF5000
+  block CRC @0xF5400
+  block RSA @0xF5800
+  block SYSCTRL @0xF7000
+  block EECTRL @0xF8000
+  block RFCTRL @0xF9400
+  block MEM @0x0
+}
