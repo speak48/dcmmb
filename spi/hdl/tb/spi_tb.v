@@ -274,17 +274,17 @@ initial
        MOSI = 1'b1;
        SS  = 1'b1;
        rs_mode = 2'b01;
-       block_size = 3'b001;
+       block_size = 3'b011;
 end
 
-//task dum_fsdb;
-initial
+task dum_fsdb;
+//initial
 begin
 	$fsdbDumpfile("spi.fsdb");
 	$fsdbDumpvars;
 	$fsdbDumpflush;
 end
-//endtask
+endtask
 
 initial
     fork

@@ -15,8 +15,8 @@ output   [7:0]   mem_data_out;
 output           mem_ena_out;
 output           bydin_int;
 
-parameter MI_DEPTH =  9'd72;
-parameter K_REG = 8'd176;
+parameter MI_DEPTH =  9'd288;
+parameter K_REG = 8'd224;
 
 reg              rd_ena_d1;
 reg              rd_ena_d2;
