@@ -1,0 +1,146 @@
+//Module
+module ldpc_ctrl(
+    clk,
+    reset_n,
+    sync_in,
+    code_rate,
+    max_iter,
+
+    fsm_state,
+    finish,
+    busy,
+    num_iter    
+);
+
+//Input ports
+input                clk        ;
+input                reset_n    ;
+input                code_rate  ; // 0, 1/2 1, 3/4
+input                sync_in    ;
+input   [4:0]        max_iter   ;
+
+//Output ports
+output  [3:0]        fsm_state  ;
+output               finish     ;
+output               busy       ;
+output  [4:0]        num_iter   ;
+
+//Paramter
+parameter IDLE     = 4'b0001,
+          DATA_IN  = 4'b0010,
+	  CNU      = 4'b0100,
+	  DATA_OUT = 4'b1000;
+
+//Intenal Reg and Wires Definition
+reg     [3:0]        fsm_state  ;
+reg                  finish     ;
+reg                  busy       ;
+reg     [4:0]        num_iter   ;
+
+reg                  sync_dly   ;
+reg                  sync_dly2  ;
+reg     [3:0]        next_state ;
+reg    [12:0]        counter    ;
+
+wire                 sync_end   ;
+wire                 iter_end   ;
+wire                 vnu_end    ;
+wire                 sync_out_end;
+wire   [12:0]        counter_max;
+
+assign counter_max = code_rate ? 'd4607 : 'd6911;
+assign sync_end = sync_dly2 & (!sync_dly);
+assign iter_end = (num_iter == max_iter); 
+assign vnu_end  = (counter == 'd4608) & fsm_state[2];
+assign sync_out_end = (counter == counter_max) & fsm_state[3];
+
+// sync in delay register
+always @ (posedge clk or negedge reset_n)
+begin : sync_d1	
+    if(!reset_n)
+        sync_dly <= #1 1'b0;
+    else
+	sync_dly <= #1 sync_in;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : sync_d2	
+    if(!reset_n)
+        sync_dly2 <= #1 1'b0;
+    else
+	sync_dly2 <= #1 sync_dly;
+end
+
+// ldpc_busy status
+always @ (posedge clk or negedge reset_n)
+begin : busy_r
+    if(!reset_n)
+        busy <= #1 1'b0;
+    else if(iter_end)
+        busy <= #1 1'b0;
+    else if(sync_end)
+	busy <= #1 1'b1;    
+end	
+
+// FSM
+always @ (posedge clk or negedge reset_n)
+begin : fsm_state_r
+    if(!reset_n)
+        fsm_state <= #1 IDLE;
+    else 
+        fsm_state <= #1 next_state;
+end
+
+always @ (*)
+begin : fsm_next_state_r
+    case(fsm_state)
+    IDLE: if(sync_in)
+        next_state = DATA_IN;
+    DATA_IN: if(sync_end)
+	next_state = CNU;
+    CNU: if(vnu_end)
+             begin
+		 if(iter_end)
+	             next_state = DATA_OUT;
+	         else 
+	             next_state = CNU;
+          end
+     DATA_OUT: if(sync_out_end)
+         next_state = IDLE;
+     default:
+	 next_state = IDLE;
+     endcase
+end 
+
+// Number of iteration
+always @ (posedge clk or negedge reset_n)
+begin: num_iter_r
+    if(!reset_n)
+        num_iter <= #1 5'h0;
+    else if(sync_in)
+	num_iter <= #1 5'h0;
+    else if(vnu_end)
+	num_iter <=#1 num_iter + 1'b1;
+end
+
+// This section is not implment in the end
+//
+always @ (posedge clk or negedge reset_n)
+begin: counter_r
+    if(!reset_n)
+        counter <= #1 13'h0;
+    else if(fsm_state[2]) begin 
+	if(counter == 'd4607)	
+	    counter <= #1 13'h0;
+	else
+            counter <= #1 counter + 1'b1;
+    end
+    else if(fsm_state[3]) begin
+	if(counter == counter_max)
+            counter <= #1 13'h0;
+        else
+            counter <= #1 counter + 1'b1;
+    end
+end	
+
+endmodule
