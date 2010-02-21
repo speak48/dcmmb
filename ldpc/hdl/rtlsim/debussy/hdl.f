@@ -1,6 +1,10 @@
 ../../tb/ldpc_tb.v
-../../rtl/ldpc_dec.v
-../../rtl/ldpc_vtc.v
+../../rtl/ldpc.v
 ../../rtl/ldpc_ctrl.v
 ../../rtl/vtc_cell.v
-../../rtl/sram256x8.v
+../../rtl/sram2p256x8.v
+../../rtl/rd_addr_gen.v
+../../rtl/rd_cell.v
+../../rtl/data_comp.v
+../../rtl/comp_cell.v
+../../rtl/data_cell.v
