@@ -14,10 +14,11 @@ constellation = [ 1 2 4];
 coderate = 0.5;            % 0.75
 mode = 'qpsk';             % 'bpsk' 'qpsk' '16qm'
 % snr  =    ;              % Signal-Noise ratio
-k = constellation(1);      % 1 2 4
-N = 11;                     % 500 frame 10^6
+k = constellation(2);      % 1 2 4
+N = 1;                     % 500 frame 10^6
 
-Eb_N0_dB = [1.2:0.1:2]; % multiple Es/N0 values
+%Eb_N0_dB = [1.2:0.1:2]; % multiple Es/N0 values
+Eb_N0_dB = [1.2];
 Es_N0_dB = Eb_N0_dB + 10*log10(k);
 
 for ii = 1:length(Eb_N0_dB)

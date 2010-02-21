@@ -1,0 +1,125 @@
+Magic 271485
+Revision 5.4v9
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort -8 -8 1280 785 155 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "L:\svn\ldpc\hdl\rtlsim\debussy\ldpc.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 3
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 79841.830846 110508.352239
+cursor 236.000000
+marker 92486.000000
+
+; user define markers
+; userMarker time_pos marker_name
+; visible top row signal index
+top 12
+; marker line index
+markerPos 65
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "L:\svn\ldpc\hdl\rtlsim\debussy\ldpc.fsdb"
+addSignal -h 15 -UNSIGNED -HEX /ldpc_tb/u_ldpc_dec/data_in[5:0]
+addSignal -h 15 -holdScope sync_in
+addGroup "G2 RAM0"
+addSignal -h 15 -UNSIGNED -HEX /ldpc_tb/u_ldpc_dec/rd_addr00[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope wr_addr00[7:0]
+addSignal -h 15 -holdScope wr00
+addSignal -h 15 -UNSIGNED -HEX -holdScope din00[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope dout00[7:0]
+addGroup "G6 RAM12"
+addSignal -h 15 -UNSIGNED -HEX /ldpc_tb/u_ldpc_dec/rd_addr12[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope wr_addr12[7:0]
+addSignal -h 15 -holdScope wr12
+addSignal -h 15 -2COMP -UDEC -holdScope din02[7:0]
+addSignal -h 15 -2COMP -HEX -holdScope dout12[7:0]
+addGroup "G3 RAM35" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /ldpc_tb/u_ldpc_dec/rd_addr35[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope wr_addr35[7:0]
+addSignal -h 15 -holdScope wr35
+addSignal -h 15 -UNSIGNED -HEX -holdScope din35[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope dout35[7:0]
+addGroup "G4"
+addSignal -h 15 -UNSIGNED -HEX /ldpc_tb/u_ldpc_dec/u_data_comp/fsm[3:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope cycle[1:0]
+addSignal -h 15 -holdScope iter_0
+addSignal -h 15 -holdScope rate
+addSignal -h 15 /ldpc_tb/u_ldpc_dec/u_data_comp/comp1/cnu_in
+addSignal -h 15 /ldpc_tb/u_ldpc_dec/u_data_comp/comp0/in_dly
+addSignal -h 15 -holdScope in_dly2
+addSignal -h 15 -holdScope in_dly3
+addSignal -h 15 -holdScope in_dly4
+addSignal -h 15 -holdScope in_dly5
+addGroup "G5 CNU0"
+addSignal -h 15 -2COMP -UDEC /ldpc_tb/u_ldpc_dec/u_data_comp/comp0/lq0[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq1[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq2[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq3[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq4[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq5[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope abs_less_lq[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope abs_least_lq[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope least_loc[2:0]
+addSignal -h 15 -holdScope sign_xor
+addSignal -h 15 -2COMP -UDEC -holdScope lq0_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq1_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq2_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq3_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq4_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq5_dly[7:0]
+addGroup "G7 CNU1"
+addSignal -h 15 -UNSIGNED -HEX /ldpc_tb/u_ldpc_dec/u_data_comp/comp1/abs_less_lq[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope abs_least_lq[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope least_loc[2:0]
+addSignal -h 15 -holdScope sign_xor
+addSignal -h 15 -2COMP -UDEC -holdScope lq0_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq1_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq2_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq3_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq4_dly[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope lq5_dly[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope lq0[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope lq1[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope lq2[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope lq3[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope lq4[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope lq5[7:0]
+addGroup "G8"
+
+; grid status
+; gridSignal signal_name
+; gridEdge 0 | 1
+; gridCount
+; gridCycleTime from to cycleTime
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+
