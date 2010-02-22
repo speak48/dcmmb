@@ -6,8 +6,7 @@ module comp_cell(
     lr_in,
     cnu_in,
     lq6_out,
-    lr_out,
-    cnu_out
+    lr_out
 );
 
 //Parameter
@@ -19,11 +18,10 @@ input                 reset_n    ;
 input                 iter_0     ;
 input  [6*D_WID-1:0]  lq6_in     ;
 input  [2*D_WID+9:0]  lr_in      ;
-input                 cnu_in     ;
+input  [6:0]          cnu_in     ;
 
 //Output ports
 output [6*D_WID-1:0]  lq6_out    ;
-output                cnu_out    ;
 output [2*D_WID+9:0]  lr_out     ;
 
 reg    [D_WID-1:0]    lq0        ;
@@ -38,17 +36,17 @@ reg    [D_WID-1:0]    lq2_dly    ;
 reg    [D_WID-1:0]    lq3_dly    ;   
 reg    [D_WID-1:0]    lq4_dly    ;   
 reg    [D_WID-1:0]    lq5_dly    ;   
-reg                   in_dly     ;
-reg                   in_dly2    ;
-reg                   in_dly3    ;
-reg                   in_dly4    ;
-reg                   in_dly5    ;
 reg                   sign_xor   ;
 reg    [D_WID-1:0]    abs_less_lq ;
 reg    [D_WID-1:0]    abs_least_lq;
 reg    [2:0]          least_loc  ; 
 reg  [2*D_WID+9:0]    compress_lr;
 
+wire                  in_dly     ;
+wire                  in_dly2    ;
+wire                  in_dly3    ;
+wire                  in_dly4    ;
+wire                  in_dly5    ;
 wire   [D_WID-1:0]    lq0_diff   ;
 wire   [D_WID-1:0]    lq1_diff   ;
 wire   [D_WID-1:0]    lq2_diff   ;
@@ -128,7 +126,6 @@ wire                  lr5_sign   ;
 wire   [2:0]          lr_least_loc;
 
 assign lq6_out = {lq0_dly,lq1_dly,lq2_dly,lq3_dly,lq4_dly,lq5_dly};
-assign cnu_out = in_dly5;
 assign lr_out = {abs_least_lq, abs_less_lq, least_loc, sign_xor, lq0[D_WID-1], lr1[D_WID-1], lr2[D_WID-1], lr3[D_WID-1], lr4[D_WID-1], lr5[D_WID-1]};
 
 assign lq0_diff = iter_0 ? lq0 : (lq0 - lr0);
@@ -146,29 +143,18 @@ assign lr3 = (lr_least_loc==3'h3) ? ((lr3_sign ^ sign_lr)? inv_less_lr : abs_les
 assign lr4 = (lr_least_loc==3'h4) ? ((lr4_sign ^ sign_lr)? inv_less_lr : abs_less_lr ) : ((lr4_sign ^ sign_lr)? inv_least_lr : abs_least_lr ); 
 assign lr5 = (lr_least_loc==3'h5) ? ((lr5_sign ^ sign_lr)? inv_less_lr : abs_less_lr ) : ((lr5_sign ^ sign_lr)? inv_least_lr : abs_least_lr ); 
 
-always @ (posedge clk or negedge reset_n)
-begin : cnu_in_d
-    if(!reset_n) begin
-        in_dly  <= #1 1'b0;
-        in_dly2 <= #1 1'b0;
-        in_dly3 <= #1 1'b0;
-        in_dly4 <= #1 1'b0;
-        in_dly5 <= #1 1'b0;
-        end
-    else begin
-        in_dly  <= #1 cnu_in ;
-        in_dly2 <= #1 in_dly ;
-        in_dly3 <= #1 in_dly2;
-        in_dly4 <= #1 in_dly3;
-        in_dly5 <= #1 in_dly4;
-        end
-end
+
+assign  in_dly  =  cnu_in[2] ;
+assign  in_dly2 =  cnu_in[3] ;
+assign  in_dly3 =  cnu_in[4] ;
+assign  in_dly4 =  cnu_in[5] ;
+assign  in_dly5 =  cnu_in[6] ;
 
 always @ (posedge clk or negedge reset_n)
 begin : lr_r
     if(!reset_n) 
         compress_lr <= #1 {(2*D_WID+10){1'b0}};
-    else if(cnu_in) 
+    else if(cnu_in[0]) 
         compress_lr <= #1 lr_in;
 end
         
@@ -182,7 +168,7 @@ begin : lq_r
         lq4 <= #1 {D_WID{1'b0}};
         lq5 <= #1 {D_WID{1'b0}};
         end
-    else if(cnu_in) begin
+    else if(cnu_in[1]) begin
         lq0 <= #1 lq6_in[6*D_WID-1:5*D_WID];
         lq1 <= #1 lq6_in[5*D_WID-1:4*D_WID];
         lq2 <= #1 lq6_in[4*D_WID-1:3*D_WID];
@@ -282,7 +268,7 @@ begin : lq_less_r
         end
 end
 
-assign inv_less_lq = ~abs_least_lq + 1'b1;
+assign inv_less_lq = ~abs_less_lq + 1'b1;
 assign inv_least_lq = ~abs_least_lq + 1'b1;
 
 assign new_lr0 = (least_loc==3'h0) ? ((lq0_dly[D_WID-1]^sign_xor) ? inv_less_lq : abs_less_lq ) : ((lq0_dly[D_WID-1]^sign_xor) ? inv_least_lq : abs_least_lq );

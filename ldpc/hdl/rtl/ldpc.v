@@ -252,7 +252,7 @@ wire    [D_WID-1:0]   dctv34     ;
 wire    [D_WID-1:0]   dctv35     ;
 
 wire    [3:0]         cycle      ;
-
+wire                  ctv_out    ;
 
 
 reg     [35:0]        sync_dly   ;
@@ -295,42 +295,42 @@ begin : data_dly_r
 end
 
 
-vtc_cell cel_00(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 0]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr00),.rd_addr(),.ram_wr(wr00),.ram_d(),.dctv(dctv00));
-vtc_cell cel_01(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 1]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr01),.rd_addr(),.ram_wr(wr01),.ram_d(),.dctv(dctv01));
-vtc_cell cel_02(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 2]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr02),.rd_addr(),.ram_wr(wr02),.ram_d(),.dctv(dctv02));
-vtc_cell cel_03(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 3]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr03),.rd_addr(),.ram_wr(wr03),.ram_d(),.dctv(dctv03));
-vtc_cell cel_04(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 4]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr04),.rd_addr(),.ram_wr(wr04),.ram_d(),.dctv(dctv04));
-vtc_cell cel_05(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 5]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr05),.rd_addr(),.ram_wr(wr05),.ram_d(),.dctv(dctv05));
-vtc_cell cel_06(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 6]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr06),.rd_addr(),.ram_wr(wr06),.ram_d(),.dctv(dctv06));
-vtc_cell cel_07(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 7]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr07),.rd_addr(),.ram_wr(wr07),.ram_d(),.dctv(dctv07));
-vtc_cell cel_08(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 8]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr08),.rd_addr(),.ram_wr(wr08),.ram_d(),.dctv(dctv08));
-vtc_cell cel_09(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 9]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr09),.rd_addr(),.ram_wr(wr09),.ram_d(),.dctv(dctv09));
-vtc_cell cel_10(.clk(clk),.reset_n(reset_n),.sin(sync_dly[10]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr10),.rd_addr(),.ram_wr(wr10),.ram_d(),.dctv(dctv10));
-vtc_cell cel_11(.clk(clk),.reset_n(reset_n),.sin(sync_dly[11]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr11),.rd_addr(),.ram_wr(wr11),.ram_d(),.dctv(dctv11));
-vtc_cell cel_12(.clk(clk),.reset_n(reset_n),.sin(sync_dly[12]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr12),.rd_addr(),.ram_wr(wr12),.ram_d(),.dctv(dctv12));
-vtc_cell cel_13(.clk(clk),.reset_n(reset_n),.sin(sync_dly[13]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr13),.rd_addr(),.ram_wr(wr13),.ram_d(),.dctv(dctv13));
-vtc_cell cel_14(.clk(clk),.reset_n(reset_n),.sin(sync_dly[14]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr14),.rd_addr(),.ram_wr(wr14),.ram_d(),.dctv(dctv14));
-vtc_cell cel_15(.clk(clk),.reset_n(reset_n),.sin(sync_dly[15]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr15),.rd_addr(),.ram_wr(wr15),.ram_d(),.dctv(dctv15));
-vtc_cell cel_16(.clk(clk),.reset_n(reset_n),.sin(sync_dly[16]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr16),.rd_addr(),.ram_wr(wr16),.ram_d(),.dctv(dctv16));
-vtc_cell cel_17(.clk(clk),.reset_n(reset_n),.sin(sync_dly[17]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr17),.rd_addr(),.ram_wr(wr17),.ram_d(),.dctv(dctv17));
-vtc_cell cel_18(.clk(clk),.reset_n(reset_n),.sin(sync_dly[18]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr18),.rd_addr(),.ram_wr(wr18),.ram_d(),.dctv(dctv18));
-vtc_cell cel_19(.clk(clk),.reset_n(reset_n),.sin(sync_dly[19]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr19),.rd_addr(),.ram_wr(wr19),.ram_d(),.dctv(dctv19));
-vtc_cell cel_20(.clk(clk),.reset_n(reset_n),.sin(sync_dly[20]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr20),.rd_addr(),.ram_wr(wr20),.ram_d(),.dctv(dctv20));
-vtc_cell cel_21(.clk(clk),.reset_n(reset_n),.sin(sync_dly[21]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr21),.rd_addr(),.ram_wr(wr21),.ram_d(),.dctv(dctv21));
-vtc_cell cel_22(.clk(clk),.reset_n(reset_n),.sin(sync_dly[22]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr22),.rd_addr(),.ram_wr(wr22),.ram_d(),.dctv(dctv22));
-vtc_cell cel_23(.clk(clk),.reset_n(reset_n),.sin(sync_dly[23]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr23),.rd_addr(),.ram_wr(wr23),.ram_d(),.dctv(dctv23));
-vtc_cell cel_24(.clk(clk),.reset_n(reset_n),.sin(sync_dly[24]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr24),.rd_addr(),.ram_wr(wr24),.ram_d(),.dctv(dctv24));
-vtc_cell cel_25(.clk(clk),.reset_n(reset_n),.sin(sync_dly[25]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr25),.rd_addr(),.ram_wr(wr25),.ram_d(),.dctv(dctv25));
-vtc_cell cel_26(.clk(clk),.reset_n(reset_n),.sin(sync_dly[26]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr26),.rd_addr(),.ram_wr(wr26),.ram_d(),.dctv(dctv26));
-vtc_cell cel_27(.clk(clk),.reset_n(reset_n),.sin(sync_dly[27]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr27),.rd_addr(),.ram_wr(wr27),.ram_d(),.dctv(dctv27));
-vtc_cell cel_28(.clk(clk),.reset_n(reset_n),.sin(sync_dly[28]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr28),.rd_addr(),.ram_wr(wr28),.ram_d(),.dctv(dctv28));
-vtc_cell cel_29(.clk(clk),.reset_n(reset_n),.sin(sync_dly[29]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr29),.rd_addr(),.ram_wr(wr29),.ram_d(),.dctv(dctv29));
-vtc_cell cel_30(.clk(clk),.reset_n(reset_n),.sin(sync_dly[30]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr30),.rd_addr(),.ram_wr(wr30),.ram_d(),.dctv(dctv30));
-vtc_cell cel_31(.clk(clk),.reset_n(reset_n),.sin(sync_dly[31]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr31),.rd_addr(),.ram_wr(wr31),.ram_d(),.dctv(dctv31));
-vtc_cell cel_32(.clk(clk),.reset_n(reset_n),.sin(sync_dly[32]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr32),.rd_addr(),.ram_wr(wr32),.ram_d(),.dctv(dctv32));
-vtc_cell cel_33(.clk(clk),.reset_n(reset_n),.sin(sync_dly[33]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr33),.rd_addr(),.ram_wr(wr33),.ram_d(),.dctv(dctv33));
-vtc_cell cel_34(.clk(clk),.reset_n(reset_n),.sin(sync_dly[34]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr34),.rd_addr(),.ram_wr(wr34),.ram_d(),.dctv(dctv34));
-vtc_cell cel_35(.clk(clk),.reset_n(reset_n),.sin(sync_dly[35]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr35),.rd_addr(),.ram_wr(wr35),.ram_d(),.dctv(dctv35));
+//vtc_cell cel_00(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 0]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr00),.rd_addr(),.ram_wr(wr00),.ram_d(),.dctv(dctv00));
+//vtc_cell cel_01(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 1]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr01),.rd_addr(),.ram_wr(wr01),.ram_d(),.dctv(dctv01));
+//vtc_cell cel_02(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 2]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr02),.rd_addr(),.ram_wr(wr02),.ram_d(),.dctv(dctv02));
+//vtc_cell cel_03(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 3]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr03),.rd_addr(),.ram_wr(wr03),.ram_d(),.dctv(dctv03));
+//vtc_cell cel_04(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 4]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr04),.rd_addr(),.ram_wr(wr04),.ram_d(),.dctv(dctv04));
+//vtc_cell cel_05(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 5]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr05),.rd_addr(),.ram_wr(wr05),.ram_d(),.dctv(dctv05));
+//vtc_cell cel_06(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 6]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr06),.rd_addr(),.ram_wr(wr06),.ram_d(),.dctv(dctv06));
+//vtc_cell cel_07(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 7]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr07),.rd_addr(),.ram_wr(wr07),.ram_d(),.dctv(dctv07));
+//vtc_cell cel_08(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 8]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr08),.rd_addr(),.ram_wr(wr08),.ram_d(),.dctv(dctv08));
+//vtc_cell cel_09(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 9]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr09),.rd_addr(),.ram_wr(wr09),.ram_d(),.dctv(dctv09));
+//vtc_cell cel_10(.clk(clk),.reset_n(reset_n),.sin(sync_dly[10]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr10),.rd_addr(),.ram_wr(wr10),.ram_d(),.dctv(dctv10));
+//vtc_cell cel_11(.clk(clk),.reset_n(reset_n),.sin(sync_dly[11]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr11),.rd_addr(),.ram_wr(wr11),.ram_d(),.dctv(dctv11));
+//vtc_cell cel_12(.clk(clk),.reset_n(reset_n),.sin(sync_dly[12]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr12),.rd_addr(),.ram_wr(wr12),.ram_d(),.dctv(dctv12));
+//vtc_cell cel_13(.clk(clk),.reset_n(reset_n),.sin(sync_dly[13]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr13),.rd_addr(),.ram_wr(wr13),.ram_d(),.dctv(dctv13));
+//vtc_cell cel_14(.clk(clk),.reset_n(reset_n),.sin(sync_dly[14]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr14),.rd_addr(),.ram_wr(wr14),.ram_d(),.dctv(dctv14));
+//vtc_cell cel_15(.clk(clk),.reset_n(reset_n),.sin(sync_dly[15]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr15),.rd_addr(),.ram_wr(wr15),.ram_d(),.dctv(dctv15));
+//vtc_cell cel_16(.clk(clk),.reset_n(reset_n),.sin(sync_dly[16]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr16),.rd_addr(),.ram_wr(wr16),.ram_d(),.dctv(dctv16));
+//vtc_cell cel_17(.clk(clk),.reset_n(reset_n),.sin(sync_dly[17]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr17),.rd_addr(),.ram_wr(wr17),.ram_d(),.dctv(dctv17));
+//vtc_cell cel_18(.clk(clk),.reset_n(reset_n),.sin(sync_dly[18]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr18),.rd_addr(),.ram_wr(wr18),.ram_d(),.dctv(dctv18));
+//vtc_cell cel_19(.clk(clk),.reset_n(reset_n),.sin(sync_dly[19]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr19),.rd_addr(),.ram_wr(wr19),.ram_d(),.dctv(dctv19));
+//vtc_cell cel_20(.clk(clk),.reset_n(reset_n),.sin(sync_dly[20]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr20),.rd_addr(),.ram_wr(wr20),.ram_d(),.dctv(dctv20));
+//vtc_cell cel_21(.clk(clk),.reset_n(reset_n),.sin(sync_dly[21]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr21),.rd_addr(),.ram_wr(wr21),.ram_d(),.dctv(dctv21));
+//vtc_cell cel_22(.clk(clk),.reset_n(reset_n),.sin(sync_dly[22]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr22),.rd_addr(),.ram_wr(wr22),.ram_d(),.dctv(dctv22));
+//vtc_cell cel_23(.clk(clk),.reset_n(reset_n),.sin(sync_dly[23]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr23),.rd_addr(),.ram_wr(wr23),.ram_d(),.dctv(dctv23));
+//vtc_cell cel_24(.clk(clk),.reset_n(reset_n),.sin(sync_dly[24]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr24),.rd_addr(),.ram_wr(wr24),.ram_d(),.dctv(dctv24));
+//vtc_cell cel_25(.clk(clk),.reset_n(reset_n),.sin(sync_dly[25]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr25),.rd_addr(),.ram_wr(wr25),.ram_d(),.dctv(dctv25));
+//vtc_cell cel_26(.clk(clk),.reset_n(reset_n),.sin(sync_dly[26]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr26),.rd_addr(),.ram_wr(wr26),.ram_d(),.dctv(dctv26));
+//vtc_cell cel_27(.clk(clk),.reset_n(reset_n),.sin(sync_dly[27]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr27),.rd_addr(),.ram_wr(wr27),.ram_d(),.dctv(dctv27));
+//vtc_cell cel_28(.clk(clk),.reset_n(reset_n),.sin(sync_dly[28]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr28),.rd_addr(),.ram_wr(wr28),.ram_d(),.dctv(dctv28));
+//vtc_cell cel_29(.clk(clk),.reset_n(reset_n),.sin(sync_dly[29]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr29),.rd_addr(),.ram_wr(wr29),.ram_d(),.dctv(dctv29));
+//vtc_cell cel_30(.clk(clk),.reset_n(reset_n),.sin(sync_dly[30]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr30),.rd_addr(),.ram_wr(wr30),.ram_d(),.dctv(dctv30));
+//vtc_cell cel_31(.clk(clk),.reset_n(reset_n),.sin(sync_dly[31]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr31),.rd_addr(),.ram_wr(wr31),.ram_d(),.dctv(dctv31));
+//vtc_cell cel_32(.clk(clk),.reset_n(reset_n),.sin(sync_dly[32]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr32),.rd_addr(),.ram_wr(wr32),.ram_d(),.dctv(dctv32));
+//vtc_cell cel_33(.clk(clk),.reset_n(reset_n),.sin(sync_dly[33]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr33),.rd_addr(),.ram_wr(wr33),.ram_d(),.dctv(dctv33));
+//vtc_cell cel_34(.clk(clk),.reset_n(reset_n),.sin(sync_dly[34]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr34),.rd_addr(),.ram_wr(wr34),.ram_d(),.dctv(dctv34));
+//vtc_cell cel_35(.clk(clk),.reset_n(reset_n),.sin(sync_dly[35]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr35),.rd_addr(),.ram_wr(wr35),.ram_d(),.dctv(dctv35));
 
 
 sram2p256x8 u_ram00(.CLKA(clk),.CLKB(clk),.ADDRA(rd_addr00),.ADDRB(wr_addr00),.ENA(1'b0),.ENB(1'b0),.WEB(wr00),.DINB(din00),.DOUTA(dout00));
@@ -376,6 +376,7 @@ ldpc_ctrl u_ldpc_ctrl(
     .sync_in    (  sync_in    ),
     .rate       (  rate       ),
     .max_iter   (  max_iter   ),
+    .ctv_out    (  ctv_out    ),
 
     .fsm_state  (  fsm        ),
     .cycle      (  cycle      ),
@@ -386,13 +387,13 @@ ldpc_ctrl u_ldpc_ctrl(
 
 );
 
-
-rd_addr_gen u_addr_gen(
+addr_gen u_addr_gen(
     .clk        (clk      ),
     .reset_n    (reset_n  ),
     .fsm        (fsm      ),
-    .cycle      (cycle[3:2]),
+    .cycle      (cycle    ),
     .rate       (rate     ),
+    .sync_in    (sync_dly ),
     .rd_addr00  (rd_addr00),
     .rd_addr01  (rd_addr01),
     .rd_addr02  (rd_addr02),
@@ -428,7 +429,79 @@ rd_addr_gen u_addr_gen(
     .rd_addr32  (rd_addr32),
     .rd_addr33  (rd_addr33),
     .rd_addr34  (rd_addr34),
-    .rd_addr35  (rd_addr35)
+    .rd_addr35  (rd_addr35),
+    .wr_addr00  (wr_addr00),
+    .wr_addr01  (wr_addr01),
+    .wr_addr02  (wr_addr02),
+    .wr_addr03  (wr_addr03),
+    .wr_addr04  (wr_addr04),
+    .wr_addr05  (wr_addr05),
+    .wr_addr06  (wr_addr06),
+    .wr_addr07  (wr_addr07),
+    .wr_addr08  (wr_addr08),
+    .wr_addr09  (wr_addr09),
+    .wr_addr10  (wr_addr10),
+    .wr_addr11  (wr_addr11),
+    .wr_addr12  (wr_addr12),
+    .wr_addr13  (wr_addr13),
+    .wr_addr14  (wr_addr14),
+    .wr_addr15  (wr_addr15),
+    .wr_addr16  (wr_addr16),
+    .wr_addr17  (wr_addr17),
+    .wr_addr18  (wr_addr18),
+    .wr_addr19  (wr_addr19),
+    .wr_addr20  (wr_addr20),
+    .wr_addr21  (wr_addr21),
+    .wr_addr22  (wr_addr22),
+    .wr_addr23  (wr_addr23),
+    .wr_addr24  (wr_addr24),
+    .wr_addr25  (wr_addr25),
+    .wr_addr26  (wr_addr26),
+    .wr_addr27  (wr_addr27),
+    .wr_addr28  (wr_addr28),
+    .wr_addr29  (wr_addr29),
+    .wr_addr30  (wr_addr30),
+    .wr_addr31  (wr_addr31),
+    .wr_addr32  (wr_addr32),
+    .wr_addr33  (wr_addr33),
+    .wr_addr34  (wr_addr34),
+    .wr_addr35  (wr_addr35),
+    .wr00       (wr00     ),
+    .wr01       (wr01     ),
+    .wr02       (wr02     ),
+    .wr03       (wr03     ),
+    .wr04       (wr04     ),
+    .wr05       (wr05     ),
+    .wr06       (wr06     ),
+    .wr07       (wr07     ),
+    .wr08       (wr08     ),
+    .wr09       (wr09     ),
+    .wr10       (wr10     ),
+    .wr11       (wr11     ),
+    .wr12       (wr12     ),
+    .wr13       (wr13     ),
+    .wr14       (wr14     ),
+    .wr15       (wr15     ),
+    .wr16       (wr16     ),
+    .wr17       (wr17     ),
+    .wr18       (wr18     ),
+    .wr19       (wr19     ),
+    .wr20       (wr20     ),
+    .wr21       (wr21     ),
+    .wr22       (wr22     ),
+    .wr23       (wr23     ),
+    .wr24       (wr24     ),
+    .wr25       (wr25     ),
+    .wr26       (wr26     ),
+    .wr27       (wr27     ),
+    .wr28       (wr28     ),
+    .wr29       (wr29     ),
+    .wr30       (wr30     ),
+    .wr31       (wr31     ),
+    .wr32       (wr32     ),
+    .wr33       (wr33     ),
+    .wr34       (wr34     ),
+    .wr35       (wr35     ) 
 );  
 
 
@@ -441,7 +514,7 @@ data_comp u_data_comp(
     .iter_0     ( iter_0     ),
     .sync_in    ( sync_dly   ),
     .data_in    ( data_dly   ),
-    
+    .ctv_out    ( ctv_out    ),
     .dout00     ( dout00     ),
     .dout01     ( dout01     ),
     .dout02     ( dout02     ),

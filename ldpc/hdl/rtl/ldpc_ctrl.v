@@ -5,6 +5,7 @@ module ldpc_ctrl(
     sync_in,
     rate,
     max_iter,
+    ctv_out,
 
     fsm_state,
     cycle,
@@ -17,9 +18,10 @@ module ldpc_ctrl(
 //Input ports
 input                clk        ;
 input                reset_n    ;
-input                rate  ; // 0, 1/2 1, 3/4
+input                rate       ; // 0, 1/2 1, 3/4
 input                sync_in    ;
 input   [4:0]        max_iter   ;
+input                ctv_out    ;
 
 //Output ports
 output  [3:0]        fsm_state  ;
@@ -46,6 +48,7 @@ reg                  sync_dly   ;
 reg                  sync_dly2  ;
 reg     [3:0]        next_state ;
 reg    [12:0]        counter    ;
+reg                  wr_ena     ;
 
 wire                 sync_end   ;
 wire                 iter_end   ;
@@ -53,12 +56,11 @@ wire                 vnu_end    ;
 wire                 sync_out_end;
 wire   [12:0]        counter_max;
 wire                 rd_ena     ;
-wire                 wr_ena     ;
 
-assign counter_max = rate ? 'd4607 : 'd6911;
+assign counter_max = rate ? 'd6911 : 'd4607;
 assign sync_end = sync_dly2 & (!sync_dly);
 assign iter_end = (num_iter == max_iter); 
-assign vnu_end  = (counter == 'd4608) & fsm_state[2];
+assign vnu_end  = (counter == counter_max) & fsm_state[2];
 assign sync_out_end = (counter == counter_max) & fsm_state[3];
 assign rd_ena = next_state == CNU;
 assign iter_0 = ( num_iter == 0);
@@ -120,7 +122,7 @@ begin : fsm_next_state_r
          next_state = IDLE;
      endcase
 end 
-
+//(*)
 // Cycle 01->10->11
 always @ (posedge clk or negedge reset_n)
 begin : cycle0_r
@@ -170,7 +172,7 @@ begin: counter_r
     else if(fsm_state[2]) begin 
         if(counter == counter_max)   
             counter <= #1 13'h0;
-        else
+        else if(wr_ena)
             counter <= #1 counter + 1'b1;
     end
     else if(fsm_state[3]) begin
@@ -180,5 +182,19 @@ begin: counter_r
             counter <= #1 counter + 1'b1;
     end
 end     
+
+always @ (posedge clk or negedge reset_n)
+begin : wr_ena_r
+    if(!reset_n)
+        wr_ena <= #1 1'b0;
+    else if(fsm_state[2]) begin
+        if(counter == counter_max)
+        wr_ena <= #1 1'b0;
+        else if(ctv_out)
+        wr_ena <= #1 1'b1;
+        end
+    else
+        wr_ena <= #1 1'b0;
+end        
 
 endmodule
