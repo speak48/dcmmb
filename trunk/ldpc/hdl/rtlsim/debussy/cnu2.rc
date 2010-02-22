@@ -1,0 +1,115 @@
+Magic 271485
+Revision 5.4v9
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 1 1 1150 832 155 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "D:\svn\ldpc\hdl\rtlsim\debussy\ldpc.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 3
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 92350.039954 92718.536830
+cursor 92406.000000
+marker 92426.000000
+
+; user define markers
+; userMarker time_pos marker_name
+; visible top row signal index
+top 0
+; marker line index
+markerPos 27
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "D:\svn\ldpc\hdl\rtlsim\debussy\ldpc.fsdb"
+addSignal -h 15 /ldpc_tb/u_ldpc_dec/u_data_comp/compc/clk
+addSignal -h 15 -UNSIGNED -HEX /ldpc_tb/u_ldpc_dec/u_data_comp/data_buffer10a[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_buffer10b[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_buffer10c[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vtc_en[2:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope dvtc_10a[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope dvtc_10b[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope dvtc_10c[7:0]
+addSignal -h 15 -UNSIGNED -HEX /ldpc_tb/u_ldpc_dec/wr_addr10[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din10[7:0]
+addSignal -h 15 -holdScope wr10
+addSignal -h 15 -UNSIGNED -HEX -holdScope rd_addr10[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope dout10[7:0]
+addGroup "G4"
+addSignal -h 15 -2COMP -UDEC /ldpc_tb/u_ldpc_dec/din00[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din01[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din02[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din03[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din04[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din05[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din06[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din07[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope wr_addr08[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope rd_addr08[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din08[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope rd_addr09[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope wr_addr09[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din09[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din10[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din11[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din12[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din13[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din14[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din15[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din16[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din17[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din18[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din19[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din20[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din21[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din22[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din23[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din24[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din25[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din26[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din27[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din28[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din29[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din30[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din31[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din32[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din33[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din34[7:0]
+addSignal -h 15 -2COMP -UDEC -holdScope din35[7:0]
+addGroup "G2"
+addGroup "G3"
+
+; grid status
+; gridSignal signal_name
+; gridEdge 0 | 1
+; gridCount
+; gridCycleTime from to cycleTime
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+

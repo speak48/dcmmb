@@ -1,7 +1,7 @@
 module rd_cell(
     clk,     
     reset_n,
-    en,
+    rd_en,
     cycle,
     base_addr,
     addr_offset,
@@ -13,7 +13,7 @@ parameter A_WID = 8;
 //Input ports
 input                 clk        ;
 input                 reset_n    ;
-input                 en         ;
+input                 rd_en      ;
 input   [1:0]         cycle      ;
 input   [A_WID-1:0]   base_addr  ;
 input   [3*A_WID-1:0] addr_offset;
@@ -27,7 +27,7 @@ always @ (posedge clk or negedge reset_n)
 begin : rd_addr_r
     if(!reset_n)
         rd_addr <= #1 8'h0;
-    else if(en)
+    else if(rd_en)
         rd_addr <= #1 base_addr + addr_offset1;
     else
         rd_addr <= #1 8'h0;

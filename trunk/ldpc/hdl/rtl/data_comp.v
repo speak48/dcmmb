@@ -7,6 +7,7 @@ module data_comp(
     rate   ,
     sync_in,
     data_in,
+    ctv_out,
     dout00 ,
     dout01 ,
     dout02 ,
@@ -132,6 +133,7 @@ input   [D_WID-1:0]   dout34     ;
 input   [D_WID-1:0]   dout35     ;
 
 //Output ports
+output                ctv_out   ;
 output  [D_WID-1:0]   din00     ;
 output  [D_WID-1:0]   din01     ;
 output  [D_WID-1:0]   din02     ;
@@ -172,7 +174,7 @@ output  [D_WID-1:0]   din35     ;
 reg     [1:0]         cycle_dly  ;
 reg     [1:0]         cycle_dly2 ;
 reg     [2:0]         vtc_en     ;
-reg                   cnu_in     ;
+reg     [6:0]         cnu_in     ;
 reg     [D_WID-1:0]   data_buffer0a     ;
 reg     [D_WID-1:0]   data_buffer1a     ;
 reg     [D_WID-1:0]   data_buffer2a     ;
@@ -498,6 +500,15 @@ reg     [D_WID-1:0]   data_out32c    ;
 reg     [D_WID-1:0]   data_out33c    ;
 reg     [D_WID-1:0]   data_out34c    ;
 reg     [D_WID-1:0]   data_out35c    ;
+reg     [D_WID-1:0]   data_0     ;
+reg     [D_WID-1:0]   data_1     ;
+reg     [D_WID-1:0]   data_2     ;
+reg     [D_WID-1:0]   data_3     ;
+reg     [D_WID-1:0]   data_4     ;
+reg     [D_WID-1:0]   data_5     ;
+reg     [D_WID-1:0]   data_6     ;
+reg     [D_WID-1:0]   data_7     ;
+reg     [D_WID-1:0]   data_8     ;
 reg   [6*D_WID-1:0]   cnu0_d     ;
 reg   [6*D_WID-1:0]   cnu1_d     ;
 reg   [6*D_WID-1:0]   cnu2_d     ;
@@ -553,7 +564,6 @@ wire  [6*D_WID-1:0]   cnue_q     ;
 wire  [6*D_WID-1:0]   cnuf_q     ;
 wire  [6*D_WID-1:0]   cnug_q     ;
 wire  [6*D_WID-1:0]   cnuh_q     ;
-wire                  cnu_out    ;
 wire  [2*D_WID+9:0]   vnu0_q     ;
 wire  [2*D_WID+9:0]   vnu1_q     ;
 wire  [2*D_WID+9:0]   vnu2_q     ;
@@ -573,6 +583,7 @@ wire  [2*D_WID+9:0]   vnuf_q     ;
 wire  [2*D_WID+9:0]   vnug_q     ;
 wire  [2*D_WID+9:0]   vnuh_q     ;
 
+assign ctv_out = cnu_in[5];
 
 always @ (posedge clk or negedge reset_n)
 begin : cycle_dly_r
@@ -593,9 +604,9 @@ end
 always @ (posedge clk or negedge reset_n)
 begin : cnu_init_r
     if(!reset_n)
-        cnu_in <= #1 1'b0;
+        cnu_in <= #1 7'h0;
     else
-        cnu_in <= #1 ( cycle_dly == 2'b11 ) ? 1'b1 : 1'b0;
+        cnu_in <= #1 { cnu_in[5:0], (( cycle_dly == 2'b11 ) ? 1'b1 : 1'b0)};
 end         
 
 always @ (posedge clk or negedge reset_n)
@@ -878,7 +889,7 @@ begin : dvtc_ar
         dvtc_34a <= #1 8'h0;
         dvtc_35a <= #1 8'h0;
         end
-    else if(cnu_out) begin
+    else if(cnu_in[6]) begin
         dvtc_0a  <= #1 data_out0a;
         dvtc_1a  <= #1 data_out1a;
         dvtc_2a  <= #1 data_out2a;
@@ -958,7 +969,7 @@ begin : dvtc_br
         dvtc_34b <= #1 8'h0;
         dvtc_35b <= #1 8'h0;
         end
-    else if(cnu_out) begin
+    else if(cnu_in[6]) begin
         dvtc_0b  <= #1 data_out0b;
         dvtc_1b  <= #1 data_out1b;
         dvtc_2b  <= #1 data_out2b;
@@ -1038,7 +1049,7 @@ begin : dvtc_cr
         dvtc_34c <= #1 8'h0;       
         dvtc_35c <= #1 8'h0;       
         end                              
-    else if(cnu_out) begin    
+    else if(cnu_in[6]) begin    
         dvtc_0c  <= #1 data_out0c;     
         dvtc_1c  <= #1 data_out1c;     
         dvtc_2c  <= #1 data_out2c;     
@@ -1090,7 +1101,7 @@ begin : cnu_sel_r
    cnu6_d = { data_buffer2a, data_buffer6c , data_buffer28a, data_buffer35a, data_buffer16b, data_buffer20c };
    cnu7_d = { data_buffer2a, data_buffer10a, data_buffer17a, data_buffer27b, data_buffer21c, data_buffer30b };
    cnu8_d = { data_buffer2a, data_buffer11a, data_buffer22a, data_buffer22b, data_buffer16c, data_buffer34b };
-   cnu9_d = { data_buffer3a, data_buffer7b , data_buffer26a, data_buffer13b, data_buffer33b, data_buffer19b };
+   cnu9_d = { data_buffer3a, data_buffer7b , data_buffer26c, data_buffer13b, data_buffer33b, data_buffer19b };
    cnua_d = { data_buffer3a, data_buffer9b , data_buffer28b, data_buffer17b, data_buffer31c, data_buffer18b };
    cnub_d = { data_buffer3a, data_buffer23a, data_buffer9c , data_buffer12c, data_buffer35b, data_buffer24a };
    cnuc_d = { data_buffer4a, data_buffer7c , data_buffer29a, data_buffer17c, data_buffer34c, data_buffer18c };
@@ -1115,7 +1126,7 @@ begin : cnu_data_out_r
    { data_out2a, data_out6c , data_out28a, data_out35a, data_out16b, data_out20c } = cnu6_q;
    { data_out2b, data_out10a, data_out17a, data_out27b, data_out21c, data_out30b } = cnu7_q;
    { data_out2c, data_out11a, data_out22a, data_out22b, data_out16c, data_out34b } = cnu8_q;
-   { data_out3a, data_out7b , data_out26a, data_out13b, data_out33b, data_out19b } = cnu9_q;
+   { data_out3a, data_out7b , data_out26c, data_out13b, data_out33b, data_out19b } = cnu9_q;
    { data_out3b, data_out9b , data_out28b, data_out17b, data_out31c, data_out18b } = cnua_q;
    { data_out3c, data_out23a, data_out9c , data_out12c, data_out35b, data_out24a } = cnub_q;
    { data_out4a, data_out7c , data_out29a, data_out17c, data_out34c, data_out18c } = cnuc_q;
@@ -1133,37 +1144,63 @@ begin : vtc_en_r
     if(!reset_n) 
         vtc_en <= #1 3'h0;
     else 
-        vtc_en <= #1 {vtc_en[1:0],cnu_out};
+        vtc_en <= #1 {vtc_en[1:0],cnu_in[6]};
 end
-        
-comp_cell comp0(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu0_d),.lr_in(vnu0_d),.cnu_in(cnu_in),.lq6_out(cnu0_q),.lr_out(vnu0_q),.cnu_out(cnu_out));
-comp_cell comp1(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu1_d),.lr_in(vnu1_d),.cnu_in(cnu_in),.lq6_out(cnu1_q),.lr_out(vnu1_q),.cnu_out());
-comp_cell comp2(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu2_d),.lr_in(vnu2_d),.cnu_in(cnu_in),.lq6_out(cnu2_q),.lr_out(vnu2_q),.cnu_out());
-comp_cell comp3(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu3_d),.lr_in(vnu3_d),.cnu_in(cnu_in),.lq6_out(cnu3_q),.lr_out(vnu3_q),.cnu_out());
-comp_cell comp4(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu4_d),.lr_in(vnu4_d),.cnu_in(cnu_in),.lq6_out(cnu4_q),.lr_out(vnu4_q),.cnu_out());
-comp_cell comp5(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu5_d),.lr_in(vnu5_d),.cnu_in(cnu_in),.lq6_out(cnu5_q),.lr_out(vnu5_q),.cnu_out());
-comp_cell comp6(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu6_d),.lr_in(vnu6_d),.cnu_in(cnu_in),.lq6_out(cnu6_q),.lr_out(vnu6_q),.cnu_out());
-comp_cell comp7(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu7_d),.lr_in(vnu7_d),.cnu_in(cnu_in),.lq6_out(cnu7_q),.lr_out(vnu7_q),.cnu_out());
-comp_cell comp8(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu8_d),.lr_in(vnu8_d),.cnu_in(cnu_in),.lq6_out(cnu8_q),.lr_out(vnu8_q),.cnu_out());
-comp_cell comp9(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu9_d),.lr_in(vnu9_d),.cnu_in(cnu_in),.lq6_out(cnu9_q),.lr_out(vnu9_q),.cnu_out());
-comp_cell compa(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnua_d),.lr_in(vnua_d),.cnu_in(cnu_in),.lq6_out(cnua_q),.lr_out(vnua_q),.cnu_out());
-comp_cell compb(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnub_d),.lr_in(vnub_d),.cnu_in(cnu_in),.lq6_out(cnub_q),.lr_out(vnub_q),.cnu_out());
-comp_cell compc(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuc_d),.lr_in(vnuc_d),.cnu_in(cnu_in),.lq6_out(cnuc_q),.lr_out(vnuc_q),.cnu_out());
-comp_cell compd(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnud_d),.lr_in(vnud_d),.cnu_in(cnu_in),.lq6_out(cnud_q),.lr_out(vnud_q),.cnu_out());
-comp_cell compe(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnue_d),.lr_in(vnue_d),.cnu_in(cnu_in),.lq6_out(cnue_q),.lr_out(vnue_q),.cnu_out());
-comp_cell compf(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuf_d),.lr_in(vnuf_d),.cnu_in(cnu_in),.lq6_out(cnuf_q),.lr_out(vnuf_q),.cnu_out());
-comp_cell compg(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnug_d),.lr_in(vnug_d),.cnu_in(cnu_in),.lq6_out(cnug_q),.lr_out(vnug_q),.cnu_out());
-comp_cell comph(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuh_d),.lr_in(vnuh_d),.cnu_in(cnu_in),.lq6_out(cnuh_q),.lr_out(vnuh_q),.cnu_out());
 
-data_cell data00(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 0]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_0a ),.dvtc_b(dvtc_0b ),.dvtc_c(dvtc_0c ),.ram_d(din00));
-data_cell data01(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 1]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_1a ),.dvtc_b(dvtc_1b ),.dvtc_c(dvtc_1c ),.ram_d(din01));
-data_cell data02(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 2]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_2a ),.dvtc_b(dvtc_2b ),.dvtc_c(dvtc_2c ),.ram_d(din02));
-data_cell data03(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 3]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_3a ),.dvtc_b(dvtc_3b ),.dvtc_c(dvtc_3c ),.ram_d(din03));
-data_cell data04(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 4]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_4a ),.dvtc_b(dvtc_4b ),.dvtc_c(dvtc_4c ),.ram_d(din04));
-data_cell data05(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 5]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_5a ),.dvtc_b(dvtc_5b ),.dvtc_c(dvtc_5c ),.ram_d(din05));
-data_cell data06(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 6]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_6a ),.dvtc_b(dvtc_6b ),.dvtc_c(dvtc_6c ),.ram_d(din06));
-data_cell data07(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 7]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_7a ),.dvtc_b(dvtc_7b ),.dvtc_c(dvtc_7c ),.ram_d(din07));
-data_cell data08(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 8]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_8a ),.dvtc_b(dvtc_8b ),.dvtc_c(dvtc_8c ),.ram_d(din08));
+always @ (posedge clk or negedge reset_n)
+begin : data_out_r
+    if(!reset_n) begin
+        data_0 <= #1 {D_WID{1'b0}};
+        data_1 <= #1 {D_WID{1'b0}};
+        data_2 <= #1 {D_WID{1'b0}};
+        data_3 <= #1 {D_WID{1'b0}};
+        data_4 <= #1 {D_WID{1'b0}};
+        data_5 <= #1 {D_WID{1'b0}};
+        data_6 <= #1 {D_WID{1'b0}};
+        data_7 <= #1 {D_WID{1'b0}};
+        data_8 <= #1 {D_WID{1'b0}};
+        end
+    else if(cnu_in[5]) begin
+        data_0 <= #1 data_out0a;
+        data_1 <= #1 data_out1a;
+        data_2 <= #1 data_out2a;
+        data_3 <= #1 data_out3a;
+        data_4 <= #1 data_out4a;
+        data_5 <= #1 data_out5a;
+        data_6 <= #1 data_out6a;
+        data_7 <= #1 data_out7a;
+        data_8 <= #1 data_out8a;
+        end
+end                
+        
+comp_cell comp0(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu0_d),.lr_in(vnu0_d),.cnu_in(cnu_in),.lq6_out(cnu0_q),.lr_out(vnu0_q));
+comp_cell comp1(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu1_d),.lr_in(vnu1_d),.cnu_in(cnu_in),.lq6_out(cnu1_q),.lr_out(vnu1_q));
+comp_cell comp2(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu2_d),.lr_in(vnu2_d),.cnu_in(cnu_in),.lq6_out(cnu2_q),.lr_out(vnu2_q));
+comp_cell comp3(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu3_d),.lr_in(vnu3_d),.cnu_in(cnu_in),.lq6_out(cnu3_q),.lr_out(vnu3_q));
+comp_cell comp4(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu4_d),.lr_in(vnu4_d),.cnu_in(cnu_in),.lq6_out(cnu4_q),.lr_out(vnu4_q));
+comp_cell comp5(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu5_d),.lr_in(vnu5_d),.cnu_in(cnu_in),.lq6_out(cnu5_q),.lr_out(vnu5_q));
+comp_cell comp6(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu6_d),.lr_in(vnu6_d),.cnu_in(cnu_in),.lq6_out(cnu6_q),.lr_out(vnu6_q));
+comp_cell comp7(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu7_d),.lr_in(vnu7_d),.cnu_in(cnu_in),.lq6_out(cnu7_q),.lr_out(vnu7_q));
+comp_cell comp8(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu8_d),.lr_in(vnu8_d),.cnu_in(cnu_in),.lq6_out(cnu8_q),.lr_out(vnu8_q));
+comp_cell comp9(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu9_d),.lr_in(vnu9_d),.cnu_in(cnu_in),.lq6_out(cnu9_q),.lr_out(vnu9_q));
+comp_cell compa(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnua_d),.lr_in(vnua_d),.cnu_in(cnu_in),.lq6_out(cnua_q),.lr_out(vnua_q));
+comp_cell compb(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnub_d),.lr_in(vnub_d),.cnu_in(cnu_in),.lq6_out(cnub_q),.lr_out(vnub_q));
+comp_cell compc(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuc_d),.lr_in(vnuc_d),.cnu_in(cnu_in),.lq6_out(cnuc_q),.lr_out(vnuc_q));
+comp_cell compd(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnud_d),.lr_in(vnud_d),.cnu_in(cnu_in),.lq6_out(cnud_q),.lr_out(vnud_q));
+comp_cell compe(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnue_d),.lr_in(vnue_d),.cnu_in(cnu_in),.lq6_out(cnue_q),.lr_out(vnue_q));
+comp_cell compf(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuf_d),.lr_in(vnuf_d),.cnu_in(cnu_in),.lq6_out(cnuf_q),.lr_out(vnuf_q));
+comp_cell compg(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnug_d),.lr_in(vnug_d),.cnu_in(cnu_in),.lq6_out(cnug_q),.lr_out(vnug_q));
+comp_cell comph(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuh_d),.lr_in(vnuh_d),.cnu_in(cnu_in),.lq6_out(cnuh_q),.lr_out(vnuh_q));
+
+data_cell2 data00(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[0]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_0a ),.dvtc_b(dvtc_0b ),.dvtc_c(dvtc_0c ),.ram_d(din00),.d_last(data_0));
+data_cell2 data01(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[1]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_1a ),.dvtc_b(dvtc_1b ),.dvtc_c(dvtc_1c ),.ram_d(din01),.d_last(data_1));
+data_cell2 data02(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[2]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_2a ),.dvtc_b(dvtc_2b ),.dvtc_c(dvtc_2c ),.ram_d(din02),.d_last(data_2));
+data_cell2 data03(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[3]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_3a ),.dvtc_b(dvtc_3b ),.dvtc_c(dvtc_3c ),.ram_d(din03),.d_last(data_3));
+data_cell2 data04(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[4]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_4a ),.dvtc_b(dvtc_4b ),.dvtc_c(dvtc_4c ),.ram_d(din04),.d_last(data_4));
+data_cell2 data05(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[5]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_5a ),.dvtc_b(dvtc_5b ),.dvtc_c(dvtc_5c ),.ram_d(din05),.d_last(data_5));
+data_cell2 data06(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[6]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_6a ),.dvtc_b(dvtc_6b ),.dvtc_c(dvtc_6c ),.ram_d(din06),.d_last(data_6));
+data_cell2 data07(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[7]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_7a ),.dvtc_b(dvtc_7b ),.dvtc_c(dvtc_7c ),.ram_d(din07),.d_last(data_7));
+data_cell1 data08(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[8]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_8a ),.dvtc_b(dvtc_8b ),.dvtc_c(dvtc_8c ),.ram_d(din08),.d_last(data_8));
 data_cell data09(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 9]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_9a ),.dvtc_b(dvtc_9b ),.dvtc_c(dvtc_9c ),.ram_d(din09));
 data_cell data10(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[10]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_10a),.dvtc_b(dvtc_10b),.dvtc_c(dvtc_10c),.ram_d(din10));
 data_cell data11(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[11]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_11a),.dvtc_b(dvtc_11b),.dvtc_c(dvtc_11c),.ram_d(din11));

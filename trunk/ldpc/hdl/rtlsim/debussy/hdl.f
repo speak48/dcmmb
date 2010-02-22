@@ -1,10 +1,13 @@
++incdir+../../rtl
 ../../tb/ldpc_tb.v
 ../../rtl/ldpc.v
 ../../rtl/ldpc_ctrl.v
-../../rtl/vtc_cell.v
 ../../rtl/sram2p256x8.v
-../../rtl/rd_addr_gen.v
+../../rtl/addr_gen.v
 ../../rtl/rd_cell.v
+../../rtl/wr_cell.v
 ../../rtl/data_comp.v
 ../../rtl/comp_cell.v
 ../../rtl/data_cell.v
+../../rtl/data_cell2.v
+../../rtl/data_cell1.v

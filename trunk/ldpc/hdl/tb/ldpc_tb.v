@@ -1,6 +1,8 @@
 `timescale 1ns/1ns
+`define DEBUG
 //Module
 module ldpc_tb;
+`include "debug.v"
 
 parameter CLK_PRD = 10;
 parameter D_WID = 6;
@@ -75,7 +77,6 @@ initial
         dump_fsdb;
         read_data_in; 
     join
-
 
 ldpc u_ldpc_dec(
     clk,
