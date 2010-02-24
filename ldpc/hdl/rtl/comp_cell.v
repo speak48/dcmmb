@@ -126,7 +126,7 @@ wire                  lr5_sign   ;
 wire   [2:0]          lr_least_loc;
 
 assign lq6_out = {lq0_dly,lq1_dly,lq2_dly,lq3_dly,lq4_dly,lq5_dly};
-assign lr_out = {abs_least_lq, abs_less_lq, least_loc, sign_xor, lq0[D_WID-1], lr1[D_WID-1], lr2[D_WID-1], lr3[D_WID-1], lr4[D_WID-1], lr5[D_WID-1]};
+assign lr_out = {abs_least_lq, abs_less_lq, least_loc, sign_xor, lq0_dly[D_WID-1], lq1_dly[D_WID-1], lq2_dly[D_WID-1], lq3_dly[D_WID-1], lq4_dly[D_WID-1], lq5_dly[D_WID-1]};
 
 assign lq0_diff = iter_0 ? lq0 : (lq0 - lr0);
 assign lq1_diff = iter_0 ? lq1 : (lq1 - lr1);
@@ -136,6 +136,8 @@ assign lq4_diff = iter_0 ? lq4 : (lq4 - lr4);
 assign lq5_diff = iter_0 ? lq5 : (lq5 - lr5);
 
 assign {abs_least_lr, abs_less_lr, lr_least_loc, sign_lr, lr0_sign, lr1_sign, lr2_sign, lr3_sign, lr4_sign, lr5_sign} = compress_lr; 
+assign inv_less_lr = ~abs_less_lr + 1'b1;
+assign inv_least_lr = ~abs_least_lr + 1'b1;
 assign lr0 = (lr_least_loc==3'h0) ? ((lr0_sign ^ sign_lr)? inv_less_lr : abs_less_lr ) : ((lr0_sign ^ sign_lr)? inv_least_lr : abs_least_lr ); 
 assign lr1 = (lr_least_loc==3'h1) ? ((lr1_sign ^ sign_lr)? inv_less_lr : abs_less_lr ) : ((lr1_sign ^ sign_lr)? inv_least_lr : abs_least_lr ); 
 assign lr2 = (lr_least_loc==3'h2) ? ((lr2_sign ^ sign_lr)? inv_less_lr : abs_less_lr ) : ((lr2_sign ^ sign_lr)? inv_least_lr : abs_least_lr ); 
@@ -154,7 +156,7 @@ always @ (posedge clk or negedge reset_n)
 begin : lr_r
     if(!reset_n) 
         compress_lr <= #1 {(2*D_WID+10){1'b0}};
-    else if(cnu_in[0]) 
+    else if(cnu_in[1]) 
         compress_lr <= #1 lr_in;
 end
         
@@ -230,7 +232,7 @@ assign ind_least0123 = com01_23 ? ind_less23 : ind_less01 ;
 
 assign com01_0123    = less01     > more23;
 assign com23_0123    = less23     > more01;
-assign less0123      = com01_0123 ? (com01_0123 ? more23 : less01) : (com23_0123 ? more01 : less23);
+assign less0123      = com01_23 ? (com01_0123 ? more23 : less01) : (com23_0123 ? more01 : less23);
 assign ind_less0123  = com23_0123 ? (com01_0123 ? ind_more23 : ind_less01 ) : (com23_0123 ? ind_more01 : ind_less23 );
 
 // 0123 vs 45 comparsion

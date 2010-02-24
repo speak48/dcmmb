@@ -2,7 +2,7 @@
 `define DEBUG
 //Module
 module ldpc_tb;
-`include "debug.v"
+
 
 parameter CLK_PRD = 10;
 parameter D_WID = 6;
@@ -20,7 +20,7 @@ wire            sync_out;
 wire            busy;
 wire [4:0]      num_iter;
 
-
+`include "debug.v"
 task clock_gen;
 begin   
    clk = 1'b0;

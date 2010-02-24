@@ -5,6 +5,10 @@ module addr_gen(
     cycle,
     rate,
     sync_in,
+    wr_lq,
+    wr_lr,
+    rd_lq,
+    rd_lr,
     rd_addr00,
     rd_addr01,
     rd_addr02,
@@ -112,7 +116,10 @@ module addr_gen(
     wr32     ,
     wr33     ,
     wr34     ,
-    wr35    
+    wr35     ,
+    rd_addr  ,
+    wr_addr  ,
+    wr0
 );  
 
 parameter A_WID = 8;
@@ -124,6 +131,10 @@ input                 rate       ;
 input   [3:0]         fsm        ;
 input   [3:0]         cycle      ;
 input   [35:0]        sync_in    ;
+input                 wr_lq      ;
+input                 wr_lr      ;
+input                 rd_lq      ;
+input                 rd_lr      ;
 
 //Output ports
 output  [A_WID-1:0]   rd_addr00  ;
@@ -234,6 +245,9 @@ output                wr32       ;
 output                wr33       ;
 output                wr34       ;
 output                wr35       ;
+output  [A_WID+1:0]   rd_addr    ;
+output  [A_WID+1:0]   wr_addr    ;
+output                wr0        ;
 
 wire    [A_WID-1:0]   rd_addr00  ;
 wire    [A_WID-1:0]   rd_addr01  ;
@@ -382,6 +396,10 @@ wire  [3*A_WID-1:0]   offset35   ;
 
 reg     [A_WID-1:0]   rd_counter ;
 reg     [A_WID-1:0]   wr_counter ;
+reg     [A_WID+1:0]   rd_addr    ;
+reg     [A_WID+1:0]   wr_addr    ;
+
+wire                  wr0        ;
 wire                  rd_en      ;
 
 assign rd_en = fsm[2] & (cycle[3:2] != 2'h0);
@@ -428,8 +446,8 @@ begin : rd_counter_r
     if(!reset_n)
         rd_counter <= #1 8'h0;
     else if(fsm[2]) begin 
-        if ( cycle[3:2] == 2'b11)
-        rd_counter <= #1 rd_counter + 8'd11;
+        if ( rd_lq )
+        rd_counter <= #1 rd_counter + 8'd37;
         else
         rd_counter <= #1 rd_counter;
         end
@@ -442,13 +460,39 @@ begin : wr_counter_r
     if(!reset_n)
         wr_counter <= #1 8'h0;
     else if(fsm[2]) begin 
-        if ( cycle[1:0] == 2'b11)
-        wr_counter <= #1 wr_counter + 8'd11;
+        if ( wr_lq )
+        wr_counter <= #1 wr_counter + 8'd37;
         else
         wr_counter <= #1 wr_counter;
         end
     else
         wr_counter <= #1 8'h0;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : wr_addr_r
+    if(!reset_n)
+        wr_addr <= #1 10'h0;
+    else if(wr_lr) begin
+        if( wr_addr == 'd767)
+        wr_addr <= #1 10'h0;
+        else
+        wr_addr <= #1 wr_addr + 1'b1;
+        end
+end
+
+assign wr0 = wr_lr;
+
+always @ (posedge clk or negedge reset_n)
+begin : rd_addr_r
+    if(!reset_n)
+        rd_addr <= #1 10'h0;
+    else if(rd_lr) begin
+        if(rd_addr == 'd767)
+        rd_addr <= #1 10'h0;
+        else        
+        rd_addr <= #1 rd_addr + 1'b1;
+    end
 end
 
 rd_cell rd_cell00(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset00),.rd_addr(rd_addr00));

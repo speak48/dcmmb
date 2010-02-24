@@ -48,7 +48,7 @@ begin : ram_d_r
 //        ram_d <= #1 dvtc_a;
         if(vtc_en[1])
         ram_d <= #1 dvtc_b;
-        if(vtc_en[0]) 
+        if(vtc_en[2]) 
         ram_d <= #1 temp3; 
         end
 end    
