@@ -56,13 +56,16 @@ reg     [3:0]        fsm_state  ;
 reg                  finish     ;
 reg                  busy       ;
 reg     [4:0]        num_iter   ;
-reg     [3:0]        cycle      ;
+//reg     [3:0]        cycle      ;
 
 reg                  sync_dly   ;
 reg                  sync_dly2  ;
 reg     [3:0]        next_state ;
 reg    [12:0]        counter    ;
 reg                  wr_ena     ;
+reg                  wr_lq      ;
+//reg                  wr_lr      ;
+reg                  rd_lq      ;
 reg                  rd_lr      ;
 reg     [7:0]        rd_lq_cnt  ;
 reg     [7:0]        wr_lq_cnt  ;
@@ -72,10 +75,13 @@ reg                  rd_lq_ena  ;
 reg                  wr_lq_ena  ;
 reg                  wr_lr_ena  ;
 reg                  error_det  ;
+reg     [1:0]        rd_cycle   ;
+reg     [1:0]        wr_cycle   ;
 //////////////////////////////////
 reg     [4:0]        fsm        ;
 reg     [4:0]        next_fsm   ;
 
+wire     [3:0]        cycle      ;
 wire                 sync_end   ;
 wire                 iter_end   ;
 wire                 vnu_end    ;
@@ -84,12 +90,12 @@ wire   [12:0]        counter_max;
 wire                 rd_ena     ;
 wire                 fsm_cnu    ;
 wire                 rd_lq_end  ;
+wire                 wr_lq_end  ;
 
-assign rd_lq = rd_lq_ena;
-assign wr_lq = wr_lr_ena;
+assign cycle = {rd_cycle, wr_cycle};
 assign wr_lr = wr_lr_ena;
-
-assign counter_max = 'd767 + 'd11;//rate ? 'd6911 : 'd4607;
+//assign rd_lr = rd_lq_ena & ( num_iter != 'd1);
+assign counter_max = 'd767 + 'd10;//rate ? 'd6911 : 'd4607;
 assign sync_end = sync_dly2 & (!sync_dly);
 assign iter_end = (num_iter == max_iter); 
 assign vnu_end  = (rd_lq_cnt == 8'hff) & fsm_state[2];
@@ -153,14 +159,15 @@ begin : fsm_next_state_r
      default:
          next_state = IDLE;
      endcase
-end 
+end
+/*
 //(*)
 // Cycle 01->10->11
 always @ (posedge clk or negedge reset_n)
 begin : cycle0_r
     if(!reset_n)
         cycle[3:2] <= #1 2'b0;
-    else if((fsm_cnu | rd_lq_ena) & !rd_lq_end) begin
+    else if((next_state == CNU) & rd_ena ) begin
         if(cycle[3:2] == 2'b11)
         cycle[3:2] <= #1 2'b01;
         else
@@ -174,7 +181,7 @@ always @ (posedge clk or negedge reset_n)
 begin : cycle1_r
     if(!reset_n)
         cycle[1:0] <= #1 2'b0;
-    else if(wr_lq_ena) begin
+    else if((next_state == CNU) & wr_ena) begin
         if(cycle[1:0] == 2'b11)
         cycle[1:0] <= #1 2'b01;
         else
@@ -183,7 +190,7 @@ begin : cycle1_r
     else
         cycle[1:0] <= #1 2'b0;
 end
-
+*/
 // Number of iteration
 always @ (posedge clk or negedge reset_n)
 begin: num_iter_r
@@ -191,7 +198,7 @@ begin: num_iter_r
         num_iter <= #1 5'h0;
     else if(sync_in)
         num_iter <= #1 5'h0;
-    else if(vnu_end)
+    else if(fsm_cnu)
         num_iter <=#1 num_iter + 1'b1;
 end
 
@@ -201,7 +208,7 @@ always @ (posedge clk or negedge reset_n)
 begin: counter_r
     if(!reset_n)
         counter <= #1 13'h0;
-    else if(fsm_state[2]) begin 
+    else if(fsm[2] | fsm[3]) begin 
         if(counter == counter_max)   
             counter <= #1 13'h0;
         else
@@ -220,11 +227,39 @@ begin : wr_ena_r
 end        
 
 always @ (posedge clk or negedge reset_n)
+begin : wr_lq_r
+    if(!reset_n)
+        wr_lq <= #1 1'b0;
+    else if(cycle[1:0] == 2'b10)
+        wr_lq <= #1 1'b1;
+    else
+        wr_lq <= #1 1'b0;
+end        
+
+always @ (posedge clk or negedge reset_n)
+begin : rd_lq_r
+    if(!reset_n)
+        rd_lq <= #1 1'b0;
+    else if(cycle[3:2] == 2'b10)
+        rd_lq <= #1 1'b1;
+    else
+        rd_lq <= #1 1'b0;
+end
+/*
+always @ (posedge clk or negedge reset_n)
+begin : wr_lr_r
+    if(!reset_n)
+        wr_lr<= #1 1'b0;
+    else if(step[6])
+        wr_lr <= #1 1'b1;
+end  
+*/
+always @ (posedge clk or negedge reset_n)
 begin : rd_lr_r
     if(!reset_n)
         rd_lr <= #1 1'b0;
-    else if((rd_lq_cnt == 8'hfe) & step[3])
-        rd_lr <= #1 1'b1;
+    else 
+        rd_lr <= #1 rd_lq_ena & (num_iter != 'd1);
 end
 
 always @ (posedge clk or negedge reset_n)
@@ -254,14 +289,14 @@ end
 always @ (posedge clk or negedge reset_n)
 begin : iter_0r
     if(!reset_n)
-        iter_0 <= #1 1'b1;
-    else if(rd_lr)
         iter_0 <= #1 1'b0;
+    else 
+        iter_0 <= #1 (num_iter == 'd1);
 end
 
 assign fsm_cnu = (( fsm == DATA_I ) | fsm == VNU_U) & ( next_fsm == CNU_U );
 assign rd_lq_end = (counter == 'd767);
-assign wr_lq_end = !rd_lq_end & step[11] & !wr_lq_ena;
+assign wr_lq_end = (counter == 'd777);
 
 always @ (posedge clk or negedge reset_n)
 begin : rd_lq_ena_r
@@ -277,16 +312,20 @@ always @ (posedge clk or negedge reset_n)
 begin : wr_lq_ena_r
     if(!reset_n)
         wr_lq_ena <= #1 1'b0;
-    else if(step[6])
-	wr_lq_ena <= #1 rd_lq_ena;
+    else if(wr_lq_end)
+	wr_lq_ena <= #1 1'b0;
+    else if(step[6] & rd_lq_ena)
+	wr_lq_ena <= #1 1'b1;
 end
 
 always @ (posedge clk or negedge reset_n)
 begin : wr_lr_ena_r
     if(!reset_n)
         wr_lr_ena <= #1 1'b0;
-    else if(step[5])
-	wr_lr_ena <= #1 rd_lq_ena;
+    else if(wr_lq_end)
+	wr_lr_ena <= #1 1'b0;
+    else if(step[6] & rd_lq_ena)
+	wr_lr_ena <= #1 1'b1;
 end
 
 always @ (posedge clk or negedge reset_n)
@@ -317,7 +356,7 @@ begin
     CNU_U: if(rd_lq_end)
 	next_fsm = VNU_U;
     VNU_U: if(wr_lq_end) begin
-	if(~error_det)    
+	if(!error_det)    
 	next_fsm = DATA_O;
         else 
         next_fsm = CNU_U;
@@ -330,5 +369,33 @@ begin
 	next_fsm = IDLE;
     endcase
 end	
+
+always @ (posedge clk or negedge reset_n)
+begin : rd_cycle_r
+    if(!reset_n)
+        rd_cycle <= #1 2'b0;
+    else if((fsm_cnu | rd_lq_ena) & (!rd_lq_end) ) begin
+        if(rd_cycle == 2'b11)
+        rd_cycle <= #1 2'b01;
+        else
+        rd_cycle <= #1 rd_cycle + 1'b1;
+    end
+    else
+        rd_cycle <= #1 2'b0;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : wr_cycle_r
+    if(!reset_n)
+        wr_cycle <= #1 2'h0;
+    else if(wr_lq_ena) begin
+	if(wr_cycle == 2'b11)
+        wr_cycle <= #1 2'b01;
+        else
+        wr_cycle <= #1 wr_cycle + 1'b1;
+    end
+    else
+	wr_cycle <= #1 2'b0;
+end
 
 endmodule

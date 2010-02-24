@@ -3,6 +3,7 @@ module lr_cell(
     reset_n,
     iter_0,
     cnu_in,
+    cycle ,
     cnu0_q,
     cnu1_q,
     cnu2_q,
@@ -27,6 +28,7 @@ input                 clk        ;
 input                 reset_n    ;
 input                 iter_0     ;
 input  [6:0]          cnu_in     ;
+input  [1:0]          cycle      ;
 input  [2*D_WID+9:0]  cnu0_q     ;
 input  [2*D_WID+9:0]  cnu1_q     ;
 input  [2*D_WID+9:0]  cnu2_q     ;
@@ -94,7 +96,7 @@ always @ (posedge clk or negedge reset_n)
 begin : cnu0_d_r
     if(!reset_n)
         cnu0_d <= #1 26'h0;
-    else if(cnu_in[1] & !iter_0)
+    else if((cycle == 2'b01) & !iter_0)
         cnu0_d <= #1 mem_out[4*D_WID+19:2*D_WID+10];
 end
 
@@ -102,7 +104,7 @@ always @ (posedge clk or negedge reset_n)
 begin : cnu1_d_r
     if(!reset_n)
         cnu1_d <= #1 26'h0;
-    else if(cnu_in[1] & !iter_0)
+    else if((cycle == 2'b01) & !iter_0)
         cnu1_d <= #1 mem_out[2*D_WID+9:0];
 end
 
@@ -110,7 +112,7 @@ always @ (posedge clk or negedge reset_n)
 begin : cnu2_d_r
     if(!reset_n)
         cnu2_d <= #1 26'h0;
-    else if(cnu_in[2] & !iter_0)
+    else if((cycle == 2'b10) & !iter_0)
         cnu2_d <= #1 mem_out[4*D_WID+19:2*D_WID+10];
 end
 
@@ -118,7 +120,7 @@ always @ (posedge clk or negedge reset_n)
 begin : cnu3_d_r
     if(!reset_n)
         cnu3_d <= #1 26'h0;
-    else if(cnu_in[2] & !iter_0)
+    else if((cycle == 2'b10) & !iter_0)
         cnu3_d <= #1 mem_out[2*D_WID+9:0];
 end
 
@@ -127,7 +129,7 @@ always @ (posedge clk or negedge reset_n)
 begin : cnu4_d_r
     if(!reset_n)
         cnu4_d <= #1 26'h0;
-    else if(cnu_in[3] & !iter_0)
+    else if((cycle == 2'b11) & !iter_0)
         cnu4_d <= #1 mem_out[4*D_WID+19:2*D_WID+10];
 end
 
@@ -135,7 +137,7 @@ always @ (posedge clk or negedge reset_n)
 begin : cnu5_d_r
     if(!reset_n)
         cnu5_d <= #1 26'h0;
-    else if(cnu_in[3] & !iter_0)
+    else if((cycle == 2'b11) & !iter_0)
         cnu5_d <= #1 mem_out[2*D_WID+9:0];
 end
 
