@@ -11,3 +11,5 @@
 ../../rtl/data_cell.v
 ../../rtl/data_cell2.v
 ../../rtl/data_cell1.v
+../../rtl/sram2p768x52.v
+../../rtl/lr_cell.v

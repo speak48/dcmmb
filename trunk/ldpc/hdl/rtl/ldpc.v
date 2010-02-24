@@ -250,10 +250,18 @@ wire    [D_WID-1:0]   dctv32     ;
 wire    [D_WID-1:0]   dctv33     ;
 wire    [D_WID-1:0]   dctv34     ;
 wire    [D_WID-1:0]   dctv35     ;
-
+wire    [A_WID+1:0]   rd_addr    ;
+wire    [A_WID+1:0]   wr_addr    ;
+wire                  wr0        ;
 wire    [3:0]         cycle      ;
 wire                  ctv_out    ;
-
+wire   [4*D_WID+19:0] mem0_in    ;   
+wire   [4*D_WID+19:0] mem1_in    ;   
+wire   [4*D_WID+19:0] mem2_in    ;   
+wire   [4*D_WID+19:0] mem0_out   ;   
+wire   [4*D_WID+19:0] mem1_out   ;   
+wire   [4*D_WID+19:0] mem2_out   ;   
+wire                  sigma_vnu  ;
 
 reg     [35:0]        sync_dly   ;
 reg     [D_WID-1:0]   data_dly   ;
@@ -370,6 +378,10 @@ sram2p256x8 u_ram33(.CLKA(clk),.CLKB(clk),.ADDRA(rd_addr33),.ADDRB(wr_addr33),.E
 sram2p256x8 u_ram34(.CLKA(clk),.CLKB(clk),.ADDRA(rd_addr34),.ADDRB(wr_addr34),.ENA(1'b0),.ENB(1'b0),.WEB(wr34),.DINB(din34),.DOUTA(dout34));
 sram2p256x8 u_ram35(.CLKA(clk),.CLKB(clk),.ADDRA(rd_addr35),.ADDRB(wr_addr35),.ENA(1'b0),.ENB(1'b0),.WEB(wr35),.DINB(din35),.DOUTA(dout35));
 
+sram2p768x52 lr_ram00(.CLKA(clk),.CLKB(clk),.ADDRA(rd_addr),.ADDRB(wr_addr),.ENA(1'b0),.ENB(1'b0),.WEB(wr0),.DINB(mem0_in),.DOUTA(mem0_out));
+sram2p768x52 lr_ram01(.CLKA(clk),.CLKB(clk),.ADDRA(rd_addr),.ADDRB(wr_addr),.ENA(1'b0),.ENB(1'b0),.WEB(wr0),.DINB(mem1_in),.DOUTA(mem1_out));
+sram2p768x52 lr_ram02(.CLKA(clk),.CLKB(clk),.ADDRA(rd_addr),.ADDRB(wr_addr),.ENA(1'b0),.ENB(1'b0),.WEB(wr0),.DINB(mem2_in),.DOUTA(mem2_out));
+
 ldpc_ctrl u_ldpc_ctrl(
     .clk        (  clk        ),
     .reset_n    (  reset_n    ),
@@ -377,12 +389,17 @@ ldpc_ctrl u_ldpc_ctrl(
     .rate       (  rate       ),
     .max_iter   (  max_iter   ),
     .ctv_out    (  ctv_out    ),
+    .sigma_vnu  (  sigma_vnu  ),
 
     .fsm_state  (  fsm        ),
     .cycle      (  cycle      ),
     .finish     (             ),
     .busy       (  busy       ),
-    .iter_0     (  iter_0     ),
+    .iter_0     (  iter_0     ), 
+    .wr_lq      (  wr_lq      ),
+    .wr_lr      (  wr_lr      ),
+    .rd_lq      (  rd_lq      ),
+    .rd_lr      (  rd_lr      ),
     .num_iter   (  num_iter   ) 
 
 );
@@ -394,6 +411,10 @@ addr_gen u_addr_gen(
     .cycle      (cycle    ),
     .rate       (rate     ),
     .sync_in    (sync_dly ),
+    .wr_lq      (  wr_lq  ),
+    .wr_lr      (  wr_lr  ),
+    .rd_lq      (  rd_lq  ),
+    .rd_lr      (  rd_lr  ),
     .rd_addr00  (rd_addr00),
     .rd_addr01  (rd_addr01),
     .rd_addr02  (rd_addr02),
@@ -501,7 +522,10 @@ addr_gen u_addr_gen(
     .wr32       (wr32     ),
     .wr33       (wr33     ),
     .wr34       (wr34     ),
-    .wr35       (wr35     ) 
+    .wr35       (wr35     ),
+    .rd_addr    (rd_addr  ),
+    .wr_addr    (wr_addr  ), 
+    .wr0        (wr0      )
 );  
 
 
@@ -515,6 +539,7 @@ data_comp u_data_comp(
     .sync_in    ( sync_dly   ),
     .data_in    ( data_dly   ),
     .ctv_out    ( ctv_out    ),
+    .sigma_vnu  ( sigma_vnu  ),
     .dout00     ( dout00     ),
     .dout01     ( dout01     ),
     .dout02     ( dout02     ),
@@ -586,7 +611,13 @@ data_comp u_data_comp(
     .din32      ( din32      ),
     .din33      ( din33      ),
     .din34      ( din34      ),
-    .din35      ( din35      )
+    .din35      ( din35      ),
+    .mem0_in    ( mem0_in    ),   
+    .mem0_out   ( mem0_out   ), 
+    .mem1_in    ( mem1_in    ),   
+    .mem1_out   ( mem1_out   ), 
+    .mem2_in    ( mem2_in    ),   
+    .mem2_out   ( mem2_out   ) 
 ); 
 
 endmodule

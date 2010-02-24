@@ -8,6 +8,7 @@ module data_comp(
     sync_in,
     data_in,
     ctv_out,
+    sigma_vnu,
     dout00 ,
     dout01 ,
     dout02 ,
@@ -79,7 +80,13 @@ module data_comp(
     din32 ,
     din33 ,
     din34 ,
-    din35 
+    din35 ,
+    mem0_in,
+    mem1_in,
+    mem2_in,
+    mem0_out,
+    mem1_out,
+    mem2_out
 );
 
 //Parameter
@@ -131,9 +138,13 @@ input   [D_WID-1:0]   dout32     ;
 input   [D_WID-1:0]   dout33     ;
 input   [D_WID-1:0]   dout34     ;
 input   [D_WID-1:0]   dout35     ;
+input  [4*D_WID+19:0] mem0_in    ; 
+input  [4*D_WID+19:0] mem1_in    ; 
+input  [4*D_WID+19:0] mem2_in    ; 
 
 //Output ports
 output                ctv_out   ;
+output                sigma_vnu ;
 output  [D_WID-1:0]   din00     ;
 output  [D_WID-1:0]   din01     ;
 output  [D_WID-1:0]   din02     ;
@@ -170,6 +181,10 @@ output  [D_WID-1:0]   din32     ;
 output  [D_WID-1:0]   din33     ;
 output  [D_WID-1:0]   din34     ;
 output  [D_WID-1:0]   din35     ;
+output [4*D_WID+19:0] mem0_out  ; 
+output [4*D_WID+19:0] mem1_out  ; 
+output [4*D_WID+19:0] mem2_out  ; 
+
 
 reg     [1:0]         cycle_dly  ;
 reg     [1:0]         cycle_dly2 ;
@@ -509,79 +524,99 @@ reg     [D_WID-1:0]   data_5     ;
 reg     [D_WID-1:0]   data_6     ;
 reg     [D_WID-1:0]   data_7     ;
 reg     [D_WID-1:0]   data_8     ;
-reg   [6*D_WID-1:0]   cnu0_d     ;
-reg   [6*D_WID-1:0]   cnu1_d     ;
-reg   [6*D_WID-1:0]   cnu2_d     ;
-reg   [6*D_WID-1:0]   cnu3_d     ;
-reg   [6*D_WID-1:0]   cnu4_d     ;
-reg   [6*D_WID-1:0]   cnu5_d     ;
-reg   [6*D_WID-1:0]   cnu6_d     ;
-reg   [6*D_WID-1:0]   cnu7_d     ;
-reg   [6*D_WID-1:0]   cnu8_d     ;
-reg   [6*D_WID-1:0]   cnu9_d     ;
-reg   [6*D_WID-1:0]   cnua_d     ;
-reg   [6*D_WID-1:0]   cnub_d     ;
-reg   [6*D_WID-1:0]   cnuc_d     ;
-reg   [6*D_WID-1:0]   cnud_d     ;
-reg   [6*D_WID-1:0]   cnue_d     ;
-reg   [6*D_WID-1:0]   cnuf_d     ;
-reg   [6*D_WID-1:0]   cnug_d     ;
-reg   [6*D_WID-1:0]   cnuh_d     ;
-reg   [2*D_WID+9:0]   vnu0_d     ;
-reg   [2*D_WID+9:0]   vnu1_d     ;
-reg   [2*D_WID+9:0]   vnu2_d     ;
-reg   [2*D_WID+9:0]   vnu3_d     ;
-reg   [2*D_WID+9:0]   vnu4_d     ;
-reg   [2*D_WID+9:0]   vnu5_d     ;
-reg   [2*D_WID+9:0]   vnu6_d     ;
-reg   [2*D_WID+9:0]   vnu7_d     ;
-reg   [2*D_WID+9:0]   vnu8_d     ;
-reg   [2*D_WID+9:0]   vnu9_d     ;
-reg   [2*D_WID+9:0]   vnua_d     ;
-reg   [2*D_WID+9:0]   vnub_d     ;
-reg   [2*D_WID+9:0]   vnuc_d     ;
-reg   [2*D_WID+9:0]   vnud_d     ;
-reg   [2*D_WID+9:0]   vnue_d     ;
-reg   [2*D_WID+9:0]   vnuf_d     ;
-reg   [2*D_WID+9:0]   vnug_d     ;
-reg   [2*D_WID+9:0]   vnuh_d     ;
+reg     [D_WID-1:0]   data_0d    ; 
+reg     [D_WID-1:0]   data_1d    ; 
+reg     [D_WID-1:0]   data_2d    ; 
+reg     [D_WID-1:0]   data_3d    ; 
+reg     [D_WID-1:0]   data_4d    ; 
+reg     [D_WID-1:0]   data_5d    ; 
+reg     [D_WID-1:0]   data_6d    ; 
+reg     [D_WID-1:0]   data_7d    ; 
+reg     [D_WID-1:0]   data_8d    ; 
+reg     [D_WID-1:0]   data_0d2   ;  
+reg     [D_WID-1:0]   data_1d2   ;  
+reg     [D_WID-1:0]   data_2d2   ;  
+reg     [D_WID-1:0]   data_3d2   ;  
+reg     [D_WID-1:0]   data_4d2   ;  
+reg     [D_WID-1:0]   data_5d2   ;  
+reg     [D_WID-1:0]   data_6d2   ;  
+reg     [D_WID-1:0]   data_7d2   ;  
+reg     [D_WID-1:0]   data_8d2   ;  
+reg   [6*D_WID-1:0]   vnu0_d     ;
+reg   [6*D_WID-1:0]   vnu1_d     ;
+reg   [6*D_WID-1:0]   vnu2_d     ;
+reg   [6*D_WID-1:0]   vnu3_d     ;
+reg   [6*D_WID-1:0]   vnu4_d     ;
+reg   [6*D_WID-1:0]   vnu5_d     ;
+reg   [6*D_WID-1:0]   vnu6_d     ;
+reg   [6*D_WID-1:0]   vnu7_d     ;
+reg   [6*D_WID-1:0]   vnu8_d     ;
+reg   [6*D_WID-1:0]   vnu9_d     ;
+reg   [6*D_WID-1:0]   vnua_d     ;
+reg   [6*D_WID-1:0]   vnub_d     ;
+reg   [6*D_WID-1:0]   vnuc_d     ;
+reg   [6*D_WID-1:0]   vnud_d     ;
+reg   [6*D_WID-1:0]   vnue_d     ;
+reg   [6*D_WID-1:0]   vnuf_d     ;
+reg   [6*D_WID-1:0]   vnug_d     ;
+reg   [6*D_WID-1:0]   vnuh_d     ;
+reg     [17:0]        sign_vnu   ;
+reg                   sigma_vnu  ;
 
-wire  [6*D_WID-1:0]   cnu0_q     ;
-wire  [6*D_WID-1:0]   cnu1_q     ;
-wire  [6*D_WID-1:0]   cnu2_q     ;
-wire  [6*D_WID-1:0]   cnu3_q     ;
-wire  [6*D_WID-1:0]   cnu4_q     ;
-wire  [6*D_WID-1:0]   cnu5_q     ;
-wire  [6*D_WID-1:0]   cnu6_q     ;
-wire  [6*D_WID-1:0]   cnu7_q     ;
-wire  [6*D_WID-1:0]   cnu8_q     ;
-wire  [6*D_WID-1:0]   cnu9_q     ;
-wire  [6*D_WID-1:0]   cnua_q     ;
-wire  [6*D_WID-1:0]   cnub_q     ;
-wire  [6*D_WID-1:0]   cnuc_q     ;
-wire  [6*D_WID-1:0]   cnud_q     ;
-wire  [6*D_WID-1:0]   cnue_q     ;
-wire  [6*D_WID-1:0]   cnuf_q     ;
-wire  [6*D_WID-1:0]   cnug_q     ;
-wire  [6*D_WID-1:0]   cnuh_q     ;
-wire  [2*D_WID+9:0]   vnu0_q     ;
-wire  [2*D_WID+9:0]   vnu1_q     ;
-wire  [2*D_WID+9:0]   vnu2_q     ;
-wire  [2*D_WID+9:0]   vnu3_q     ;
-wire  [2*D_WID+9:0]   vnu4_q     ;
-wire  [2*D_WID+9:0]   vnu5_q     ;
-wire  [2*D_WID+9:0]   vnu6_q     ;
-wire  [2*D_WID+9:0]   vnu7_q     ;
-wire  [2*D_WID+9:0]   vnu8_q     ;
-wire  [2*D_WID+9:0]   vnu9_q     ;
-wire  [2*D_WID+9:0]   vnua_q     ;
-wire  [2*D_WID+9:0]   vnub_q     ;
-wire  [2*D_WID+9:0]   vnuc_q     ;
-wire  [2*D_WID+9:0]   vnud_q     ;
-wire  [2*D_WID+9:0]   vnue_q     ;
-wire  [2*D_WID+9:0]   vnuf_q     ;
-wire  [2*D_WID+9:0]   vnug_q     ;
-wire  [2*D_WID+9:0]   vnuh_q     ;
+wire  [2*D_WID+9:0]   cnu0_d     ;
+wire  [2*D_WID+9:0]   cnu1_d     ;
+wire  [2*D_WID+9:0]   cnu2_d     ;
+wire  [2*D_WID+9:0]   cnu3_d     ;
+wire  [2*D_WID+9:0]   cnu4_d     ;
+wire  [2*D_WID+9:0]   cnu5_d     ;
+wire  [2*D_WID+9:0]   cnu6_d     ;
+wire  [2*D_WID+9:0]   cnu7_d     ;
+wire  [2*D_WID+9:0]   cnu8_d     ;
+wire  [2*D_WID+9:0]   cnu9_d     ;
+wire  [2*D_WID+9:0]   cnua_d     ;
+wire  [2*D_WID+9:0]   cnub_d     ;
+wire  [2*D_WID+9:0]   cnuc_d     ;
+wire  [2*D_WID+9:0]   cnud_d     ;
+wire  [2*D_WID+9:0]   cnue_d     ;
+wire  [2*D_WID+9:0]   cnuf_d     ;
+wire  [2*D_WID+9:0]   cnug_d     ;
+wire  [2*D_WID+9:0]   cnuh_d     ;
+wire  [6*D_WID-1:0]   vnu0_q     ;
+wire  [6*D_WID-1:0]   vnu1_q     ;
+wire  [6*D_WID-1:0]   vnu2_q     ;
+wire  [6*D_WID-1:0]   vnu3_q     ;
+wire  [6*D_WID-1:0]   vnu4_q     ;
+wire  [6*D_WID-1:0]   vnu5_q     ;
+wire  [6*D_WID-1:0]   vnu6_q     ;
+wire  [6*D_WID-1:0]   vnu7_q     ;
+wire  [6*D_WID-1:0]   vnu8_q     ;
+wire  [6*D_WID-1:0]   vnu9_q     ;
+wire  [6*D_WID-1:0]   vnua_q     ;
+wire  [6*D_WID-1:0]   vnub_q     ;
+wire  [6*D_WID-1:0]   vnuc_q     ;
+wire  [6*D_WID-1:0]   vnud_q     ;
+wire  [6*D_WID-1:0]   vnue_q     ;
+wire  [6*D_WID-1:0]   vnuf_q     ;
+wire  [6*D_WID-1:0]   vnug_q     ;
+wire  [6*D_WID-1:0]   vnuh_q     ;
+wire  [2*D_WID+9:0]   cnu0_q     ;
+wire  [2*D_WID+9:0]   cnu1_q     ;
+wire  [2*D_WID+9:0]   cnu2_q     ;
+wire  [2*D_WID+9:0]   cnu3_q     ;
+wire  [2*D_WID+9:0]   cnu4_q     ;
+wire  [2*D_WID+9:0]   cnu5_q     ;
+wire  [2*D_WID+9:0]   cnu6_q     ;
+wire  [2*D_WID+9:0]   cnu7_q     ;
+wire  [2*D_WID+9:0]   cnu8_q     ;
+wire  [2*D_WID+9:0]   cnu9_q     ;
+wire  [2*D_WID+9:0]   cnua_q     ;
+wire  [2*D_WID+9:0]   cnub_q     ;
+wire  [2*D_WID+9:0]   cnuc_q     ;
+wire  [2*D_WID+9:0]   cnud_q     ;
+wire  [2*D_WID+9:0]   cnue_q     ;
+wire  [2*D_WID+9:0]   cnuf_q     ;
+wire  [2*D_WID+9:0]   cnug_q     ;
+wire  [2*D_WID+9:0]   cnuh_q     ;
 
 assign ctv_out = cnu_in[5];
 
@@ -1092,24 +1127,24 @@ end
 always @ (*)
 begin : cnu_sel_r
    if(!rate) begin
-   cnu0_d = { data_buffer0a, data_buffer6a , data_buffer12a, data_buffer18a, data_buffer25a, data_buffer30a };
-   cnu1_d = { data_buffer0a, data_buffer7a , data_buffer19a, data_buffer26a, data_buffer31a, data_buffer12b };
-   cnu2_d = { data_buffer0a, data_buffer8a , data_buffer13a, data_buffer20a, data_buffer32a, data_buffer26b };
-   cnu3_d = { data_buffer1a, data_buffer6b , data_buffer14a, data_buffer21a, data_buffer25b, data_buffer31b };
-   cnu4_d = { data_buffer1a, data_buffer15a, data_buffer27a, data_buffer33a, data_buffer20b, data_buffer8b  };
-   cnu5_d = { data_buffer1a, data_buffer9a , data_buffer16a, data_buffer34a, data_buffer25c, data_buffer21b };
-   cnu6_d = { data_buffer2a, data_buffer6c , data_buffer28a, data_buffer35a, data_buffer16b, data_buffer20c };
-   cnu7_d = { data_buffer2a, data_buffer10a, data_buffer17a, data_buffer27b, data_buffer21c, data_buffer30b };
-   cnu8_d = { data_buffer2a, data_buffer11a, data_buffer22a, data_buffer22b, data_buffer16c, data_buffer34b };
-   cnu9_d = { data_buffer3a, data_buffer7b , data_buffer26c, data_buffer13b, data_buffer33b, data_buffer19b };
-   cnua_d = { data_buffer3a, data_buffer9b , data_buffer28b, data_buffer17b, data_buffer31c, data_buffer18b };
-   cnub_d = { data_buffer3a, data_buffer23a, data_buffer9c , data_buffer12c, data_buffer35b, data_buffer24a };
-   cnuc_d = { data_buffer4a, data_buffer7c , data_buffer29a, data_buffer17c, data_buffer34c, data_buffer18c };
-   cnud_d = { data_buffer4a, data_buffer24b, data_buffer10b, data_buffer23b, data_buffer13c, data_buffer32b };
-   cnue_d = { data_buffer4a, data_buffer29b, data_buffer10c, data_buffer32c, data_buffer23c, data_buffer15b };
-   cnuf_d = { data_buffer5a, data_buffer8c , data_buffer14b, data_buffer22c, data_buffer28c, data_buffer30c };
-   cnug_d = { data_buffer5a, data_buffer19c, data_buffer11b, data_buffer15c, data_buffer33c, data_buffer27c };
-   cnuh_d = { data_buffer5a, data_buffer24c, data_buffer35c, data_buffer11c, data_buffer14c, data_buffer29c };
+   vnu0_d = { data_buffer0a, data_buffer6a , data_buffer12a, data_buffer18a, data_buffer25a, data_buffer30a };
+   vnu1_d = { data_buffer0a, data_buffer7a , data_buffer19a, data_buffer26a, data_buffer31a, data_buffer12b };
+   vnu2_d = { data_buffer0a, data_buffer8a , data_buffer13a, data_buffer20a, data_buffer32a, data_buffer26b };
+   vnu3_d = { data_buffer1a, data_buffer6b , data_buffer14a, data_buffer21a, data_buffer25b, data_buffer31b };
+   vnu4_d = { data_buffer1a, data_buffer15a, data_buffer27a, data_buffer33a, data_buffer20b, data_buffer8b  };
+   vnu5_d = { data_buffer1a, data_buffer9a , data_buffer16a, data_buffer34a, data_buffer25c, data_buffer21b };
+   vnu6_d = { data_buffer2a, data_buffer6c , data_buffer28a, data_buffer35a, data_buffer16b, data_buffer20c };
+   vnu7_d = { data_buffer2a, data_buffer10a, data_buffer17a, data_buffer27b, data_buffer21c, data_buffer30b };
+   vnu8_d = { data_buffer2a, data_buffer11a, data_buffer22a, data_buffer22b, data_buffer16c, data_buffer34b };
+   vnu9_d = { data_buffer3a, data_buffer7b , data_buffer26c, data_buffer13b, data_buffer33b, data_buffer19b };
+   vnua_d = { data_buffer3a, data_buffer9b , data_buffer28b, data_buffer17b, data_buffer31c, data_buffer18b };
+   vnub_d = { data_buffer3a, data_buffer23a, data_buffer9c , data_buffer12c, data_buffer35b, data_buffer24a };
+   vnuc_d = { data_buffer4a, data_buffer7c , data_buffer29a, data_buffer17c, data_buffer34c, data_buffer18c };
+   vnud_d = { data_buffer4a, data_buffer24b, data_buffer10b, data_buffer23b, data_buffer13c, data_buffer32b };
+   vnue_d = { data_buffer4a, data_buffer29b, data_buffer10c, data_buffer32c, data_buffer23c, data_buffer15b };
+   vnuf_d = { data_buffer5a, data_buffer8c , data_buffer14b, data_buffer22c, data_buffer28c, data_buffer30c };
+   vnug_d = { data_buffer5a, data_buffer19c, data_buffer11b, data_buffer15c, data_buffer33c, data_buffer27c };
+   vnuh_d = { data_buffer5a, data_buffer24c, data_buffer35c, data_buffer11c, data_buffer14c, data_buffer29c };
    end
    else;
 end   
@@ -1117,27 +1152,65 @@ end
 always @ (*)
 begin : cnu_data_out_r
    if(!rate) begin
-   { data_out0a, data_out6a , data_out12a, data_out18a, data_out25a, data_out30a } = cnu0_q;
-   { data_out0b, data_out7a , data_out19a, data_out26a, data_out31a, data_out12b } = cnu1_q;
-   { data_out0c, data_out8a , data_out13a, data_out20a, data_out32a, data_out26b } = cnu2_q;
-   { data_out1a, data_out6b , data_out14a, data_out21a, data_out25b, data_out31b } = cnu3_q;
-   { data_out1b, data_out15a, data_out27a, data_out33a, data_out20b, data_out8b  } = cnu4_q;
-   { data_out1c, data_out9a , data_out16a, data_out34a, data_out25c, data_out21b } = cnu5_q;
-   { data_out2a, data_out6c , data_out28a, data_out35a, data_out16b, data_out20c } = cnu6_q;
-   { data_out2b, data_out10a, data_out17a, data_out27b, data_out21c, data_out30b } = cnu7_q;
-   { data_out2c, data_out11a, data_out22a, data_out22b, data_out16c, data_out34b } = cnu8_q;
-   { data_out3a, data_out7b , data_out26c, data_out13b, data_out33b, data_out19b } = cnu9_q;
-   { data_out3b, data_out9b , data_out28b, data_out17b, data_out31c, data_out18b } = cnua_q;
-   { data_out3c, data_out23a, data_out9c , data_out12c, data_out35b, data_out24a } = cnub_q;
-   { data_out4a, data_out7c , data_out29a, data_out17c, data_out34c, data_out18c } = cnuc_q;
-   { data_out4b, data_out24b, data_out10b, data_out23b, data_out13c, data_out32b } = cnud_q;
-   { data_out4c, data_out29b, data_out10c, data_out32c, data_out23c, data_out15b } = cnue_q;
-   { data_out5a, data_out8c , data_out14b, data_out22c, data_out28c, data_out30c } = cnuf_q;
-   { data_out5b, data_out19c, data_out11b, data_out15c, data_out33c, data_out27c } = cnug_q;
-   { data_out5c, data_out24c, data_out35c, data_out11c, data_out14c, data_out29c } = cnuh_q;
+   { data_out0a, data_out6a , data_out12a, data_out18a, data_out25a, data_out30a } = vnu0_q;
+   { data_out0b, data_out7a , data_out19a, data_out26a, data_out31a, data_out12b } = vnu1_q;
+   { data_out0c, data_out8a , data_out13a, data_out20a, data_out32a, data_out26b } = vnu2_q;
+   { data_out1a, data_out6b , data_out14a, data_out21a, data_out25b, data_out31b } = vnu3_q;
+   { data_out1b, data_out15a, data_out27a, data_out33a, data_out20b, data_out8b  } = vnu4_q;
+   { data_out1c, data_out9a , data_out16a, data_out34a, data_out25c, data_out21b } = vnu5_q;
+   { data_out2a, data_out6c , data_out28a, data_out35a, data_out16b, data_out20c } = vnu6_q;
+   { data_out2b, data_out10a, data_out17a, data_out27b, data_out21c, data_out30b } = vnu7_q;
+   { data_out2c, data_out11a, data_out22a, data_out22b, data_out16c, data_out34b } = vnu8_q;
+   { data_out3a, data_out7b , data_out26c, data_out13b, data_out33b, data_out19b } = vnu9_q;
+   { data_out3b, data_out9b , data_out28b, data_out17b, data_out31c, data_out18b } = vnua_q;
+   { data_out3c, data_out23a, data_out9c , data_out12c, data_out35b, data_out24a } = vnub_q;
+   { data_out4a, data_out7c , data_out29a, data_out17c, data_out34c, data_out18c } = vnuc_q;
+   { data_out4b, data_out24b, data_out10b, data_out23b, data_out13c, data_out32b } = vnud_q;
+   { data_out4c, data_out29b, data_out10c, data_out32c, data_out23c, data_out15b } = vnue_q;
+   { data_out5a, data_out8c , data_out14b, data_out22c, data_out28c, data_out30c } = vnuf_q;
+   { data_out5b, data_out19c, data_out11b, data_out15c, data_out33c, data_out27c } = vnug_q;
+   { data_out5c, data_out24c, data_out35c, data_out11c, data_out14c, data_out29c } = vnuh_q;
    end
    else;
 end   
+
+always @ (posedge clk or negedge reset_n)
+begin : sign_vnu_r
+    if(!reset_n)
+        sign_vnu <= #1 18'h0;
+    else if(fsm[2]) begin
+        if  (cnu_in[6]) begin
+        sign_vnu[ 0] <= #1 vnu0_q[6*D_WID-1]^vnu0_q[5*D_WID-1]^vnu0_q[4*D_WID-1]^vnu0_q[3*D_WID-1]^vnu0_q[2*D_WID-1]^vnu0_q[D_WID-1];
+        sign_vnu[ 1] <= #1 vnu1_q[6*D_WID-1]^vnu1_q[5*D_WID-1]^vnu1_q[4*D_WID-1]^vnu1_q[3*D_WID-1]^vnu1_q[2*D_WID-1]^vnu1_q[D_WID-1];
+        sign_vnu[ 2] <= #1 vnu2_q[6*D_WID-1]^vnu2_q[5*D_WID-1]^vnu2_q[4*D_WID-1]^vnu2_q[3*D_WID-1]^vnu2_q[2*D_WID-1]^vnu2_q[D_WID-1];
+        sign_vnu[ 3] <= #1 vnu3_q[6*D_WID-1]^vnu3_q[5*D_WID-1]^vnu3_q[4*D_WID-1]^vnu3_q[3*D_WID-1]^vnu3_q[2*D_WID-1]^vnu3_q[D_WID-1];
+        sign_vnu[ 4] <= #1 vnu4_q[6*D_WID-1]^vnu4_q[5*D_WID-1]^vnu4_q[4*D_WID-1]^vnu4_q[3*D_WID-1]^vnu4_q[2*D_WID-1]^vnu4_q[D_WID-1];
+        sign_vnu[ 5] <= #1 vnu5_q[6*D_WID-1]^vnu5_q[5*D_WID-1]^vnu5_q[4*D_WID-1]^vnu5_q[3*D_WID-1]^vnu5_q[2*D_WID-1]^vnu5_q[D_WID-1];
+        sign_vnu[ 6] <= #1 vnu6_q[6*D_WID-1]^vnu6_q[5*D_WID-1]^vnu6_q[4*D_WID-1]^vnu6_q[3*D_WID-1]^vnu6_q[2*D_WID-1]^vnu6_q[D_WID-1];
+        sign_vnu[ 7] <= #1 vnu7_q[6*D_WID-1]^vnu7_q[5*D_WID-1]^vnu7_q[4*D_WID-1]^vnu7_q[3*D_WID-1]^vnu7_q[2*D_WID-1]^vnu7_q[D_WID-1];
+        sign_vnu[ 8] <= #1 vnu8_q[6*D_WID-1]^vnu8_q[5*D_WID-1]^vnu8_q[4*D_WID-1]^vnu8_q[3*D_WID-1]^vnu8_q[2*D_WID-1]^vnu8_q[D_WID-1];
+        sign_vnu[ 9] <= #1 vnu9_q[6*D_WID-1]^vnu9_q[5*D_WID-1]^vnu9_q[4*D_WID-1]^vnu9_q[3*D_WID-1]^vnu9_q[2*D_WID-1]^vnu9_q[D_WID-1];
+        sign_vnu[10] <= #1 vnua_q[6*D_WID-1]^vnua_q[5*D_WID-1]^vnua_q[4*D_WID-1]^vnua_q[3*D_WID-1]^vnua_q[2*D_WID-1]^vnua_q[D_WID-1];
+        sign_vnu[11] <= #1 vnub_q[6*D_WID-1]^vnub_q[5*D_WID-1]^vnub_q[4*D_WID-1]^vnub_q[3*D_WID-1]^vnub_q[2*D_WID-1]^vnub_q[D_WID-1];
+        sign_vnu[12] <= #1 vnuc_q[6*D_WID-1]^vnuc_q[5*D_WID-1]^vnuc_q[4*D_WID-1]^vnuc_q[3*D_WID-1]^vnuc_q[2*D_WID-1]^vnuc_q[D_WID-1];
+        sign_vnu[13] <= #1 vnud_q[6*D_WID-1]^vnud_q[5*D_WID-1]^vnud_q[4*D_WID-1]^vnud_q[3*D_WID-1]^vnud_q[2*D_WID-1]^vnud_q[D_WID-1];
+        sign_vnu[14] <= #1 vnue_q[6*D_WID-1]^vnue_q[5*D_WID-1]^vnue_q[4*D_WID-1]^vnue_q[3*D_WID-1]^vnue_q[2*D_WID-1]^vnue_q[D_WID-1];
+        sign_vnu[15] <= #1 vnuf_q[6*D_WID-1]^vnuf_q[5*D_WID-1]^vnuf_q[4*D_WID-1]^vnuf_q[3*D_WID-1]^vnuf_q[2*D_WID-1]^vnuf_q[D_WID-1];
+        sign_vnu[16] <= #1 vnug_q[6*D_WID-1]^vnug_q[5*D_WID-1]^vnug_q[4*D_WID-1]^vnug_q[3*D_WID-1]^vnug_q[2*D_WID-1]^vnug_q[D_WID-1];
+        sign_vnu[17] <= #1 vnuh_q[6*D_WID-1]^vnuh_q[5*D_WID-1]^vnuh_q[4*D_WID-1]^vnuh_q[3*D_WID-1]^vnuh_q[2*D_WID-1]^vnuh_q[D_WID-1];
+        end
+        end
+    else
+        sign_vnu <= #1 18'h0;
+end        
+
+always @ (posedge clk or negedge reset_n)
+begin
+    if(!reset_n)
+        sigma_vnu <= #1 1'b0;
+    else
+        sigma_vnu <= #1 (sign_vnu != 18'h0) ;
+end        
 
 always @ (posedge clk or negedge reset_n)
 begin : vtc_en_r
@@ -1148,7 +1221,7 @@ begin : vtc_en_r
 end
 
 always @ (posedge clk or negedge reset_n)
-begin : data_out_r
+begin : data_buf0_r
     if(!reset_n) begin
         data_0 <= #1 {D_WID{1'b0}};
         data_1 <= #1 {D_WID{1'b0}};
@@ -1160,47 +1233,106 @@ begin : data_out_r
         data_7 <= #1 {D_WID{1'b0}};
         data_8 <= #1 {D_WID{1'b0}};
         end
-    else if(cnu_in[5]) begin
-        data_0 <= #1 data_out0a;
-        data_1 <= #1 data_out1a;
-        data_2 <= #1 data_out2a;
-        data_3 <= #1 data_out3a;
-        data_4 <= #1 data_out4a;
-        data_5 <= #1 data_out5a;
-        data_6 <= #1 data_out6a;
-        data_7 <= #1 data_out7a;
-        data_8 <= #1 data_out8a;
+    else if(cnu_in[1]) begin
+        data_0 <= #1 data_buffer0a;
+        data_1 <= #1 data_buffer1a;
+        data_2 <= #1 data_buffer2a;
+        data_3 <= #1 data_buffer3a;
+        data_4 <= #1 data_buffer4a;
+        data_5 <= #1 data_buffer5a;
+        data_6 <= #1 data_buffer6a;
+        data_7 <= #1 data_buffer7a;
+        data_8 <= #1 data_buffer8a;
         end
 end                
-        
-comp_cell comp0(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu0_d),.lr_in(vnu0_d),.cnu_in(cnu_in),.lq6_out(cnu0_q),.lr_out(vnu0_q));
-comp_cell comp1(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu1_d),.lr_in(vnu1_d),.cnu_in(cnu_in),.lq6_out(cnu1_q),.lr_out(vnu1_q));
-comp_cell comp2(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu2_d),.lr_in(vnu2_d),.cnu_in(cnu_in),.lq6_out(cnu2_q),.lr_out(vnu2_q));
-comp_cell comp3(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu3_d),.lr_in(vnu3_d),.cnu_in(cnu_in),.lq6_out(cnu3_q),.lr_out(vnu3_q));
-comp_cell comp4(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu4_d),.lr_in(vnu4_d),.cnu_in(cnu_in),.lq6_out(cnu4_q),.lr_out(vnu4_q));
-comp_cell comp5(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu5_d),.lr_in(vnu5_d),.cnu_in(cnu_in),.lq6_out(cnu5_q),.lr_out(vnu5_q));
-comp_cell comp6(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu6_d),.lr_in(vnu6_d),.cnu_in(cnu_in),.lq6_out(cnu6_q),.lr_out(vnu6_q));
-comp_cell comp7(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu7_d),.lr_in(vnu7_d),.cnu_in(cnu_in),.lq6_out(cnu7_q),.lr_out(vnu7_q));
-comp_cell comp8(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu8_d),.lr_in(vnu8_d),.cnu_in(cnu_in),.lq6_out(cnu8_q),.lr_out(vnu8_q));
-comp_cell comp9(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnu9_d),.lr_in(vnu9_d),.cnu_in(cnu_in),.lq6_out(cnu9_q),.lr_out(vnu9_q));
-comp_cell compa(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnua_d),.lr_in(vnua_d),.cnu_in(cnu_in),.lq6_out(cnua_q),.lr_out(vnua_q));
-comp_cell compb(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnub_d),.lr_in(vnub_d),.cnu_in(cnu_in),.lq6_out(cnub_q),.lr_out(vnub_q));
-comp_cell compc(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuc_d),.lr_in(vnuc_d),.cnu_in(cnu_in),.lq6_out(cnuc_q),.lr_out(vnuc_q));
-comp_cell compd(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnud_d),.lr_in(vnud_d),.cnu_in(cnu_in),.lq6_out(cnud_q),.lr_out(vnud_q));
-comp_cell compe(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnue_d),.lr_in(vnue_d),.cnu_in(cnu_in),.lq6_out(cnue_q),.lr_out(vnue_q));
-comp_cell compf(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuf_d),.lr_in(vnuf_d),.cnu_in(cnu_in),.lq6_out(cnuf_q),.lr_out(vnuf_q));
-comp_cell compg(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnug_d),.lr_in(vnug_d),.cnu_in(cnu_in),.lq6_out(cnug_q),.lr_out(vnug_q));
-comp_cell comph(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(cnuh_d),.lr_in(vnuh_d),.cnu_in(cnu_in),.lq6_out(cnuh_q),.lr_out(vnuh_q));
 
-data_cell2 data00(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[0]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_0a ),.dvtc_b(dvtc_0b ),.dvtc_c(dvtc_0c ),.ram_d(din00),.d_last(data_0));
-data_cell2 data01(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[1]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_1a ),.dvtc_b(dvtc_1b ),.dvtc_c(dvtc_1c ),.ram_d(din01),.d_last(data_1));
-data_cell2 data02(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[2]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_2a ),.dvtc_b(dvtc_2b ),.dvtc_c(dvtc_2c ),.ram_d(din02),.d_last(data_2));
-data_cell2 data03(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[3]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_3a ),.dvtc_b(dvtc_3b ),.dvtc_c(dvtc_3c ),.ram_d(din03),.d_last(data_3));
-data_cell2 data04(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[4]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_4a ),.dvtc_b(dvtc_4b ),.dvtc_c(dvtc_4c ),.ram_d(din04),.d_last(data_4));
-data_cell2 data05(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[5]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_5a ),.dvtc_b(dvtc_5b ),.dvtc_c(dvtc_5c ),.ram_d(din05),.d_last(data_5));
-data_cell2 data06(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[6]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_6a ),.dvtc_b(dvtc_6b ),.dvtc_c(dvtc_6c ),.ram_d(din06),.d_last(data_6));
-data_cell2 data07(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[7]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_7a ),.dvtc_b(dvtc_7b ),.dvtc_c(dvtc_7c ),.ram_d(din07),.d_last(data_7));
-data_cell1 data08(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[8]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_8a ),.dvtc_b(dvtc_8b ),.dvtc_c(dvtc_8c ),.ram_d(din08),.d_last(data_8));
+always @ (posedge clk or negedge reset_n)
+begin : data_buf1_r
+    if(!reset_n) begin
+        data_0d <= #1 {D_WID{1'b0}};
+        data_1d <= #1 {D_WID{1'b0}};
+        data_2d <= #1 {D_WID{1'b0}};
+        data_3d <= #1 {D_WID{1'b0}};
+        data_4d <= #1 {D_WID{1'b0}};
+        data_5d <= #1 {D_WID{1'b0}};
+        data_6d <= #1 {D_WID{1'b0}};
+        data_7d <= #1 {D_WID{1'b0}};
+        data_8d <= #1 {D_WID{1'b0}};
+        end
+    else if(cnu_in[4]) begin
+        data_0d <= #1 data_0;
+        data_1d <= #1 data_1;
+        data_2d <= #1 data_2;
+        data_3d <= #1 data_3;
+        data_4d <= #1 data_4;
+        data_5d <= #1 data_5;
+        data_6d <= #1 data_6;
+        data_7d <= #1 data_7;
+        data_8d <= #1 data_8;
+        end
+end                
+
+always @ (posedge clk or negedge reset_n)
+begin : data_buf2_r
+    if(!reset_n) begin
+        data_0d2 <= #1 {D_WID{1'b0}};
+        data_1d2 <= #1 {D_WID{1'b0}};
+        data_2d2 <= #1 {D_WID{1'b0}};
+        data_3d2 <= #1 {D_WID{1'b0}};
+        data_4d2 <= #1 {D_WID{1'b0}};
+        data_5d2 <= #1 {D_WID{1'b0}};
+        data_6d2 <= #1 {D_WID{1'b0}};
+        data_7d2 <= #1 {D_WID{1'b0}};
+        data_8d2 <= #1 {D_WID{1'b0}};
+        end
+    else if(cnu_in[6]) begin
+        data_0d2 <= #1 data_0d;
+        data_1d2 <= #1 data_1d;
+        data_2d2 <= #1 data_2d;
+        data_3d2 <= #1 data_3d;
+        data_4d2 <= #1 data_4d;
+        data_5d2 <= #1 data_5d;
+        data_6d2 <= #1 data_6d;
+        data_7d2 <= #1 data_7d;
+        data_8d2 <= #1 data_8d;
+        end
+end 
+//always @ (posedge clk or negedge reset_n)
+//begin : data_8r
+//    if(!reset_n)
+//        data_8d <= #1 {D_WID{1'b0}};
+//    else
+//	data_8d <= #1 data_8;
+//end
+
+comp_cell comp0(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu0_d),.lr_in(cnu0_d),.cnu_in(cnu_in),.lq6_out(vnu0_q),.lr_out(cnu0_q));
+comp_cell comp1(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu1_d),.lr_in(cnu1_d),.cnu_in(cnu_in),.lq6_out(vnu1_q),.lr_out(cnu1_q));
+comp_cell comp2(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu2_d),.lr_in(cnu2_d),.cnu_in(cnu_in),.lq6_out(vnu2_q),.lr_out(cnu2_q));
+comp_cell comp3(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu3_d),.lr_in(cnu3_d),.cnu_in(cnu_in),.lq6_out(vnu3_q),.lr_out(cnu3_q));
+comp_cell comp4(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu4_d),.lr_in(cnu4_d),.cnu_in(cnu_in),.lq6_out(vnu4_q),.lr_out(cnu4_q));
+comp_cell comp5(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu5_d),.lr_in(cnu5_d),.cnu_in(cnu_in),.lq6_out(vnu5_q),.lr_out(cnu5_q));
+comp_cell comp6(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu6_d),.lr_in(cnu6_d),.cnu_in(cnu_in),.lq6_out(vnu6_q),.lr_out(cnu6_q));
+comp_cell comp7(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu7_d),.lr_in(cnu7_d),.cnu_in(cnu_in),.lq6_out(vnu7_q),.lr_out(cnu7_q));
+comp_cell comp8(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu8_d),.lr_in(cnu8_d),.cnu_in(cnu_in),.lq6_out(vnu8_q),.lr_out(cnu8_q));
+comp_cell comp9(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnu9_d),.lr_in(cnu9_d),.cnu_in(cnu_in),.lq6_out(vnu9_q),.lr_out(cnu9_q));
+comp_cell compa(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnua_d),.lr_in(cnua_d),.cnu_in(cnu_in),.lq6_out(vnua_q),.lr_out(cnua_q));
+comp_cell compb(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnub_d),.lr_in(cnub_d),.cnu_in(cnu_in),.lq6_out(vnub_q),.lr_out(cnub_q));
+comp_cell compc(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnuc_d),.lr_in(cnuc_d),.cnu_in(cnu_in),.lq6_out(vnuc_q),.lr_out(cnuc_q));
+comp_cell compd(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnud_d),.lr_in(cnud_d),.cnu_in(cnu_in),.lq6_out(vnud_q),.lr_out(cnud_q));
+comp_cell compe(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnue_d),.lr_in(cnue_d),.cnu_in(cnu_in),.lq6_out(vnue_q),.lr_out(cnue_q));
+comp_cell compf(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnuf_d),.lr_in(cnuf_d),.cnu_in(cnu_in),.lq6_out(vnuf_q),.lr_out(cnuf_q));
+comp_cell compg(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnug_d),.lr_in(cnug_d),.cnu_in(cnu_in),.lq6_out(vnug_q),.lr_out(cnug_q));
+comp_cell comph(.clk(clk),.reset_n(reset_n),.iter_0(iter_0),.lq6_in(vnuh_d),.lr_in(cnuh_d),.cnu_in(cnu_in),.lq6_out(vnuh_q),.lr_out(cnuh_q));
+
+data_cell2 data00(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[0]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_0a ),.dvtc_b(dvtc_0b ),.dvtc_c(dvtc_0c ),.ram_d(din00),.d_last(data_0d2));
+data_cell2 data01(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[1]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_1a ),.dvtc_b(dvtc_1b ),.dvtc_c(dvtc_1c ),.ram_d(din01),.d_last(data_1d2));
+data_cell2 data02(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[2]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_2a ),.dvtc_b(dvtc_2b ),.dvtc_c(dvtc_2c ),.ram_d(din02),.d_last(data_2d2));
+data_cell2 data03(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[3]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_3a ),.dvtc_b(dvtc_3b ),.dvtc_c(dvtc_3c ),.ram_d(din03),.d_last(data_3d2));
+data_cell2 data04(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[4]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_4a ),.dvtc_b(dvtc_4b ),.dvtc_c(dvtc_4c ),.ram_d(din04),.d_last(data_4d2));
+data_cell2 data05(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[5]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_5a ),.dvtc_b(dvtc_5b ),.dvtc_c(dvtc_5c ),.ram_d(din05),.d_last(data_5d2));
+data_cell2 data06(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[6]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_6a ),.dvtc_b(dvtc_6b ),.dvtc_c(dvtc_6c ),.ram_d(din06),.d_last(data_6d2));
+data_cell2 data07(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[7]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_7a ),.dvtc_b(dvtc_7b ),.dvtc_c(dvtc_7c ),.ram_d(din07),.d_last(data_7d2));
+data_cell1 data08(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[8]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_8a ),.dvtc_b(dvtc_8b ),.dvtc_c(dvtc_8c ),.ram_d(din08),.d_last(data_8d2));
 data_cell data09(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[ 9]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_9a ),.dvtc_b(dvtc_9b ),.dvtc_c(dvtc_9c ),.ram_d(din09));
 data_cell data10(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[10]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_10a),.dvtc_b(dvtc_10b),.dvtc_c(dvtc_10c),.ram_d(din10));
 data_cell data11(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[11]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_11a),.dvtc_b(dvtc_11b),.dvtc_c(dvtc_11c),.ram_d(din11));
@@ -1229,4 +1361,66 @@ data_cell data33(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[33]),.din(da
 data_cell data34(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[34]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_34a),.dvtc_b(dvtc_34b),.dvtc_c(dvtc_34c),.ram_d(din34));
 data_cell data35(.clk(clk),.reset_n(reset_n),.fsm(fsm),.sin(sync_in[35]),.din(data_in),.vtc_en(vtc_en),.dvtc_a(dvtc_35a),.dvtc_b(dvtc_35b),.dvtc_c(dvtc_35c),.ram_d(din35));
 
+lr_cell lr0(
+    .clk(clk),
+    .reset_n(reset_n),
+    .iter_0(iter_0),
+    .cnu_in(cnu_in),
+    .cnu0_q(cnu0_q),
+    .cnu1_q(cnu1_q),
+    .cnu2_q(cnu2_q),
+    .cnu3_q(cnu3_q),
+    .cnu4_q(cnu4_q),
+    .cnu5_q(cnu5_q),
+    .mem_in(mem0_in),      
+    .mem_out(mem0_out),     
+    .cnu0_d(cnu0_d),
+    .cnu1_d(cnu1_d),
+    .cnu2_d(cnu2_d),
+    .cnu3_d(cnu3_d),
+    .cnu4_d(cnu4_d),
+    .cnu5_d(cnu5_d)
+);
+
+lr_cell lr1(
+    .clk(clk),
+    .reset_n(reset_n),
+    .iter_0(iter_0),
+    .cnu_in(cnu_in),
+    .cnu0_q(cnu6_q),
+    .cnu1_q(cnu7_q),
+    .cnu2_q(cnu8_q),
+    .cnu3_q(cnu9_q),
+    .cnu4_q(cnua_q),
+    .cnu5_q(cnub_q),
+    .mem_in(mem1_in),      
+    .mem_out(mem1_out),     
+    .cnu0_d(cnu6_d),
+    .cnu1_d(cnu7_d),
+    .cnu2_d(cnu8_d),
+    .cnu3_d(cnu9_d),
+    .cnu4_d(cnua_d),
+    .cnu5_d(cnub_d)
+);
+
+lr_cell lr2(
+    .clk(clk),
+    .reset_n(reset_n),
+    .iter_0(iter_0),
+    .cnu_in(cnu_in),
+    .cnu0_q(cnuc_q),
+    .cnu1_q(cnud_q),
+    .cnu2_q(cnue_q),
+    .cnu3_q(cnuf_q),
+    .cnu4_q(cnug_q),
+    .cnu5_q(cnuh_q),
+    .mem_in(mem2_in),      
+    .mem_out(mem2_out),     
+    .cnu0_d(cnuc_d),
+    .cnu1_d(cnud_d),
+    .cnu2_d(cnue_d),
+    .cnu3_d(cnuf_d),
+    .cnu4_d(cnug_d),
+    .cnu5_d(cnuh_d)
+);
 endmodule                                       
