@@ -54,7 +54,7 @@ begin
     $fdisplay(file,"%d",$signed(u_ldpc_dec.u_ram34 .mem[k]));
     $fdisplay(file,"%d",$signed(u_ldpc_dec.u_ram35 .mem[k]));  
       end
-    #20000 $finish;  
+    #90000 $finish;  
     end                                       
 end
 endtask
