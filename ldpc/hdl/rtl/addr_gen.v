@@ -393,6 +393,8 @@ wire  [3*A_WID-1:0]   offset32   ;
 wire  [3*A_WID-1:0]   offset33   ;
 wire  [3*A_WID-1:0]   offset34   ;
 wire  [3*A_WID-1:0]   offset35   ;
+wire    [A_WID-1:0]   out_addr   ;
+wire     [35:0]       out_rd     ;
 
 reg     [A_WID-1:0]   rd_counter ;
 reg     [A_WID-1:0]   wr_counter ;
@@ -569,5 +571,6 @@ wr_cell wr_cell33(.clk(clk),.reset_n(reset_n),.wr_en(wr_en),.sin(sync_in[33]),.f
 wr_cell wr_cell34(.clk(clk),.reset_n(reset_n),.wr_en(wr_en),.sin(sync_in[34]),.fsm(fsm),.cycle(cycle[1:0]),.base_addr(wr_counter),.addr_offset(offset34),.wr_addr(wr_addr34),.ram_wr(wr34));
 wr_cell wr_cell35(.clk(clk),.reset_n(reset_n),.wr_en(wr_en),.sin(sync_in[35]),.fsm(fsm),.cycle(cycle[1:0]),.base_addr(wr_counter),.addr_offset(offset35),.wr_addr(wr_addr35),.ram_wr(wr35));
 
+rd_seq rd_seq(.clk(clk),.reset_n(reset_n),.rate(rate),.fsm(fsm),.out_addr(out_addr),.out_rd(out_rd));
 
 endmodule

@@ -52,7 +52,7 @@ parameter IDLE     = 'h0001,
           DATA_O   = 5'b10000;
 
 //Intenal Reg and Wires Definition
-reg     [3:0]        fsm_state  ;
+//reg     [3:0]        fsm_state  ;
 reg                  finish     ;
 reg                  busy       ;
 reg     [4:0]        num_iter   ;
@@ -81,7 +81,7 @@ reg     [1:0]        wr_cycle   ;
 reg     [4:0]        fsm        ;
 reg     [4:0]        next_fsm   ;
 
-wire     [3:0]        cycle      ;
+wire     [3:0]       cycle      ;
 wire                 sync_end   ;
 wire                 iter_end   ;
 wire                 vnu_end    ;
@@ -94,12 +94,13 @@ wire                 wr_lq_end  ;
 
 assign cycle = {rd_cycle, wr_cycle};
 assign wr_lr = wr_lr_ena;
+assign fsm_state = {fsm[4],fsm[3]|fsm[2],fsm[1],fsm[0]};
 //assign rd_lr = rd_lq_ena & ( num_iter != 'd1);
-assign counter_max = 'd767 + 'd10;//rate ? 'd6911 : 'd4607;
+assign counter_max = rate ? 'd6911 : 'd4607;
 assign sync_end = sync_dly2 & (!sync_dly);
 assign iter_end = (num_iter == max_iter); 
-assign vnu_end  = (rd_lq_cnt == 8'hff) & fsm_state[2];
-assign sync_out_end = (counter == counter_max) & fsm_state[3];
+assign vnu_end  = (rd_lq_cnt == 8'hff) & fsm[2];
+assign sync_out_end = (counter == counter_max) & fsm[4];
 assign rd_ena = next_state == CNU;
 //assign iter_0 = ( num_iter == 0);
 
@@ -132,6 +133,7 @@ begin : busy_r
 end     
 
 // FSM
+/*
 always @ (posedge clk or negedge reset_n)
 begin : fsm_state_r
     if(!reset_n)
@@ -160,7 +162,7 @@ begin : fsm_next_state_r
          next_state = IDLE;
      endcase
 end
-/*
+
 //(*)
 // Cycle 01->10->11
 always @ (posedge clk or negedge reset_n)
@@ -209,11 +211,17 @@ begin: counter_r
     if(!reset_n)
         counter <= #1 13'h0;
     else if(fsm[2] | fsm[3]) begin 
-        if(counter == counter_max)   
+        if(counter == 'd777)   
             counter <= #1 13'h0;
         else
             counter <= #1 counter + 1'b1;
     end
+    else if(fsm[4]) begin
+        if(counter == counter_max)
+            counter <= #1 13'h0;
+        else
+            counter <= #1 counter + 1'b1;  
+    end  
 end     
 
 always @ (posedge clk or negedge reset_n)
