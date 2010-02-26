@@ -5,6 +5,8 @@ module rd_cell(
     cycle,
     base_addr,
     addr_offset,
+    out_addr,
+    out_en,
     rd_addr    
 );
 
@@ -17,6 +19,8 @@ input                 rd_en      ;
 input   [1:0]         cycle      ;
 input   [A_WID-1:0]   base_addr  ;
 input   [3*A_WID-1:0] addr_offset;
+input   [A_WID-1:0]   out_addr   ;
+input                 out_en     ;
 
 output  [A_WID-1:0]   rd_addr    ;
 
@@ -29,6 +33,8 @@ begin : rd_addr_r
         rd_addr <= #1 8'h0;
     else if(rd_en)
         rd_addr <= #1 base_addr + addr_offset1;
+    else if(out_en)
+        rd_addr <= #1 out_addr;    
     else
         rd_addr <= #1 8'h0;
 end 

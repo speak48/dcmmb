@@ -9,6 +9,8 @@ module addr_gen(
     wr_lr,
     rd_lq,
     rd_lr,
+    out_sel,
+    out_en,
     rd_addr00,
     rd_addr01,
     rd_addr02,
@@ -248,6 +250,8 @@ output                wr35       ;
 output  [A_WID+1:0]   rd_addr    ;
 output  [A_WID+1:0]   wr_addr    ;
 output                wr0        ;
+output   [35:0]       out_sel    ;
+output                out_en     ;
 
 wire    [A_WID-1:0]   rd_addr00  ;
 wire    [A_WID-1:0]   rd_addr01  ;
@@ -394,12 +398,15 @@ wire  [3*A_WID-1:0]   offset33   ;
 wire  [3*A_WID-1:0]   offset34   ;
 wire  [3*A_WID-1:0]   offset35   ;
 wire    [A_WID-1:0]   out_addr   ;
-wire     [35:0]       out_rd     ;
+wire     [35:0]       out_rd_sel ;
+wire                  out_rd_en  ;
 
 reg     [A_WID-1:0]   rd_counter ;
 reg     [A_WID-1:0]   wr_counter ;
 reg     [A_WID+1:0]   rd_addr    ;
 reg     [A_WID+1:0]   wr_addr    ;
+reg      [35:0]       out_sel    ;
+reg                   out_en     ;
 
 wire                  wr0        ;
 wire                  rd_en      ;
@@ -453,9 +460,27 @@ begin : rd_counter_r
         else
         rd_counter <= #1 rd_counter;
         end
+//    else if(out_rd_en)
+//        rd_counter <= #1 out_addr;
     else
-        rd_counter <= #1 8'h0;
+	rd_counter <= #1 8'h0;
 end
+
+always @ (posedge clk or negedge reset_n)
+begin : out_sel_r
+    if(!reset_n)
+        out_sel <= #1 36'h0;
+    else
+        out_sel <= #1 out_rd_sel;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : out_en_r
+    if(!reset_n)
+        out_en <= #1 1'b0;
+    else
+        out_en <= #1 out_rd_en;
+end        
 
 always @ (posedge clk or negedge reset_n)
 begin : wr_counter_r
@@ -497,42 +522,42 @@ begin : rd_addr_r
     end
 end
 
-rd_cell rd_cell00(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset00),.rd_addr(rd_addr00));
-rd_cell rd_cell01(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset01),.rd_addr(rd_addr01));
-rd_cell rd_cell02(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset02),.rd_addr(rd_addr02));
-rd_cell rd_cell03(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset03),.rd_addr(rd_addr03));
-rd_cell rd_cell04(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset04),.rd_addr(rd_addr04));
-rd_cell rd_cell05(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset05),.rd_addr(rd_addr05));
-rd_cell rd_cell06(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset06),.rd_addr(rd_addr06));
-rd_cell rd_cell07(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset07),.rd_addr(rd_addr07));
-rd_cell rd_cell08(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset08),.rd_addr(rd_addr08));
-rd_cell rd_cell09(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset09),.rd_addr(rd_addr09));
-rd_cell rd_cell10(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset10),.rd_addr(rd_addr10));
-rd_cell rd_cell11(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset11),.rd_addr(rd_addr11));
-rd_cell rd_cell12(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset12),.rd_addr(rd_addr12));
-rd_cell rd_cell13(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset13),.rd_addr(rd_addr13));
-rd_cell rd_cell14(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset14),.rd_addr(rd_addr14));
-rd_cell rd_cell15(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset15),.rd_addr(rd_addr15));
-rd_cell rd_cell16(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset16),.rd_addr(rd_addr16));
-rd_cell rd_cell17(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset17),.rd_addr(rd_addr17));
-rd_cell rd_cell18(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset18),.rd_addr(rd_addr18));
-rd_cell rd_cell19(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset19),.rd_addr(rd_addr19));
-rd_cell rd_cell20(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset20),.rd_addr(rd_addr20));
-rd_cell rd_cell21(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset21),.rd_addr(rd_addr21));
-rd_cell rd_cell22(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset22),.rd_addr(rd_addr22));
-rd_cell rd_cell23(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset23),.rd_addr(rd_addr23));
-rd_cell rd_cell24(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset24),.rd_addr(rd_addr24));
-rd_cell rd_cell25(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset25),.rd_addr(rd_addr25));
-rd_cell rd_cell26(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset26),.rd_addr(rd_addr26));
-rd_cell rd_cell27(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset27),.rd_addr(rd_addr27));
-rd_cell rd_cell28(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset28),.rd_addr(rd_addr28));
-rd_cell rd_cell29(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset29),.rd_addr(rd_addr29));
-rd_cell rd_cell30(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset30),.rd_addr(rd_addr30));
-rd_cell rd_cell31(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset31),.rd_addr(rd_addr31));
-rd_cell rd_cell32(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset32),.rd_addr(rd_addr32));
-rd_cell rd_cell33(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset33),.rd_addr(rd_addr33));
-rd_cell rd_cell34(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset34),.rd_addr(rd_addr34));
-rd_cell rd_cell35(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset35),.rd_addr(rd_addr35));
+rd_cell rd_cell00(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset00),.out_addr(out_addr),.out_en(out_rd_sel[ 0]),.rd_addr(rd_addr00));
+rd_cell rd_cell01(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset01),.out_addr(out_addr),.out_en(out_rd_sel[ 1]),.rd_addr(rd_addr01));
+rd_cell rd_cell02(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset02),.out_addr(out_addr),.out_en(out_rd_sel[ 2]),.rd_addr(rd_addr02));
+rd_cell rd_cell03(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset03),.out_addr(out_addr),.out_en(out_rd_sel[ 3]),.rd_addr(rd_addr03));
+rd_cell rd_cell04(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset04),.out_addr(out_addr),.out_en(out_rd_sel[ 4]),.rd_addr(rd_addr04));
+rd_cell rd_cell05(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset05),.out_addr(out_addr),.out_en(out_rd_sel[ 5]),.rd_addr(rd_addr05));
+rd_cell rd_cell06(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset06),.out_addr(out_addr),.out_en(out_rd_sel[ 6]),.rd_addr(rd_addr06));
+rd_cell rd_cell07(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset07),.out_addr(out_addr),.out_en(out_rd_sel[ 7]),.rd_addr(rd_addr07));
+rd_cell rd_cell08(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset08),.out_addr(out_addr),.out_en(out_rd_sel[ 8]),.rd_addr(rd_addr08));
+rd_cell rd_cell09(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset09),.out_addr(out_addr),.out_en(out_rd_sel[ 9]),.rd_addr(rd_addr09));
+rd_cell rd_cell10(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset10),.out_addr(out_addr),.out_en(out_rd_sel[10]),.rd_addr(rd_addr10));
+rd_cell rd_cell11(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset11),.out_addr(out_addr),.out_en(out_rd_sel[11]),.rd_addr(rd_addr11));
+rd_cell rd_cell12(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset12),.out_addr(out_addr),.out_en(out_rd_sel[12]),.rd_addr(rd_addr12));
+rd_cell rd_cell13(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset13),.out_addr(out_addr),.out_en(out_rd_sel[13]),.rd_addr(rd_addr13));
+rd_cell rd_cell14(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset14),.out_addr(out_addr),.out_en(out_rd_sel[14]),.rd_addr(rd_addr14));
+rd_cell rd_cell15(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset15),.out_addr(out_addr),.out_en(out_rd_sel[15]),.rd_addr(rd_addr15));
+rd_cell rd_cell16(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset16),.out_addr(out_addr),.out_en(out_rd_sel[16]),.rd_addr(rd_addr16));
+rd_cell rd_cell17(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset17),.out_addr(out_addr),.out_en(out_rd_sel[17]),.rd_addr(rd_addr17));
+rd_cell rd_cell18(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset18),.out_addr(out_addr),.out_en(out_rd_sel[18]),.rd_addr(rd_addr18));
+rd_cell rd_cell19(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset19),.out_addr(out_addr),.out_en(out_rd_sel[19]),.rd_addr(rd_addr19));
+rd_cell rd_cell20(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset20),.out_addr(out_addr),.out_en(out_rd_sel[20]),.rd_addr(rd_addr20));
+rd_cell rd_cell21(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset21),.out_addr(out_addr),.out_en(out_rd_sel[21]),.rd_addr(rd_addr21));
+rd_cell rd_cell22(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset22),.out_addr(out_addr),.out_en(out_rd_sel[22]),.rd_addr(rd_addr22));
+rd_cell rd_cell23(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset23),.out_addr(out_addr),.out_en(out_rd_sel[23]),.rd_addr(rd_addr23));
+rd_cell rd_cell24(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset24),.out_addr(out_addr),.out_en(out_rd_sel[24]),.rd_addr(rd_addr24));
+rd_cell rd_cell25(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset25),.out_addr(out_addr),.out_en(out_rd_sel[25]),.rd_addr(rd_addr25));
+rd_cell rd_cell26(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset26),.out_addr(out_addr),.out_en(out_rd_sel[26]),.rd_addr(rd_addr26));
+rd_cell rd_cell27(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset27),.out_addr(out_addr),.out_en(out_rd_sel[27]),.rd_addr(rd_addr27));
+rd_cell rd_cell28(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset28),.out_addr(out_addr),.out_en(out_rd_sel[28]),.rd_addr(rd_addr28));
+rd_cell rd_cell29(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset29),.out_addr(out_addr),.out_en(out_rd_sel[29]),.rd_addr(rd_addr29));
+rd_cell rd_cell30(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset30),.out_addr(out_addr),.out_en(out_rd_sel[30]),.rd_addr(rd_addr30));
+rd_cell rd_cell31(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset31),.out_addr(out_addr),.out_en(out_rd_sel[31]),.rd_addr(rd_addr31));
+rd_cell rd_cell32(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset32),.out_addr(out_addr),.out_en(out_rd_sel[32]),.rd_addr(rd_addr32));
+rd_cell rd_cell33(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset33),.out_addr(out_addr),.out_en(out_rd_sel[33]),.rd_addr(rd_addr33));
+rd_cell rd_cell34(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset34),.out_addr(out_addr),.out_en(out_rd_sel[34]),.rd_addr(rd_addr34));
+rd_cell rd_cell35(.clk(clk),.reset_n(reset_n),.rd_en(rd_en),.cycle(cycle[3:2]),.base_addr(rd_counter),.addr_offset(offset35),.out_addr(out_addr),.out_en(out_rd_sel[35]),.rd_addr(rd_addr35));
 
 wr_cell wr_cell00(.clk(clk),.reset_n(reset_n),.wr_en(wr_en),.sin(sync_in[ 0]),.fsm(fsm),.cycle(cycle[1:0]),.base_addr(wr_counter),.addr_offset(offset00),.wr_addr(wr_addr00),.ram_wr(wr00));
 wr_cell wr_cell01(.clk(clk),.reset_n(reset_n),.wr_en(wr_en),.sin(sync_in[ 1]),.fsm(fsm),.cycle(cycle[1:0]),.base_addr(wr_counter),.addr_offset(offset01),.wr_addr(wr_addr01),.ram_wr(wr01));
@@ -571,6 +596,6 @@ wr_cell wr_cell33(.clk(clk),.reset_n(reset_n),.wr_en(wr_en),.sin(sync_in[33]),.f
 wr_cell wr_cell34(.clk(clk),.reset_n(reset_n),.wr_en(wr_en),.sin(sync_in[34]),.fsm(fsm),.cycle(cycle[1:0]),.base_addr(wr_counter),.addr_offset(offset34),.wr_addr(wr_addr34),.ram_wr(wr34));
 wr_cell wr_cell35(.clk(clk),.reset_n(reset_n),.wr_en(wr_en),.sin(sync_in[35]),.fsm(fsm),.cycle(cycle[1:0]),.base_addr(wr_counter),.addr_offset(offset35),.wr_addr(wr_addr35),.ram_wr(wr35));
 
-rd_seq rd_seq(.clk(clk),.reset_n(reset_n),.rate(rate),.fsm(fsm),.out_addr(out_addr),.out_rd(out_rd));
+rd_seq rd_seq(.clk(clk),.reset_n(reset_n),.rate(rate),.fsm(fsm),.out_addr(out_addr),.out_rd_en(out_rd_en),.out_rd_sel(out_rd_sel));
 
 endmodule
