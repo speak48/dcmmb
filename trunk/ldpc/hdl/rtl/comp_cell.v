@@ -123,6 +123,7 @@ wire                  lr2_sign   ;
 wire                  lr3_sign   ;
 wire                  lr4_sign   ;
 wire                  lr5_sign   ;
+wire                  sign_lr    ;
 wire   [2:0]          lr_least_loc;
 
 assign lq6_out = {lq0_dly,lq1_dly,lq2_dly,lq3_dly,lq4_dly,lq5_dly};
