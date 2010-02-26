@@ -60,16 +60,16 @@ reg     [4:0]        num_iter   ;
 
 reg                  sync_dly   ;
 reg                  sync_dly2  ;
-reg     [3:0]        next_state ;
+//reg     [3:0]        next_state ;
 reg    [12:0]        counter    ;
-reg                  wr_ena     ;
+//reg                  wr_ena     ;
 reg                  wr_lq      ;
 //reg                  wr_lr      ;
 reg                  rd_lq      ;
 reg                  rd_lr      ;
-reg     [7:0]        rd_lq_cnt  ;
-reg     [7:0]        wr_lq_cnt  ;
-reg    [11:0]        step       ;
+//reg     [7:0]        rd_lq_cnt  ;
+//reg     [7:0]        wr_lq_cnt  ;
+reg     [6:0]        step       ;
 reg                  iter_0     ;
 reg                  rd_lq_ena  ;
 reg                  wr_lq_ena  ;
@@ -84,10 +84,10 @@ reg     [4:0]        next_fsm   ;
 wire     [3:0]       cycle      ;
 wire                 sync_end   ;
 wire                 iter_end   ;
-wire                 vnu_end    ;
+//wire                 vnu_end    ;
 wire                 sync_out_end;
 wire   [12:0]        counter_max;
-wire                 rd_ena     ;
+//wire                 rd_ena     ;
 wire                 fsm_cnu    ;
 wire                 rd_lq_end  ;
 wire                 wr_lq_end  ;
@@ -99,9 +99,9 @@ assign fsm_state = {fsm[4],fsm[3]|fsm[2],fsm[1],fsm[0]};
 assign counter_max = rate ? 'd6911 : 'd4607;
 assign sync_end = sync_dly2 & (!sync_dly);
 assign iter_end = (num_iter == max_iter); 
-assign vnu_end  = (rd_lq_cnt == 8'hff) & fsm[2];
+//assign vnu_end  = (rd_lq_cnt == 8'hff) & fsm[2];
 assign sync_out_end = (counter == counter_max) & fsm[4];
-assign rd_ena = next_state == CNU;
+//assign rd_ena = next_state == CNU;
 //assign iter_0 = ( num_iter == 0);
 
 // sync in delay register
@@ -223,7 +223,7 @@ begin: counter_r
             counter <= #1 counter + 1'b1;  
     end  
 end     
-
+/*
 always @ (posedge clk or negedge reset_n)
 begin : wr_ena_r
     if(!reset_n)
@@ -233,7 +233,7 @@ begin : wr_ena_r
     else if(iter_end)
         wr_ena <= #1 1'b0;
 end        
-
+*/
 always @ (posedge clk or negedge reset_n)
 begin : wr_lq_r
     if(!reset_n)
@@ -269,7 +269,7 @@ begin : rd_lr_r
     else 
         rd_lr <= #1 rd_lq_ena & (num_iter != 'd1);
 end
-
+/*
 always @ (posedge clk or negedge reset_n)
 begin : rd_lq_cnt_r
     if(!reset_n)
@@ -285,13 +285,13 @@ begin : wr_lq_cnt_r
     else if(step[10])
         wr_lq_cnt <= #1 wr_lq_cnt + 1'b1;
 end
-
+*/
 always @ (posedge clk or negedge reset_n)
 begin : step_r
     if(!reset_n)
-        step <= #1 12'h0;
+        step <= #1 7'h0;
     else
-        step <= #1 { step[10:0],rd_lq };
+        step <= #1 { step[5:0],rd_lq };
 end        
 
 always @ (posedge clk or negedge reset_n)
@@ -359,10 +359,16 @@ begin
     case(fsm)
     IDLE: if(sync_in)
         next_fsm = DATA_I;
+          else
+        next_fsm = IDLE;
     DATA_I: if(sync_end)
 	next_fsm = CNU_U;
+	    else
+	    next_fsm = DATA_I;
     CNU_U: if(rd_lq_end)
 	next_fsm = VNU_U;
+	    else
+	    next_fsm = CNU_U;
     VNU_U: if(wr_lq_end) begin
 	if(!error_det)    
 	next_fsm = DATA_O;
@@ -373,6 +379,8 @@ begin
 	next_fsm = VNU_U;
     DATA_O: if(sync_out_end)
 	next_fsm = IDLE;
+	    else
+	    next_fsm = DATA_O;
     default:
 	next_fsm = IDLE;
     endcase

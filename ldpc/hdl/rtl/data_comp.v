@@ -138,9 +138,9 @@ input   [D_WID-1:0]   dout32     ;
 input   [D_WID-1:0]   dout33     ;
 input   [D_WID-1:0]   dout34     ;
 input   [D_WID-1:0]   dout35     ;
-input  [4*D_WID+19:0] mem0_in    ; 
-input  [4*D_WID+19:0] mem1_in    ; 
-input  [4*D_WID+19:0] mem2_in    ; 
+input  [4*D_WID+19:0] mem0_out   ; 
+input  [4*D_WID+19:0] mem1_out   ; 
+input  [4*D_WID+19:0] mem2_out   ; 
 
 //Output ports
 output                ctv_out   ;
@@ -181,9 +181,9 @@ output  [D_WID-1:0]   din32     ;
 output  [D_WID-1:0]   din33     ;
 output  [D_WID-1:0]   din34     ;
 output  [D_WID-1:0]   din35     ;
-output [4*D_WID+19:0] mem0_out  ; 
-output [4*D_WID+19:0] mem1_out  ; 
-output [4*D_WID+19:0] mem2_out  ; 
+output [4*D_WID+19:0] mem0_in   ; 
+output [4*D_WID+19:0] mem1_in   ; 
+output [4*D_WID+19:0] mem2_in   ; 
 
 
 reg     [1:0]         cycle_dly  ;
@@ -1146,7 +1146,26 @@ begin : cnu_sel_r
    vnug_d = { data_buffer5a, data_buffer19c, data_buffer11b, data_buffer15c, data_buffer33c, data_buffer27c };
    vnuh_d = { data_buffer5a, data_buffer24c, data_buffer35c, data_buffer11c, data_buffer14c, data_buffer29c };
    end
-   else;
+   else begin
+   vnu0_d = { data_buffer0a , data_buffer6a  , data_buffer16a , data_buffer21a , data_buffer27a , data_buffer34a  };
+   vnu1_d = { data_buffer0a , data_buffer10a , data_buffer25a , data_buffer13b , data_buffer34b , data_buffer21b  };
+   vnu2_d = { data_buffer0a , data_buffer11a , data_buffer22a , data_buffer27b , data_buffer16b , data_buffer25b  };
+   vnu3_d = { data_buffer1a , data_buffer8a  , data_buffer17a , data_buffer29b , data_buffer32a , data_buffer25c  };
+   vnu4_d = { data_buffer1a , data_buffer4c  , data_buffer12b , data_buffer27c , data_buffer9c  , data_buffer20b  };
+   vnu5_d = { data_buffer1a , data_buffer23a , data_buffer33b , data_buffer7b  , data_buffer19b , data_buffer12c  };
+   vnu6_d = { data_buffer2a , data_buffer30a , data_buffer35b , data_buffer32a , data_buffer23b , data_buffer7c   };
+   vnu7_d = { data_buffer2a , data_buffer30b , data_buffer23c , data_buffer20c , data_buffer10c , data_buffer8b   };
+   vnu8_d = { data_buffer2a , data_buffer19c , data_buffer28c , data_buffer5c  , data_buffer17c , data_buffer22c  };
+   vnu9_d = { data_buffer3a , data_buffer12a , data_buffer18a , data_buffer24a , data_buffer31a , data_buffer6b   };
+   vnua_d = { data_buffer4a , data_buffer13a , data_buffer28a , data_buffer18b , data_buffer6c  , data_buffer31a  };
+   vnub_d = { data_buffer7a , data_buffer19a , data_buffer33a , data_buffer29a , data_buffer13c , data_buffer4b   };
+   vnuc_d = { data_buffer3a , data_buffer14a , data_buffer20a , data_buffer32a , data_buffer9a  , data_buffer22b  };
+   vnud_d = { data_buffer9b , data_buffer15a , data_buffer31a , data_buffer24b , data_buffer21c , data_buffer34c  };
+   vnue_d = { data_buffer5a , data_buffer26a , data_buffer35a , data_buffer29c , data_buffer15b , data_buffer10b  };
+   vnuf_d = { data_buffer3a , data_buffer16c , data_buffer11b , data_buffer26b , data_buffer14b , data_buffer18c  };
+   vnug_d = { data_buffer35c, data_buffer26c , data_buffer5b  , data_buffer28b , data_buffer14c , data_buffer17b  };
+   vnuh_d = { data_buffer15c, data_buffer33c , data_buffer11c , data_buffer24c , data_buffer30c , data_buffer8c   };
+   end
 end   
 
 always @ (*)
@@ -1171,7 +1190,26 @@ begin : cnu_data_out_r
    { data_out5b, data_out19c, data_out11b, data_out15c, data_out33c, data_out27c } = vnug_q;
    { data_out5c, data_out24c, data_out35c, data_out11c, data_out14c, data_out29c } = vnuh_q;
    end
-   else;
+   else begin
+   { data_out0a , data_out6a  , data_out16a , data_out21a , data_out27a , data_out34a } = vnu0_q;
+   { data_out0b , data_out10a , data_out25a , data_out13b , data_out34b , data_out21b } = vnu1_q;
+   { data_out0c , data_out11a , data_out22a , data_out27b , data_out16b , data_out25b } = vnu2_q;
+   { data_out1a , data_out8a  , data_out17a , data_out29b , data_out32a , data_out25c } = vnu3_q;
+   { data_out1b , data_out4c  , data_out12b , data_out27c , data_out9c  , data_out20b } = vnu4_q;
+   { data_out1c , data_out23a , data_out33b , data_out7b  , data_out19b , data_out12c } = vnu5_q;
+   { data_out2a , data_out30a , data_out35b , data_out32a , data_out23b , data_out7c  } = vnu6_q;
+   { data_out2b , data_out30b , data_out23c , data_out20c , data_out10c , data_out8b  } = vnu7_q;
+   { data_out2c , data_out19c , data_out28c , data_out5c  , data_out17c , data_out22c } = vnu8_q;
+   { data_out3a , data_out12a , data_out18a , data_out24a , data_out31a , data_out6b  } = vnu9_q;
+   { data_out4a , data_out13a , data_out28a , data_out18b , data_out6c  , data_out31a } = vnua_q;
+   { data_out7a , data_out19a , data_out33a , data_out29a , data_out13c , data_out4b  } = vnub_q;
+   { data_out3b , data_out14a , data_out20a , data_out32a , data_out9a  , data_out22b } = vnuc_q;
+   { data_out9b , data_out15a , data_out31a , data_out24b , data_out21c , data_out34c } = vnud_q;
+   { data_out5a , data_out26a , data_out35a , data_out29c , data_out15b , data_out10b } = vnue_q;
+   { data_out3c , data_out16c , data_out11b , data_out26b , data_out14b , data_out18c } = vnuf_q;
+   { data_out35c, data_out26c , data_out5b  , data_out28b , data_out14c , data_out17b } = vnug_q;
+   { data_out15c, data_out33c , data_out11c , data_out24c , data_out30c , data_out8c  } = vnuh_q;
+   end
 end   
 
 always @ (posedge clk or negedge reset_n)
