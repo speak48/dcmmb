@@ -20,7 +20,12 @@ wire            sync_out;
 wire            busy;
 wire [4:0]      num_iter;
 
-`include "debug.v"
+//`include "debug.v"
+integer         file_out;
+initial begin
+file_out = $fopen("../debussy/out.dat");
+end
+
 task clock_gen;
 begin   
    clk = 1'b0;
@@ -92,5 +97,11 @@ ldpc u_ldpc_dec(
     num_iter
 );
 
+
+always @ (posedge clk)
+begin
+   if(sync_out)
+   $fdisplay(file_out,"%d",data_out);
+end
 
 endmodule

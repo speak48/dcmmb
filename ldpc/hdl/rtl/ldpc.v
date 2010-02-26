@@ -262,10 +262,17 @@ wire   [4*D_WID+19:0] mem0_out   ;
 wire   [4*D_WID+19:0] mem1_out   ;   
 wire   [4*D_WID+19:0] mem2_out   ;   
 wire                  sigma_vnu  ;
+wire     [35:0]       out_sel    ;
+wire                  out_en     ;
 
 reg     [35:0]        sync_dly   ;
 reg     [D_WID-1:0]   data_dly   ;
 reg     [5:0]         sync_count ;
+reg                   data_out   ;
+reg                   sync_out   ;
+reg                   dec_out    ;
+reg      [35:0]       out_sel_dly;  
+reg                   out_en_dly ;  
 
 wire    [3:0]         fsm        ;
 wire                  sync_in6   ;
@@ -302,7 +309,79 @@ begin : data_dly_r
         data_dly <= #1 {{2{data_in[D_WID-3]}},data_in};
 end
 
+always @ (posedge clk or negedge reset_n)
+begin : out_sel_d
+    if(!reset_n)
+        out_sel_dly <= #1 36'h0;
+    else
+        out_sel_dly <= #1 out_sel;
+end
 
+always @ (posedge clk or negedge reset_n)
+begin : out_en_d
+    if(!reset_n)
+        out_en_dly <= #1 1'b0;
+    else
+        out_en_dly <= #1 out_en;
+end 
+
+always @ (posedge clk or negedge reset_n)
+begin : sync_r
+    if(!reset_n)
+        sync_out <= #1 1'b0;
+    else
+        sync_out <= #1 out_en_dly;
+end
+        
+always @ (posedge clk or negedge reset_n)
+begin : data_r
+    if(!reset_n)
+        data_out <= #1 1'b0;
+    else if(out_en_dly)
+        data_out <= #1 dec_out;
+end
+
+always @ (*)
+case(out_sel_dly)
+36'h0_0000_0001: dec_out = dout00[D_WID-1];
+36'h0_0000_0002: dec_out = dout01[D_WID-1];
+36'h0_0000_0004: dec_out = dout02[D_WID-1];
+36'h0_0000_0008: dec_out = dout03[D_WID-1];
+36'h0_0000_0010: dec_out = dout04[D_WID-1];
+36'h0_0000_0020: dec_out = dout05[D_WID-1];
+36'h0_0000_0040: dec_out = dout06[D_WID-1];
+36'h0_0000_0080: dec_out = dout07[D_WID-1];
+36'h0_0000_0100: dec_out = dout08[D_WID-1];
+36'h0_0000_0200: dec_out = dout09[D_WID-1];
+36'h0_0000_0400: dec_out = dout10[D_WID-1];
+36'h0_0000_0800: dec_out = dout11[D_WID-1];
+36'h0_0000_1000: dec_out = dout12[D_WID-1];
+36'h0_0000_2000: dec_out = dout13[D_WID-1];
+36'h0_0000_4000: dec_out = dout14[D_WID-1];
+36'h0_0000_8000: dec_out = dout15[D_WID-1];
+36'h0_0001_0000: dec_out = dout16[D_WID-1];
+36'h0_0002_0000: dec_out = dout17[D_WID-1];
+36'h0_0004_0000: dec_out = dout18[D_WID-1];
+36'h0_0008_0000: dec_out = dout19[D_WID-1];
+36'h0_0010_0000: dec_out = dout20[D_WID-1];
+36'h0_0020_0000: dec_out = dout21[D_WID-1];
+36'h0_0040_0000: dec_out = dout22[D_WID-1];
+36'h0_0080_0000: dec_out = dout23[D_WID-1];
+36'h0_0100_0000: dec_out = dout24[D_WID-1];
+36'h0_0200_0000: dec_out = dout25[D_WID-1];
+36'h0_0400_0000: dec_out = dout26[D_WID-1];
+36'h0_0800_0000: dec_out = dout27[D_WID-1];
+36'h0_1000_0000: dec_out = dout28[D_WID-1];
+36'h0_2000_0000: dec_out = dout29[D_WID-1];
+36'h0_4000_0000: dec_out = dout30[D_WID-1];
+36'h0_8000_0000: dec_out = dout31[D_WID-1];
+36'h1_0000_0000: dec_out = dout32[D_WID-1];
+36'h2_0000_0000: dec_out = dout33[D_WID-1];
+36'h4_0000_0000: dec_out = dout34[D_WID-1];
+36'h8_0000_0000: dec_out = dout35[D_WID-1];
+default: dec_out = 1'b0;
+endcase
+        
 //vtc_cell cel_00(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 0]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr00),.rd_addr(),.ram_wr(wr00),.ram_d(),.dctv(dctv00));
 //vtc_cell cel_01(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 1]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr01),.rd_addr(),.ram_wr(wr01),.ram_d(),.dctv(dctv01));
 //vtc_cell cel_02(.clk(clk),.reset_n(reset_n),.sin(sync_dly[ 2]),.din(data_dly),.fsm(fsm),.rate(rate),.cycle(cycle),.wr_addr(wr_addr02),.rd_addr(),.ram_wr(wr02),.ram_d(),.dctv(dctv02));
@@ -415,6 +494,8 @@ addr_gen u_addr_gen(
     .wr_lr      (  wr_lr  ),
     .rd_lq      (  rd_lq  ),
     .rd_lr      (  rd_lr  ),
+    .out_sel    (out_sel  ),
+    .out_en     (out_en   ),
     .rd_addr00  (rd_addr00),
     .rd_addr01  (rd_addr01),
     .rd_addr02  (rd_addr02),
