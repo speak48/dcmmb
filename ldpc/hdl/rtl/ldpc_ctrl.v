@@ -42,14 +42,12 @@ output               rd_lq      ;
 output               rd_lr      ;
 
 //Paramter
-parameter DATA_IN  = 4'b0010,
-          CNU      = 4'b0100,
-          DATA_OUT = 4'b1000;
-parameter IDLE     = 'h0001,
+parameter IDLE     = 5'b00001,
           DATA_I   = 5'b00010,
           CNU_U    = 5'b00100,
 	  VNU_U    = 5'b01000,
           DATA_O   = 5'b10000;
+//	  WAIT     = 5'b00001;
 
 //Intenal Reg and Wires Definition
 //reg     [3:0]        fsm_state  ;
@@ -60,6 +58,7 @@ reg     [4:0]        num_iter   ;
 
 reg                  sync_dly   ;
 reg                  sync_dly2  ;
+reg                  sync_out_d ;
 //reg     [3:0]        next_state ;
 reg    [12:0]        counter    ;
 //reg                  wr_ena     ;
@@ -126,12 +125,27 @@ always @ (posedge clk or negedge reset_n)
 begin : busy_r
     if(!reset_n)
         busy <= #1 1'b0;
-    else if(iter_end)
+    else if(finish)
         busy <= #1 1'b0;
     else if(sync_end)
         busy <= #1 1'b1;    
 end     
 
+always @ (posedge clk or negedge reset_n)
+begin : finish_r
+    if(!reset_n)
+        finish <= #1 1'b0;
+    else
+	finish <= #1 sync_out_d;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : sync_out_d1
+    if(!reset_n)
+        sync_out_d <= #1 1'b0;
+    else
+	sync_out_d <= sync_out_end;
+end
 // FSM
 /*
 always @ (posedge clk or negedge reset_n)
@@ -347,7 +361,7 @@ begin : error_det_r
 end
 
 always @ (posedge clk or negedge reset_n)
-begin 
+begin : fsm_r 
     if(!reset_n)
         fsm <= #1 IDLE;
     else
@@ -358,29 +372,31 @@ always @ (*)
 begin
     case(fsm)
     IDLE: if(sync_in)
-        next_fsm = DATA_I;
+            next_fsm = DATA_I;
           else
-        next_fsm = IDLE;
+            next_fsm = IDLE;
     DATA_I: if(sync_end)
-	next_fsm = CNU_U;
+	    next_fsm = CNU_U;
 	    else
 	    next_fsm = DATA_I;
     CNU_U: if(rd_lq_end)
-	next_fsm = VNU_U;
+	    next_fsm = VNU_U;
 	    else
 	    next_fsm = CNU_U;
     VNU_U: if(wr_lq_end) begin
-	if(!error_det)    
-	next_fsm = DATA_O;
+	if(!error_det | iter_end)    
+	    next_fsm = DATA_O;
         else 
-        next_fsm = CNU_U;
+            next_fsm = CNU_U;
         end
 	else
-	next_fsm = VNU_U;
+	    next_fsm = VNU_U;
     DATA_O: if(sync_out_end)
-	next_fsm = IDLE;
+	    next_fsm = IDLE;
 	    else
 	    next_fsm = DATA_O;
+//    WAIT: 
+//	next_fsm = IDLE;
     default:
 	next_fsm = IDLE;
     endcase

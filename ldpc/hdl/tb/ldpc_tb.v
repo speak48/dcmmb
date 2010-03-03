@@ -1,4 +1,4 @@
-qishi `timescale 1ns/1ns
+`timescale 1ns/1ns
 `define DEBUG
 //Module
 module ldpc_tb;
