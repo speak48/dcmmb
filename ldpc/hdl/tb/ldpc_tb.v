@@ -62,6 +62,16 @@ begin
     end
     sync_in = 1'b0;
     data_in = 'd0;
+    #(9000*CLK_PRD);
+    for ( i = 0; i < DATA_DEP; i=i+1 )
+    begin
+      temp = mem_data[i];
+      data_in = temp[D_WID-1:0];
+      sync_in = 1'b1;
+      #(CLK_PRD);
+    end
+    sync_in = 1'b0;
+    data_in = 'd0;
     #(9000*CLK_PRD)
     $finish;
 end

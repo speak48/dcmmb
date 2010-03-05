@@ -36,14 +36,18 @@ begin : wr_addr_r
     if(!reset_n)
         wr_addr <= #1 {A_WID{1'b0}};
     else begin
-        if(ram_wr & fsm[1])    
+    	if(fsm[1]) begin
+        if(ram_wr)
         wr_addr <= #1 wr_addr + 1'b1;
+        end
         else if(fsm[2]) begin
         if(wr_en) 
         wr_addr <= #1 base_addr + addr_offset1;
         else
         wr_addr <= #1 {A_WID{1'b0}};
         end
+        else
+        wr_addr <= #1 {A_WID{1'b0}};
     end
 end    
 
