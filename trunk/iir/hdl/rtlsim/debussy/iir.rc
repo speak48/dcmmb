@@ -1,0 +1,102 @@
+Magic 271485
+Revision 5.4v9
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort -4 -4 1160 844 177 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / -i 0 "" "D:\svn\iir\hdl\rtlsim\run_dir\iir.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 3
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 449.412986 611.410690
+cursor 496.000000
+marker 0.000000
+
+; visible top row signal index
+top 0
+; marker line index
+markerPos 36
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "D:\svn\iir\hdl\rtlsim\run_dir\iir.fsdb"
+addSignal -h 15 /iir_sim/u_iir/clk
+addSignal -h 15 -UNSIGNED -HEX /iir_sim/data_in[9:0]
+addSignal -h 15 -2COMP -UDEC /iir_sim/u_iir/data_dly[9:0]
+addSignal -h 15 -2COMP -UDEC -holdScope b1[12:0]
+addSignal -h 15 -2COMP -UDEC -holdScope state1[11:0]
+addSignal -h 15 /BLANK
+addSignal -h 15 -2COMP -UDEC /iir_sim/u_iir/b2[13:0]
+addSignal -h 15 -2COMP -UDEC -holdScope state2[14:0]
+addSignal -h 15 /BLANK
+addSignal -h 15 -2COMP -UDEC /iir_sim/u_iir/b3[14:0]
+addSignal -h 15 -2COMP -UDEC -holdScope state3[13:0]
+addSignal -h 15 /BLANK
+addSignal -h 15 -2COMP -UDEC /iir_sim/u_iir/b4[12:0]
+addSignal -h 15 -2COMP -UDEC -holdScope state4[13:0]
+addSignal -h 15 /BLANK
+addSignal -h 15 -2COMP -UDEC /iir_sim/u_iir/b5[14:0]
+addSignal -h 15 -2COMP -UDEC -holdScope state5[12:0]
+addSignal -h 15 /BLANK
+addSignal -h 15 -2COMP -UDEC /iir_sim/u_iir/b6[13:0]
+addSignal -h 15 -2COMP -UDEC -holdScope state6[15:0]
+addSignal -h 15 /BLANK
+addSignal -h 15 -2COMP -UDEC /iir_sim/u_iir/b7[15:0]
+addSignal -h 15 -2COMP -UDEC -holdScope state7[14:0]
+addSignal -h 15 -2COMP -UDEC -holdScope data_out_w[14:0]
+addSignal -h 15 -2COMP -UDEC -holdScope data_out[9:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_out_r[9:0]
+addSignal -h 15 -holdScope data_out_r[9]
+addSignal -h 15 -holdScope data_out_r[8]
+addSignal -h 15 -holdScope data_out_r[7]
+addSignal -h 15 -holdScope data_out_r[6]
+addSignal -h 15 -holdScope data_out_r[5]
+addSignal -h 15 -holdScope data_out_r[4]
+addSignal -h 15 -holdScope data_out_r[3]
+addSignal -h 15 -holdScope data_out_r[2]
+addSignal -h 15 -holdScope data_out_r[1]
+addSignal -h 15 -holdScope data_out_r[0]
+addGroup "G2"
+addSignal -h 15 -2COMP -UDEC /iir_sim/u_iir/alpha1[10:0]
+addSignal -h 15 -2COMP -UDEC -holdScope alpha2[10:0]
+addSignal -h 15 -2COMP -UDEC -holdScope alpha3[10:0]
+addSignal -h 15 -2COMP -UDEC -holdScope alpha4[10:0]
+addSignal -h 15 -2COMP -UDEC -holdScope alpha5[10:0]
+addSignal -h 15 -2COMP -UDEC -holdScope alpha6[10:0]
+addSignal -h 15 -2COMP -UDEC -holdScope alpha7[10:0]
+addGroup "G3"
+
+; grid status
+; gridSignal signal_name
+; gridEdge 0 | 1
+; gridCount
+; gridCycleTime from to cycleTime
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+
