@@ -6,10 +6,11 @@ module bidin(
 		bidin_ena_in, 
 		bidin_din, 
 		ldpc_req,
+		ldpc_fin,
 		
 		// Output Ports
 		bidin_rdy,
-
+                bidin_full,
 		bidin_ena_out,
 		bidin_dout
 		);
@@ -22,11 +23,13 @@ input		      bidin_sync_in;
 input		      bidin_ena_in;
 input   [WID-1:0]     bidin_din;
 input                 ldpc_req;
+input                 ldpc_fin;
 
 //Output ports declaration
 output                bidin_rdy;
 output                bidin_ena_out;
 output   [WID-1:0]    bidin_dout;
+output                bidin_full;
 
 ////////////////////////////////////////////////
 //signal declaration
@@ -51,7 +54,9 @@ main_man u_main_man(
    .bidin_ena_in   (bidin_ena_in ),
    .bidin_din      (bidin_din    ),
    .ldpc_req       (ldpc_req     ),
+   .ldpc_fin       (ldpc_fin     ),
    .bidin_rdy      (bidin_rdy    ),
+   .bidin_full     (bidin_full   ),
    .bidin_ena_out  (bidin_ena_out),
    .bidin_dout     (bidin_dout   ),
 
