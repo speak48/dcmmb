@@ -10,6 +10,7 @@ module main_man(
     bidin_full   ,
     bidin_ena_out,
     bidin_dout   ,
+
     
     main_addr    ,
     main_data_i  ,
@@ -33,6 +34,7 @@ output                    bidin_rdy    ;
 output                    bidin_ena_out;
 output  [WID-1:0]         bidin_dout   ;
 output                    bidin_full   ;
+
     
 output  [17:0]            main_addr    ;
 output  [WID-1:0]         main_data_i  ;
@@ -42,7 +44,7 @@ output                    main_wr      ;
 
 parameter     IDLE    = 'h1,
               WR_1ST  = 'h2,
-              WR_RD   = 'h4;
+              WR_MORE   = 'h4;
 
 reg         [4:0]         state        ;
 reg         [4:0]         next_state   ;
@@ -153,6 +155,7 @@ begin :main_addr_r
         main_addr <= #1 dv_dly ? wr_addr : rd_addr;
 end
 
+
 always @ (*)
 begin
     if(state_idle | wr_full) begin
@@ -190,7 +193,7 @@ begin
                 num_col_r = num_col+1'b1;
                 end
          end
-    end  
+    end	 
     else begin
         wr_addr_r = wr_addr ;
         num_row_r = num_row ;
@@ -238,20 +241,20 @@ begin
         else begin
             if((num1_col == 9'd359) && ( num1_row == 9'd359)) begin
                 rd_addr_r = 'd138240;
-                num1_row_r = 9'h0;
-                num1_col_r = num1_col + 1'b1;
+		num1_row_r = 9'h0;
+		num1_col_r = num1_col + 1'b1;
             end
-            else if(num1_col > 9'd359) begin
+	    else if(num1_col > 9'd359) begin
                 if(num1_row == 9'd359) begin
-                    rd_addr_r  = 'd138240 + num1_col - 9'd359;
+		    rd_addr_r  = 'd138240 + num1_col - 9'd359;
                     num1_row_r = 9'h0;
-                    num1_col_r = num1_col + 1'b1;
+	            num1_col_r = num1_col + 1'b1;
                 end
                 else begin
                     rd_addr_r = rd_addr + 'd24;
                     num1_row_r = num1_row + 1'b1;
                     num1_col_r = num1_col;
-                end                 
+                end		    
             end
             else begin
                 if(num1_row == 9'd359) begin
@@ -259,14 +262,14 @@ begin
                     num1_row_r = 9'h0;
                     num1_col_r = num1_col + 1'b1;
                 end
-                else begin         
-                    rd_addr_r = rd_addr + 9'd360;
+		else begin	   
+		    rd_addr_r = rd_addr + 9'd360;
                     num1_row_r = num1_row + 1'b1;
                     num1_col_r = num1_col;
                 end
-            end
+	    end
         end
-    end     
+    end	    
     else begin
         rd_addr_r = rd_addr ;
         num1_row_r = num1_row ;
@@ -335,15 +338,15 @@ begin
           end
     WR_1ST: begin
           if(rst_count)
-              next_state = WR_RD;
+              next_state = WR_MORE;
           else
               next_state = WR_1ST;
           end
-    WR_RD: begin
-          if(rd_full)
+    WR_MORE: begin
+          if(rd_full & (count == 'h0))
               next_state = IDLE;
           else
-              next_state = WR_RD;
+              next_state = WR_MORE;
           end
      default: next_state = IDLE;
      endcase 
@@ -351,12 +354,12 @@ end
 
 always @ (posedge clk or negedge rst_n)
 begin : bidin_full_r
-    if(!rst_n)  
+    if(!rst_n)	
         bidin_full <= #1 1'b0;
     else if((count =='d138237) | ( ldpc_fin & rd_addr != 0) )
-        bidin_full <= #1 1'b1;
+	bidin_full <= #1 1'b1;
     else if(!main_en & main_rd_dly)
-        bidin_full <= #1 1'b0;
+	bidin_full <= #1 1'b0;
 end
 
 always @ (posedge clk or negedge rst_n)
@@ -370,14 +373,14 @@ end
 always @ (posedge clk or negedge rst_n)
 begin : bidin_ena_r
     if(!rst_n)
-        bidin_ena_out <= #1 1'b0;           
+        bidin_ena_out <= #1 1'b0;
     else
         bidin_ena_out <= #1 main_rd_dly;
 end
 
 always @ (posedge clk or negedge rst_n)
 begin : main_rd_d
-    if(!rst_n)  
+    if(!rst_n)	
         main_rd_dly <= #1 1'b0;
     else
         main_rd_dly <= #1 main_en & (!main_wr);
