@@ -90,6 +90,7 @@ wire   [12:0]        counter_max;
 wire                 fsm_cnu    ;
 wire                 rd_lq_end  ;
 wire                 wr_lq_end  ;
+wire                 wr_lq_pre  ;
 
 assign cycle = {rd_cycle, wr_cycle};
 assign wr_lr = wr_lr_ena;
@@ -225,7 +226,7 @@ begin: counter_r
     if(!reset_n)
         counter <= #1 13'h0;
     else if(fsm[2] | fsm[3]) begin 
-        if(counter == 'd777)   
+        if(wr_lq_end)   
             counter <= #1 13'h0;
         else
             counter <= #1 counter + 1'b1;
@@ -318,7 +319,8 @@ end
 
 assign fsm_cnu = (( fsm == DATA_I ) | fsm == VNU_U) & ( next_fsm == CNU_U );
 assign rd_lq_end = (counter == 'd767);
-assign wr_lq_end = (counter == 'd777);
+assign wr_lq_end = (counter == 'd778);
+assign wr_lq_pre = (counter == 'd777);
 
 always @ (posedge clk or negedge reset_n)
 begin : rd_lq_ena_r
@@ -334,7 +336,7 @@ always @ (posedge clk or negedge reset_n)
 begin : wr_lq_ena_r
     if(!reset_n)
         wr_lq_ena <= #1 1'b0;
-    else if(wr_lq_end)
+    else if(wr_lq_pre)
 	wr_lq_ena <= #1 1'b0;
     else if(step[6] & rd_lq_ena)
 	wr_lq_ena <= #1 1'b1;
@@ -344,7 +346,7 @@ always @ (posedge clk or negedge reset_n)
 begin : wr_lr_ena_r
     if(!reset_n)
         wr_lr_ena <= #1 1'b0;
-    else if(wr_lq_end)
+    else if(counter == 'd777)
 	wr_lr_ena <= #1 1'b0;
     else if(step[6] & rd_lq_ena)
 	wr_lr_ena <= #1 1'b1;
