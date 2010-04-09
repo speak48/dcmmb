@@ -6,8 +6,8 @@
 #------------------------------------------------------------------------
 # Variables
 #------------------------------------------------------------------------
-project=iir
-topmodulename=iir
+project=bidin
+topmodulename=bidin
 cdc_hier=0
 lib=1
 

@@ -62,7 +62,7 @@ begin
     end
     sync_in = 1'b0;
     data_in = 'd0;
-    #(9000*CLK_PRD);
+    #(10000*CLK_PRD) ;
     for ( i = 0; i < DATA_DEP; i=i+1 )
     begin
       temp = mem_data[i];
@@ -72,7 +72,7 @@ begin
     end
     sync_in = 1'b0;
     data_in = 'd0;
-    #(9000*CLK_PRD)
+    #(10000*CLK_PRD)  
     $finish;
 end
 endtask
