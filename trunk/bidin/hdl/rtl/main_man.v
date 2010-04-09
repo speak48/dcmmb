@@ -10,7 +10,6 @@ module main_man(
     bidin_full   ,
     bidin_ena_out,
     bidin_dout   ,
-
     
     main_addr    ,
     main_data_i  ,
@@ -44,7 +43,7 @@ output                    main_wr      ;
 
 parameter     IDLE    = 'h1,
               WR_1ST  = 'h2,
-              WR_MORE   = 'h4;
+              WR_RD   = 'h4;
 
 reg         [4:0]         state        ;
 reg         [4:0]         next_state   ;
@@ -65,7 +64,11 @@ reg         [8:0]         num_col      ;
 reg         [8:0]         num_row_r    ;
 reg         [8:0]         num_col_r    ;
 reg         [17:0]        wr_addr_r    ;
+reg         [17:0]        wr_addr2_r   ;
+reg         [17:0]        wr_addr2     ;
 reg         [17:0]        rd_addr_r    ;
+reg         [17:0]        rd_addr2_r   ;
+reg         [17:0]        rd_addr2     ;
 reg         [8:0]         num1_row     ;
 reg         [8:0]         num1_col     ;
 reg         [8:0]         num1_row_r   ;
@@ -201,6 +204,48 @@ begin
     end
 end
 
+wire [14:0] temp = wr_addr2[17:3];
+always @ (*)
+begin
+    if(state_idle | wr_full) begin
+        wr_addr2_r = 9'h0;
+        end
+    else if(dv_dly) begin
+        if(!wr_hv) begin
+            if(num_row == 9'd383) begin
+                wr_addr2_r = num_col + 1'b1;
+             end
+             else begin
+                wr_addr2_r = wr_addr2 + 9'd360;
+             end
+        end
+        else begin
+            if(num_col == 9'd359) begin
+                wr_addr2_r = 18'd138240 + (num_row[8:3] * 'd24 * 'd8) + num_row[2:0];
+                end
+            else if(num_col == 9'd383) begin
+                if(num_row[2:0] == 3'b111)
+                wr_addr2_r = 'd360 * 'd8 *(num_row[8:3] + 1'b1);
+                else
+                wr_addr2_r = 'd360 * 'd8 * num_row[8:3] + num_row[2:0] + 1'b1; 
+//                wr_addr2_r = 360 * (num_row + 1'b1);
+                end
+            else begin
+                wr_addr2_r = wr_addr2 + 4'b1000;
+                end
+         end
+    end  
+    else begin
+        wr_addr2_r = wr_addr2 ;
+    end
+end
+always @ (posedge clk or negedge rst_n)
+begin :wr_addr2_d
+    if(!rst_n)
+        wr_addr2 <= #1 'h0;
+    else
+        wr_addr2 <= #1 wr_addr2_r;
+end
 always @ (posedge clk or negedge rst_n)
 begin :wr_addr_d
     if(!rst_n)
@@ -228,7 +273,7 @@ end
 always @ (*)
 begin
     if(state_idle | rd_full) begin
-        rd_addr_r = 9'h0;
+        rd_addr_r = 18'h0;
         num1_row_r = 9'd0;
         num1_col_r = 9'd0;
         end
@@ -275,6 +320,44 @@ begin
         num1_row_r = num1_row ;
         num1_col_r = num1_col ;
     end
+end
+always @ (*)
+begin
+    if(state_idle | rd_full )
+        rd_addr2_r = 18'h0;
+    else if(ldpc_req) begin
+        if(!rd_hv)
+            rd_addr2_r = rd_addr2 + 1'b1;
+        else begin
+            if((num1_col == 9'd359) && ( num1_row == 9'd359))
+                rd_addr2_r = 'd138240;
+            else if(num1_col > 9'd359) begin
+                if(num1_row == 9'd359)
+                    rd_addr2_r = 'd138240 + (num1_col - 9'd359) * 'h8;
+                else if(num1_row[2:0] == 3'b111)
+                    rd_addr2_r = 'd138240 + (num1_row[8:3] + 1'b1) * 'd24 * 'd8 + (num1_col - 9'd360) * 'd8 ;
+                else
+                    rd_addr2_r = rd_addr2 + 1'b1;
+                end
+            else begin
+                if(num1_row == 9'd359)
+                    rd_addr2_r = (num1_col + 1'b1)* 'h8;
+                else if(num1_row[2:0] == 3'b111)
+                    rd_addr2_r = (num1_row[8:3] + 1'b1) * 'd360 * 'd8 + { num1_col, 3'h0};
+                else
+                    rd_addr2_r = rd_addr2 + 1'b1;
+                end
+            end
+        end
+    else
+        rd_addr2_r = rd_addr2;
+end
+always @ (posedge clk or negedge rst_n)
+begin :rd_addr2_d
+    if(!rst_n)
+        rd_addr2 <= #1 'h0;
+    else
+        rd_addr2 <= #1 rd_addr2_r;
 end
 
 always @ (posedge clk or negedge rst_n)
@@ -338,15 +421,15 @@ begin
           end
     WR_1ST: begin
           if(rst_count)
-              next_state = WR_MORE;
+              next_state = WR_RD;
           else
               next_state = WR_1ST;
           end
-    WR_MORE: begin
+    WR_RD: begin
           if(rd_full & (count == 'h0))
               next_state = IDLE;
           else
-              next_state = WR_MORE;
+              next_state = WR_RD;
           end
      default: next_state = IDLE;
      endcase 
@@ -373,7 +456,7 @@ end
 always @ (posedge clk or negedge rst_n)
 begin : bidin_ena_r
     if(!rst_n)
-        bidin_ena_out <= #1 1'b0;
+        bidin_ena_out <= #1 1'b0;           
     else
         bidin_ena_out <= #1 main_rd_dly;
 end

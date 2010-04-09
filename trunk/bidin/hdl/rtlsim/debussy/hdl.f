@@ -3,3 +3,8 @@
 ../../rtl/bidin.v
 ../../rtl/main_man.v
 ../../rtl/sram146880x6.v      
+../../rtl/sramdphs8192x6.v
+../../rtl/sram147456x6.v     
+../../rtl/sram8192x48.v     
+../../rtl/sram2048x48.v     
+/ecad/synopsys/synthesis_z2007.03_sp1/dw/sim_ver/DW_fifoctl_s1_sf.v

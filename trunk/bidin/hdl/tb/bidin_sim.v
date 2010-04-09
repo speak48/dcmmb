@@ -176,6 +176,50 @@ end
     .rst               (~reset_n)
   );
 
+wire               fifoctl_we_n  ;
+wire               fifoctl_empty ;
+wire               fifoctl_aempty;
+wire               fifoctl_hfull ;
+wire               fifoctl_afull ;
+wire               fifoctl_full  ;
+wire               fifoctl_error ;
+wire   [12:0]      fifoctl_wr_addr;
+wire   [12:0]      fifoctl_rd_addr;
+wire    [5:0]      fifoctl_do    ;
+
+// Instance a DesignWare Foundation Library
+// Instance of DW_fifoctl_s1_sf
+DW_fifoctl_s1_sf #(8192, 1, 1, 0, 0)
+U1 (
+.clk           (clk            ), 
+.rst_n         (reset_n        ),
+.push_req_n    (~sync_in       ), 
+.pop_req_n     (~fifo_rd       ),
+.diag_n        (1'b1           ),
+.we_n          (fifoctl_we_n   ),
+.empty         (fifoctl_empty  ),
+.almost_empty  (fifoctl_aempty ),
+.half_full     (fifoctl_hfull  ),
+.almost_full   (fifoctl_afull  ), 
+.full          (fifoctl_full   ),
+.error         (fifoctl_error  ), 
+.wr_addr       (fifoctl_wr_addr),
+.rd_addr       (fifoctl_rd_addr) 
+);
+sramdphs8192x6 U2(
+   .QA    ( fifoctl_do  ),
+   .CLKA  ( clk         ),
+   .CENA  ( 1'b0        ),
+   .WENA  ( 1'b1        ),
+   .AA    ( fifoctl_rd_addr ),
+   .DA    ( ),
+   .QB    ( ),
+   .CLKB  ( clk         ),
+   .CENB  ( 1'b0        ),
+   .WENB  ( fifoctl_we_n ),
+   .AB    ( fifoctl_wr_addr),
+   .DB    ( data_in      )
+);
 task ldpc_read;
 integer i,j;	
 begin

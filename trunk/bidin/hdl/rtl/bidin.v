@@ -65,7 +65,7 @@ sram146880x6 u_sram146880x6(
     .A     (main_addr  ),
     .CLK   (clk6       ),
     .D     (main_data_i),
-    .Q     (main_data_o),
+    .Q     (),
     .CEN   (!main_en   ),
     .WEN   (!main_wr   )
 );
@@ -79,5 +79,13 @@ sram146880x6 u_sram146880x6(
     .we    (main_wr    )
 );
 */
+sram147456x6 u1(
+    .A     (main_addr  ),
+    .CLK   (clk6       ),
+    .D     (main_data_i),
+    .Q     (main_data_o),
+    .CE    (main_en   ),
+    .WE    (main_wr   )
+);
 endmodule
 
