@@ -10,6 +10,7 @@ module byte_mem(
     ldpc_rate  ,
     bydin_mode ,
     ts_en_rd   ,
+    ts_new     ,
     rs_ena     ,
     rs_mode    ,
     rs_finish  ,
@@ -27,6 +28,7 @@ module byte_mem(
     ts_en_rs   ,
 
     ts_int     ,
+    ts_overflow,
     ts_en_out  ,
     ts_dout    ,
 );
@@ -45,6 +47,7 @@ input            rs_ena        ;
 input            rs_finish     ;
 input            rs_en_out     ;
 input   [7:0]    rs_dout       ;
+input            ts_new        ;
 
 input   [7:0]    mem_do        ;
 output [16:0]    mem_addr      ;
@@ -57,11 +60,12 @@ output  [7:0]    rs_din        ;
 output           ts_en_rs      ;
 
 output           ts_int        ;
+output           ts_overflow   ;
 output           ts_en_out     ;
 output  [7:0]    ts_dout       ;
 
 
-parameter   MAX_ROW = 9'd432   ;
+parameter   MAX_ROW = 9'd288   ;
 
 parameter   IDLE   = 4'b0001   ,
             WR_IN  = 4'b0010   ,
@@ -82,8 +86,14 @@ reg     [7:0]    data_i        ;
 reg              mem_wr        ;
 reg              mem_rd        ;
 reg     [7:0]    data_out      ;
-reg              rd2rs         ;
+//reg              rd2rs         ;
 reg              rs_start      ;
+reg              byte_read     ;
+reg              mem_rd_dly    ;
+reg              state_rd_r    ;
+reg              rs_en_in      ;
+reg              rs_dec_end    ;
+reg              ts_overflow   ;
 
 reg     [8:0]    mi_r          ;
 reg     [7:0]    k_r           ;
@@ -94,12 +104,15 @@ reg     [8:0]    num_row_r     ;
 
 
 wire             state_idle    ;
+wire             state_wr      ;
 wire             write_end     ;
 wire             read_end      ;
 wire             rs_end        ;
+wire    [7:0]    rs_din        ;
+wire    [7:0]    ts_dout       ;
 
 assign ts_dout  = data_out ;
-assign rs_dout  = data_out ;
+assign rs_din   = data_out ;
 
 assign mem_addr = addr ;
 assign mem_en   = mem_wr | mem_rd ;
@@ -108,9 +121,11 @@ assign mem_di   = data_i;
 assign state_idle = (fsm == IDLE   );
 assign state_rs   = (fsm == RS_DEC );
 assign state_rd   = (fsm == RD_OUT );
-assign write_end = (num_row == mi_reg) & ( num_col == 'd239);
-assign read_end = state_rd & (num_row == mi_reg) & ( num_col == k_reg);
-assign rs_end = (num_row == mi_reg) & ( num_col == k_reg ) & rs_finish ;
+assign state_wr   = (fsm == WR_IN  );
+
+assign write_end = state_wr & (num_row == mi_reg) & ( num_col == 'd239);
+assign read_end = state_rd & (num_row == mi_reg) & ( num_col == k_reg) & byte_read;
+assign rs_end = (num_row == mi_reg) & ( num_col == k_reg ) & rs_dec_end ;
 
 always @ (*)
 begin
@@ -134,10 +149,10 @@ end
 always @ (*)
 begin
     case(rs_mode)	
-    2'b00: k_r = 8'd240;
-    2'b01: k_r = 8'd224;
-    2'b10: k_r = 8'd192;
-    2'b11: k_r = 8'd176;
+    2'b00: k_r = 8'd239;
+    2'b01: k_r = 8'd223;
+    2'b10: k_r = 8'd191;
+    2'b11: k_r = 8'd175;
     endcase
 end
 
@@ -163,6 +178,9 @@ end
 
 always @ (*)
 begin
+    if(ts_overflow)
+        next_fsm = IDLE;
+    else begin	    
     case(fsm)
     IDLE: if(byte_win & byte_sync)
               next_fsm = WR_IN;
@@ -184,15 +202,24 @@ begin
           else
               next_fsm = RD_OUT;
     endcase
+    end
 end
 
 // Interrupt Generation
 always @ (posedge clk or negedge reset_n)
 begin: ts_int_r
     if(!reset_n)
-         ts_int = 1'b0;
+        ts_int <= #1 1'b0;
     else
-         ts_int = (fsm != RD_OUT) & ( next_fsm == RD_OUT);
+        ts_int <= #1 (fsm != RD_OUT) & ( next_fsm == RD_OUT);
+end 
+
+always @ (posedge clk or negedge reset_n)
+begin: ts_overflow_r
+    if(!reset_n)
+        ts_overflow <= #1 1'b0;
+    else
+        ts_overflow <= #1 ( (fsm == RD_OUT) | (fsm == RS_DEC) ) & ts_new;
 end 
 
 always @ (posedge clk or negedge reset_n)
@@ -205,17 +232,25 @@ begin : ts_en_rs_d
         ts_en_rs <= #1 1'b1;
 end
 
+always @ (posedge clk or negedge reset_n)
+begin : byte_read_d	
+    if(!reset_n)
+        byte_read <= #1 1'b0;
+    else
+        byte_read <= #1 state_rd & ts_en_rd ;	    
+end
+
 always @ (*)
 begin	
     addr_r    = addr   ;	
     num_row_r = num_row;
     num_col_r = num_col;    
-    if(state_idle | write_end | read_end)  begin 
+    if(state_idle | write_end | read_end | rs_end )  begin 
         addr_r = 17'h0;
         num_row_r = 9'h0;
         num_col_r = 8'h0;
         end
-    else if(byte_sync | ts_en_rd) begin
+    else if((byte_sync & byte_win) | byte_read ) begin
 	if(num_row == mi_reg)  begin   
             addr_r = MAX_ROW * ( num_col + 1'b1);
             num_row_r = 9'h0;
@@ -227,7 +262,7 @@ begin
         end
         end
     else if(state_rs) begin
-        if(rd2rs) begin
+        if(mem_rd) begin
             if(num_col == 'd239)begin
 //                addr_r = num_row + 1'b1;
                 addr_r    = num_row;                
@@ -240,14 +275,14 @@ begin
             end            
         end   
 	else begin
-      	    if((num_col == k_reg) | rs_finish) begin
+      	    if((num_col == k_reg) | rs_dec_end) begin
                 addr_r = num_row + 1'b1;
                 num_col_r = 8'h0;
 		num_row_r = num_row + 1'b1;
                 end
             else if(mem_wr) begin
                 addr_r = addr + MAX_ROW;
-                num_col = num_col + 1'b1;
+                num_col_r = num_col + 1'b1;
             end
 	end
     end
@@ -283,8 +318,8 @@ begin : data_i_d
         data_i <= #1 8'h0;
     else if(byte_sync & byte_win)
         data_i <= #1 byte_data;        	    
-    else if(state_rs & ts_en_out)
-        data_i <= #1 ts_dout;
+    else if(state_rs & rs_en_out)
+        data_i <= #1 rs_dout;
 end
 
 always @ (posedge clk or negedge reset_n)
@@ -292,35 +327,49 @@ begin : mem_wr_d
     if(!reset_n)
         mem_wr <= #1 1'b0;
     else 
-        mem_wr <= #1 (byte_sync & byte_win ) | ( state_rs & ts_en_out);
+        mem_wr <= #1 (byte_sync & byte_win ) | ( state_rs & rs_en_out);
 end
 
 always @ (posedge clk or negedge reset_n)
 begin : mem_rd_d
     if(!reset_n)
         mem_rd <= #1 1'b0;
+    else if(state_rs) begin
+        if(num_col == 'd239)
+	mem_rd <= #1 1'b0;
+        else if( rs_start | (rs_dec_end & !rs_end) ) 
+	mem_rd <= #1 1'b1;
+        end
     else
-	mem_rd <= #1 (state_rd & ts_en_rd ) | ( state_rs & rd2rs );
+    	mem_rd <= #1 (state_rd & ts_en_rd );
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : mem_rd_d1
+    if(!reset_n)
+        mem_rd_dly <= #1 1'b0;
+    else
+	mem_rd_dly <= #1 mem_rd;
 end
 
 always @ (posedge clk or negedge reset_n)
 begin : data_out_r
     if(!reset_n)
         data_out <= #1 8'h0;
-    else if(mem_rd)
+    else if(mem_rd_dly)
 	data_out <= #1 mem_do;
 end
-
+/*
 always @ (posedge clk or negedge reset_n)
 begin : rd2rs_d
     if(!reset_n)
         rd2rs <= #1 1'b0;
     else if(num_col == 'd239)
 	rd2rs <= #1 1'b0;
-    else if( rs_start | rs_finish ) 
+    else if( rs_start | rs_dec_end ) 
 	rd2rs <= #1 1'b1;
 end
-
+*/
 always @ (posedge clk or negedge reset_n)
 begin : rs_start_d
     if(!reset_n)
@@ -334,7 +383,31 @@ begin : ts_en_d
     if(!reset_n)
 	ts_en_out <= #1 1'b0;
     else
-        ts_en_out <= #1 state_rd & mem_rd;
+        ts_en_out <= #1 mem_rd_dly & state_rd_r;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : state_rd_d	
+    if(!reset_n)
+        state_rd_r <= #1 1'b0;
+    else
+        state_rd_r <= #1 state_rd;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : rs_en_in_d
+    if(!reset_n)	
+        rs_en_in <= #1 1'b0;
+    else 
+        rs_en_in <= #1 mem_rd_dly & state_rs;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : rs_dec_end_d
+    if(!reset_n)
+        rs_dec_end <= #1 1'b0;
+    else
+        rs_dec_end <= #1 rs_finish;	    
 end
 
 endmodule

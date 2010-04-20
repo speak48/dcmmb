@@ -91,6 +91,9 @@ wire    [7:0]    ts0_mem_di        ;
 wire             ts0_mem_wr        ;
 wire             ts0_mem_en        ;
 wire             ts0_en_rs         ;
+wire             ts0_rs_en_in      ;
+wire    [7:0]    ts0_rs_din        ;
+wire             ts0_new           ;
 
 wire    [7:0]    ts1_mem_do        ;
 wire   [16:0]    ts1_mem_addr      ;
@@ -98,10 +101,16 @@ wire    [7:0]    ts1_mem_di        ;
 wire             ts1_mem_wr        ;
 wire             ts1_mem_en        ;  
 wire             ts1_en_rs         ;
+wire             ts1_rs_en_in      ;
+wire    [7:0]    ts1_rs_din        ;
+wire             ts1_new           ;
 
-
-assign rs_mode = ts0_en_rs ? ts0_rs_mode :
-	         ts1_en_rs ? ts1_rs_mode : 2'b00;
+assign rs_mode  = ts0_en_rs ? ts0_rs_mode  :
+	          ts1_en_rs ? ts1_rs_mode  : 2'b00;
+assign rs_en_in = ts0_en_rs ? ts0_rs_en_in :
+	          ts1_en_rs ? ts0_rs_en_in : 1'b0;
+assign rs_din   = ts0_en_rs ? ts0_rs_din   :
+	          ts1_en_rs ? ts1_rs_din   : 8'h0;
 
 bit2byte u0_bit2byte(
       .clk         ( clk        ),
@@ -114,7 +123,9 @@ bit2byte u0_bit2byte(
       .byte_sync   ( byte_sync  ),
       .byte_data   ( byte_data  ),
       .byte_win0   ( byte_win0  ),
-      .byte_win1   ( byte_win1  )  
+      .byte_win1   ( byte_win1  ),
+      .ts0_new     ( ts0_new    ),
+      .ts1_new     ( ts1_new    )  
 );
 
 byte_mem ts0_by_mem(
@@ -127,6 +138,7 @@ byte_mem ts0_by_mem(
     .ldpc_rate  ( ts0_ldpc_rate),
     .bydin_mode ( ts0_bydin_mode),
     .ts_en_rd   ( ts0_en_rd    ),
+    .ts_new     ( ts0_new      ),
     .rs_ena     ( ts0_rs_ena   ),
     .rs_mode    ( ts0_rs_mode  ),
     .rs_finish  ( rs_row_finish),
@@ -139,11 +151,12 @@ byte_mem ts0_by_mem(
     .mem_di     ( ts0_mem_di   ),
     .mem_do     ( ts0_mem_do   ),
 
-    .rs_en_in   ( rs_en_in     ),
-    .rs_din     ( rs_din       ),
+    .rs_en_in   ( ts0_rs_en_in ),
+    .rs_din     ( ts0_rs_din   ),
     .ts_en_rs   ( ts0_en_rs    ),
 
     .ts_int     ( ts0_int      ),
+    .ts_overflow( ts0_overflow ),
     .ts_en_out  ( ts0_en_out   ),
     .ts_dout    ( ts0_dout     )
 
@@ -159,6 +172,7 @@ byte_mem ts1_by_mem(
     .ldpc_rate  ( ts1_ldpc_rate),
     .bydin_mode ( ts1_bydin_mode),
     .ts_en_rd   ( ts1_en_rd    ),
+    .ts_new     ( ts1_new      ),
     .rs_ena     ( ts1_rs_ena   ),
     .rs_mode    ( ts1_rs_mode  ),
     .rs_finish  ( rs_row_finish),
@@ -171,11 +185,12 @@ byte_mem ts1_by_mem(
     .mem_di     ( ts1_mem_di   ),
     .mem_do     ( ts1_mem_do   ),
 
-    .rs_en_in   ( rs_en_in     ),
-    .rs_din     ( rs_din       ),
+    .rs_en_in   ( ts1_rs_en_in ),
+    .rs_din     ( ts1_rs_din   ),
     .ts_en_rs   ( ts1_en_rs    ),
 
     .ts_int     ( ts1_int      ),
+    .ts_overflow( ts1_overflow ),
     .ts_en_out  ( ts1_en_out   ),
     .ts_dout    ( ts1_dout     )
 );

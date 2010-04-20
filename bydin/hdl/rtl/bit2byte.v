@@ -9,7 +9,9 @@ module bit2byte(
       byte_sync     ,
       byte_data     ,
       byte_win0     ,
-      byte_win1     
+      byte_win1     ,
+      ts0_new       ,
+      ts1_new       
 );
 
 //inputs
@@ -24,12 +26,16 @@ output           byte_sync     ;
 output  [7:0]    byte_data     ;
 output           byte_win0     ;
 output           byte_win1     ;
+output           ts0_new       ;
+output           ts1_new       ;
 
 reg     [2:0]    counter       ;
 reg     [7:0]    byte_data     ;
 reg              byte_sync     ;
 reg              byte_win0     ;
 reg              byte_win1     ;
+reg              ts0_new       ;
+reg              ts1_new       ;
 
 always @ (posedge clk or negedge reset_n)
 begin
@@ -80,5 +86,21 @@ begin
      else if(counter === 3'b111)
          byte_win1 <= #1 1'b1;
 end
+
+always @ (posedge clk or negedge reset_n)
+begin
+    if(!reset_n)
+         ts0_new <= #1 1'b0;
+    else 
+	 ts0_new <= #1 ts0_win & ldpc_en_out; 
+end	
+
+always @ (posedge clk or negedge reset_n)
+begin
+    if(!reset_n)
+         ts1_new <= #1 1'b0;
+    else 
+	 ts1_new <= #1 ts1_win & ldpc_en_out; 
+end	
 
 endmodule
