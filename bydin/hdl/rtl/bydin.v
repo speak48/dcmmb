@@ -4,20 +4,23 @@ module bydin (
       reset_n       ,
       ldpc_en_out   ,
       ldpc_dout     ,
-      ofdm_mode_in  ,
+ //     ofdm_mode_in  ,
+      ts_slot_ini   ,
 
       ts0_win       ,
+      ts0_slot_num  ,
       ts0_bydin_mode,
       ts0_rs_mode   ,
       ts0_rs_ena    ,
-      ts0_ldpc_rate ,
+ //     ts0_ldpc_rate ,
       ts0_en_rd     ,
 
       ts1_win       ,
+      ts1_slot_num  ,
       ts1_bydin_mode,
       ts1_rs_mode   ,
       ts1_rs_ena    ,
-      ts1_ldpc_rate ,
+ //     ts1_ldpc_rate ,
       ts1_en_rd     ,
 
       rs_cor_fail   ,
@@ -43,20 +46,23 @@ input            clk           ;
 input            reset_n       ;
 input            ldpc_en_out   ;
 input            ldpc_dout     ;
-input            ofdm_mode_in  ;  // band width 8M or 2MHz
+//input            ofdm_mode_in  ;  // band width 8M or 2MHz
+input            ts_slot_ini   ;
 // ts0 control IF
 input            ts0_win       ;
+input  [2:0]     ts0_slot_num  ;
 input  [2:0]     ts0_bydin_mode;
 input  [1:0]     ts0_rs_mode   ;
-input            ts0_ldpc_rate ;
+//input            ts0_ldpc_rate ;
 input            ts0_rs_ena    ;
 input            ts0_en_rd     ;
 // ts1 Control IF
 input            ts1_win       ;
+input  [2:0]     ts1_slot_num  ;
 input  [2:0]     ts1_bydin_mode;
 input  [1:0]     ts1_rs_mode   ;
 input            ts1_rs_ena    ;
-input            ts1_ldpc_rate ;
+//input            ts1_ldpc_rate ;
 input            ts1_en_rd     ;
 // RS IF
 input            rs_cor_fail   ;
@@ -108,7 +114,7 @@ wire             ts1_new           ;
 assign rs_mode  = ts0_en_rs ? ts0_rs_mode  :
 	          ts1_en_rs ? ts1_rs_mode  : 2'b00;
 assign rs_en_in = ts0_en_rs ? ts0_rs_en_in :
-	          ts1_en_rs ? ts0_rs_en_in : 1'b0;
+	          ts1_en_rs ? ts1_rs_en_in : 1'b0;
 assign rs_din   = ts0_en_rs ? ts0_rs_din   :
 	          ts1_en_rs ? ts1_rs_din   : 8'h0;
 
@@ -134,9 +140,11 @@ byte_mem ts0_by_mem(
     .byte_sync  ( byte_sync    ),
     .byte_data  ( byte_data    ),
     .byte_win   ( byte_win0    ),
-    .ofdm_mode  ( ofdm_mode_in ),
-    .ldpc_rate  ( ts0_ldpc_rate),
+//    .ofdm_mode  ( ofdm_mode_in ),
+//    .ldpc_rate  ( ts0_ldpc_rate),
     .bydin_mode ( ts0_bydin_mode),
+    .slot_ini   ( ts_slot_ini  ),
+    .slot_num   ( ts0_slot_num ),
     .ts_en_rd   ( ts0_en_rd    ),
     .ts_new     ( ts0_new      ),
     .rs_ena     ( ts0_rs_ena   ),
@@ -167,10 +175,12 @@ byte_mem ts1_by_mem(
     .reset_n    ( reset_n      ),
     .byte_sync  ( byte_sync    ),
     .byte_data  ( byte_data    ),
-    .byte_win   ( byte_win0    ),
-    .ofdm_mode  ( ofdm_mode_in ),
-    .ldpc_rate  ( ts1_ldpc_rate),
+    .byte_win   ( byte_win1    ),
+//    .ofdm_mode  ( ofdm_mode_in ),
+//    .ldpc_rate  ( ts1_ldpc_rate),
     .bydin_mode ( ts1_bydin_mode),
+    .slot_ini   ( ts_slot_ini  ),
+    .slot_num   ( ts1_slot_num ),
     .ts_en_rd   ( ts1_en_rd    ),
     .ts_new     ( ts1_new      ),
     .rs_ena     ( ts1_rs_ena   ),
