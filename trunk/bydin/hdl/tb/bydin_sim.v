@@ -1,5 +1,5 @@
 `timescale 1ns/1ns
-//`define PRINT_OUT
+`define PRINT_OUT
 module bidin_sim();
 parameter CLK_PRD = 10;
 parameter DATA_DEP = 240*72;
@@ -11,8 +11,11 @@ reg            data_in;
 reg            sync_in;
 reg            rs_cor_fail;
 reg            rs_row_finish;
-reg            rs_en_out;
-reg   [7:0]    rs_dout  ;
+reg            rs_en_out    ;
+reg   [7:0]    rs_dout      ;
+reg            ts_slot_ini;
+reg   [2:0]    ts0_slot_num  ;
+reg   [2:0]    ts1_slot_num  ;
 
 wire           rs_en_in ;
 wire [7:0]     rs_din   ;
@@ -20,9 +23,14 @@ wire [7:0]     rs_din   ;
 wire [WID-1:0] ts0_dout;
 wire           ts0_en_out;
 wire           ts0_int;
-
 reg            ts0_win;
 reg            ts0_en_rd;
+
+wire [WID-1:0] ts1_dout;
+wire           ts1_en_out;
+wire           ts1_int;
+reg            ts1_win;
+reg            ts1_en_rd;
 
 `ifdef PRINT_OUT
 integer file;
@@ -34,7 +42,9 @@ end
 
 always @ (posedge clk)
   if(ts0_en_out)
-    $fdisplay(file,"%d",ts0_dout);	
+    $fdisplay(file,"%d",ts0_dout);
+  else if(ts1_en_out)
+    $fdisplay(file,"%d",ts1_dout);	  
 
 always @ (posedge clk)
   if(u_bydin.byte_sync)
@@ -61,15 +71,31 @@ task read_data_in;
 integer i,j;
 reg [31:0] mem_data_i [0:DATA_DEP-1];
 reg [31:0]  temp;
-//integer ptr;
-//initial
 begin	
-//   $readmemh("../../tb/pattern/bit_in.dat",mem_data_i);
       ts0_win = 1'b0;
+      ts1_win = 1'b0;
       sync_in = 1'b0;
       data_in = 'h0;
-   #(20.5*CLK_PRD+1)   
-   for ( i = 0; i < 30 ; i = i+1) begin
+      ts_slot_ini = 1'b0; 
+      ts0_slot_num = 'h1;
+      ts1_slot_num = 'h1; 
+   #(20.5*CLK_PRD+1)  
+   #(CLK_PRD)
+         ts0_win = 1'b1;
+	 ts_slot_ini = 1'b1;
+	 ts0_slot_num = 'h1;
+    for ( j = 0; j < 4608; j = j+1 ) begin
+	 temp = $random;
+	 data_in = temp[0];
+	 sync_in = 1'b1;
+	 #(CLK_PRD)
+	 temp = 0;
+      end
+      ts_slot_ini = 1'b0;
+      sync_in = 1'b0;
+      ts0_win = 1'b0;
+      #(100*CLK_PRD); 
+   for ( i = 0; i < 29 ; i = i+1) begin
       #(CLK_PRD);
       #(CLK_PRD)
          ts0_win = 1'b1;
@@ -85,8 +111,44 @@ begin
       #(100*CLK_PRD)
       ;
    end
-   #(200000*CLK_PRD)
-   $finish;
+   #(100000*CLK_PRD);
+// test another mode for each slot interleaver solely
+// start from here  
+    #(CLK_PRD)
+         ts1_win = 1'b1;
+	 ts_slot_ini = 1'b1;
+	 ts1_slot_num = 'h2;
+    for ( j = 0; j < 4608; j = j+1 ) begin
+	 temp = $random;
+	 data_in = temp[0];
+	 sync_in = 1'b1;
+	 #(CLK_PRD)
+	 temp = 0;
+      end
+      ts_slot_ini = 1'b0;
+      sync_in = 1'b0;
+      ts1_win = 1'b0;
+      #(100*CLK_PRD);
+      
+   for ( i = 0; i < 59  ; i = i+1) begin
+      #(CLK_PRD);
+      #(CLK_PRD)
+         ts1_win = 1'b1;
+      for ( j = 0; j < 4608; j = j+1) begin
+         temp = $random;
+         data_in = temp[0];
+	 sync_in = 1'b1;
+         #(CLK_PRD)
+         temp = 0;
+      end
+      sync_in = 1'b0;
+      ts1_win = 1'b0;
+      #(100*CLK_PRD)
+      ;
+   end
+// end
+   #(360000*CLK_PRD)
+   $finish;   
 end
 endtask
 
@@ -115,21 +177,24 @@ initial
       .reset_n       ( reset_n ),
       .ldpc_en_out   ( sync_in ),
       .ldpc_dout     ( data_in ),
-      .ofdm_mode_in  ( 1'b0    ),
+ //     .ofdm_mode_in  ( 1'b0    ),
+      .ts_slot_ini   ( ts_slot_ini  ),
 
       .ts0_win       ( ts0_win ),
+      .ts0_slot_num  ( ts0_slot_num ),
       .ts0_bydin_mode( 3'b001  ),
       .ts0_rs_mode   ( 2'b01   ),
       .ts0_rs_ena    ( 1'b1    ),
-      .ts0_ldpc_rate ( 1'b0    ),
+ //     .ts0_ldpc_rate ( 1'b0    ),
       .ts0_en_rd     ( ts0_en_rd ),
 
-      .ts1_win       ( 1'b0    ),
-      .ts1_bydin_mode( 3'b000  ),
-      .ts1_rs_mode   ( 2'b00   ),
-      .ts1_rs_ena    ( 1'b0    ),
-      .ts1_ldpc_rate ( 1'b0    ),
-      .ts1_en_rd     ( 1'b0    ),
+      .ts1_win       ( ts1_win ),
+      .ts1_slot_num  ( ts1_slot_num ),
+      .ts1_bydin_mode( 3'b001  ),
+      .ts1_rs_mode   ( 2'b01   ),
+      .ts1_rs_ena    ( 1'b1    ),
+ //     .ts1_ldpc_rate ( 1'b0    ),
+      .ts1_en_rd     ( ts1_en_rd ),
 
       .rs_cor_fail   ( rs_cor_fail ),
       .rs_row_finish ( rs_row_finish ),
@@ -144,9 +209,9 @@ initial
       .ts0_en_out   ( ts0_en_out ),
       .ts0_dout     ( ts0_dout   ),
 
-      .ts1_int      (),
-      .ts1_en_out   (),
-      .ts1_dout     ()
+      .ts1_int      ( ts1_int    ),
+      .ts1_en_out   ( ts1_en_out ),
+      .ts1_dout     ( ts1_dout   )
 
 );
 
@@ -199,16 +264,29 @@ task int_deal;
 integer i;
 begin	
     ts0_en_rd = 1'b0;
+    ts1_en_rd = 1'b0;
     while(1)
     begin
-       wait(ts0_int)
-            #(CLK_PRD);
-       for (i=0;i<224*72;i=i+1)begin
-	    ts0_en_rd = 1'b1;
+        wait(ts0_int || ts1_int) begin
+	if(ts0_int) begin
+	    #(CLK_PRD);	    
+            for (i=0;i<224*72;i=i+1)begin
+	        ts0_en_rd = 1'b1;
             #(CLK_PRD)
-	    ts0_en_rd = 1'b0;
+	        ts0_en_rd = 1'b0;
 	    #(7*CLK_PRD);
+            end
+       end
+       else if(ts1_int) begin
+	    #(CLK_PRD);	    
+            for (i=0;i<224*72*2;i=i+1)begin
+	        ts1_en_rd = 1'b1;
+            #(CLK_PRD)
+	        ts1_en_rd = 1'b0;
+	    #(7*CLK_PRD);
+            end
        end   
+       end    
     end
 end   
 endtask

@@ -6,9 +6,11 @@ module byte_mem(
     byte_sync  ,
     byte_data  ,
     byte_win   ,
-    ofdm_mode  ,
-    ldpc_rate  ,
+//    ofdm_mode  ,
+//    ldpc_rate  ,
     bydin_mode ,
+    slot_ini   ,
+    slot_num   ,
     ts_en_rd   ,
     ts_new     ,
     rs_ena     ,
@@ -38,9 +40,11 @@ input            reset_n       ;
 input            byte_sync     ;
 input   [7:0]    byte_data     ;
 input            byte_win      ;
-input            ofdm_mode     ;
-input            ldpc_rate     ;
+//input            ofdm_mode     ;
+//input            ldpc_rate     ;
 input   [2:0]    bydin_mode    ;
+input            slot_ini      ;
+input   [2:0]    slot_num      ;
 input   [1:0]    rs_mode       ;
 input            ts_en_rd      ;
 input            rs_ena        ;
@@ -94,6 +98,8 @@ reg              state_rd_r    ;
 reg              rs_en_in      ;
 reg              rs_dec_end    ;
 reg              ts_overflow   ;
+reg              slot_wr_en    ;
+reg     [2:0]    slot_n        ;
 
 reg     [8:0]    mi_r          ;
 reg     [7:0]    k_r           ;
@@ -101,7 +107,7 @@ reg     [3:0]    next_fsm      ;
 reg    [16:0]    addr_r        ;
 reg     [7:0]    num_col_r     ;
 reg     [8:0]    num_row_r     ;
-
+reg     [2:0]    slot_n_r      ;
 
 wire             state_idle    ;
 wire             state_wr      ;
@@ -110,6 +116,9 @@ wire             read_end      ;
 wire             rs_end        ;
 wire    [7:0]    rs_din        ;
 wire    [7:0]    ts_dout       ;
+wire    [8:0]    total_row     ;
+wire             col_jump      ;
+wire             slot_match    ;
 
 assign ts_dout  = data_out ;
 assign rs_din   = data_out ;
@@ -123,26 +132,27 @@ assign state_rs   = (fsm == RS_DEC );
 assign state_rd   = (fsm == RD_OUT );
 assign state_wr   = (fsm == WR_IN  );
 
-assign write_end = state_wr & (num_row == mi_reg) & ( num_col == 'd239);
-assign read_end = state_rd & (num_row == mi_reg) & ( num_col == k_reg) & byte_read;
-assign rs_end = (num_row == mi_reg) & ( num_col == k_reg ) & rs_dec_end ;
+assign total_row  = (mi_reg + 1'b1) * slot_num - 1'b1;
+assign slot_match = slot_n == (slot_num - 1'b1);
+
+assign write_end = state_wr & slot_match & (num_row == mi_reg) & ( num_col == 'd239);
+assign read_end = state_rd & slot_match & (num_row == mi_reg) & ( num_col == k_reg) & byte_read;
+
+assign rs_end = (num_row == total_row ) & ( num_col == k_reg ) & rs_dec_end ;
+
+assign col_jump = byte_read ? ( num_col == k_r ) : ( num_col == 'd239 );
 
 always @ (*)
 begin
-    case({ofdm_mode, ldpc_rate, bydin_mode})
-    5'b0_0_001: mi_r = 9'd71 ;
-    5'b0_0_010: mi_r = 9'd143;
-    5'b0_0_100: mi_r = 9'd287;
-    5'b0_1_001: mi_r = 9'd107;
-    5'b0_1_010: mi_r = 9'd215;
-    5'b0_1_100: mi_r = 9'd431;
-    5'b1_0_001: mi_r = 9'd35 ;
-    5'b1_0_010: mi_r = 9'd71 ;
-    5'b1_0_100: mi_r = 9'd143;
-    5'b1_1_001: mi_r = 9'd53 ;
-    5'b1_1_010: mi_r = 9'd107;
-    5'b1_1_100: mi_r = 9'd215;
-    default   : mi_r = 9'd0;
+    case(bydin_mode)
+    3'b001: mi_r = 9'd71 ;
+    3'b010: mi_r = 9'd143;
+    3'b011: mi_r = 9'd287;
+    3'b101: mi_r = 9'd107;
+    3'b110: mi_r = 9'd215;
+    3'b111: mi_r = 9'd431;
+    3'b000: mi_r = 9'd35 ;
+    3'b100: mi_r = 9'd53 ;
     endcase
 end
 
@@ -182,7 +192,7 @@ begin
         next_fsm = IDLE;
     else begin	    
     case(fsm)
-    IDLE: if(byte_win & byte_sync)
+    IDLE: if(byte_win & byte_sync & slot_wr_en)
               next_fsm = WR_IN;
           else
               next_fsm = IDLE;
@@ -244,17 +254,26 @@ always @ (*)
 begin	
     addr_r    = addr   ;	
     num_row_r = num_row;
-    num_col_r = num_col;    
+    num_col_r = num_col;
+    slot_n_r  = slot_n ;   
     if(state_idle | write_end | read_end | rs_end )  begin 
         addr_r = 17'h0;
         num_row_r = 9'h0;
         num_col_r = 8'h0;
+	slot_n_r  = 3'h0;
         end
     else if((byte_sync & byte_win) | byte_read ) begin
 	if(num_row == mi_reg)  begin   
-            addr_r = MAX_ROW * ( num_col + 1'b1);
             num_row_r = 9'h0;
-            num_col_r = num_col + 1'b1;
+	    if(col_jump) begin
+	        num_col_r = 9'h0;
+		addr_r    = (mi_reg + 1'b1) * ( slot_n + 1'b1 );
+	        slot_n_r  = slot_n + 1'b1; 
+                end
+            else  begin  
+                num_col_r = num_col + 1'b1;
+		addr_r = MAX_ROW * ( num_col + 1'b1) + (mi_reg + 1'b1) * slot_n;
+	        end
         end
 	else begin
 	    addr_r = addr + 1'b1;	
@@ -310,6 +329,14 @@ begin : num_row_d
         num_row <= #1 9'h0;
     else
         num_row <= #1 num_row_r;
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : slot_n_d
+    if(!reset_n)
+        slot_n <= #1 3'h0;
+    else
+        slot_n <= #1 slot_n_r;
 end
 
 always @ (posedge clk or negedge reset_n)
@@ -408,6 +435,16 @@ begin : rs_dec_end_d
         rs_dec_end <= #1 1'b0;
     else
         rs_dec_end <= #1 rs_finish;	    
+end
+
+always @ (posedge clk or negedge reset_n)
+begin : wr_en_r
+    if(!reset_n)	
+        slot_wr_en <= #1 1'b0;
+    else if(write_end)
+	slot_wr_en <= #1 1'b0;    
+    else if(slot_ini)
+	slot_wr_en <= #1 1'b1;
 end
 
 endmodule
