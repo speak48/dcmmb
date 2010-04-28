@@ -34,6 +34,7 @@ module byte_mem(
     ts_en_out  ,
     ts_dout    ,
 );
+parameter   MAX_ROW = 9'd288   ;
 
 input            clk           ;
 input            reset_n       ;
@@ -69,13 +70,10 @@ output           ts_en_out     ;
 output  [7:0]    ts_dout       ;
 
 
-parameter   MAX_ROW = 9'd288   ;
-
 parameter   IDLE   = 4'b0001   ,
             WR_IN  = 4'b0010   ,
             RS_DEC = 4'b0100   ,
             RD_OUT = 4'b1000   ;	    
-
 
 reg     [8:0]    mi_reg        ;
 reg     [7:0]    k_reg         ;
@@ -119,6 +117,7 @@ wire    [7:0]    ts_dout       ;
 wire    [8:0]    total_row     ;
 wire             col_jump      ;
 wire             slot_match    ;
+wire   [16:0]    slot_addr     ;
 
 assign ts_dout  = data_out ;
 assign rs_din   = data_out ;
@@ -138,9 +137,11 @@ assign slot_match = slot_n == (slot_num - 1'b1);
 assign write_end = state_wr & slot_match & (num_row == mi_reg) & ( num_col == 'd239);
 assign read_end = state_rd & slot_match & (num_row == mi_reg) & ( num_col == k_reg) & byte_read;
 
-assign rs_end = (num_row == total_row ) & ( num_col == k_reg ) & rs_dec_end ;
+assign rs_end = (num_row == total_row ) & rs_dec_end ;
 
 assign col_jump = byte_read ? ( num_col == k_r ) : ( num_col == 'd239 );
+
+assign slot_addr = ( mi_reg + 1'b1) * 'd240;
 
 always @ (*)
 begin
@@ -260,23 +261,25 @@ begin
         addr_r = 17'h0;
         num_row_r = 9'h0;
         num_col_r = 8'h0;
-	slot_n_r  = 3'h0;
+        slot_n_r  = 3'h0;
         end
     else if((byte_sync & byte_win) | byte_read ) begin
-	if(num_row == mi_reg)  begin   
+    if(num_row == mi_reg)  begin   
             num_row_r = 9'h0;
-	    if(col_jump) begin
-	        num_col_r = 9'h0;
-		addr_r    = (mi_reg + 1'b1) * ( slot_n + 1'b1 );
-	        slot_n_r  = slot_n + 1'b1; 
-                end
-            else  begin  
-                num_col_r = num_col + 1'b1;
-		addr_r = MAX_ROW * ( num_col + 1'b1) + (mi_reg + 1'b1) * slot_n;
-	        end
+//	    addr_r = addr + 1'b1;
+        if(col_jump) begin
+            num_col_r = 9'h0;
+            addr_r    = slot_addr * ( slot_n + 1'b1 );
+            slot_n_r  = slot_n + 1'b1; 
+            end
+        else  begin  
+            num_col_r = num_col + 1'b1;
+	    addr_r = addr + 1'b1;
+//            addr_r = (mi_reg + 1'b1) * ( num_col + 1'b1) + (mi_reg + 1'b1) * slot_n;
+            end
         end
-	else begin
-	    addr_r = addr + 1'b1;	
+    else begin
+            addr_r = addr + 1'b1;	
             num_row_r = num_row + 1'b1;
         end
         end
@@ -285,25 +288,25 @@ begin
             if(num_col == 'd239)begin
 //                addr_r = num_row + 1'b1;
                 addr_r    = num_row;                
-	        num_col_r = 8'h0;
-//		num_row_r = num_row + 1'b1;
+                num_col_r = 8'h0;
+//                num_row_r = num_row + 1'b1;
             end		
 	    else begin	    
-                addr_r = addr + MAX_ROW;       
+                addr_r = addr + mi_reg + 1'b1;       
                 num_col_r = num_col + 1'b1;
             end            
         end   
-	else begin
-      	    if((num_col == k_reg) | rs_dec_end) begin
+    else begin
+         if((num_col == k_reg) | rs_dec_end) begin
                 addr_r = num_row + 1'b1;
                 num_col_r = 8'h0;
-		num_row_r = num_row + 1'b1;
+                num_row_r = num_row + 1'b1;
                 end
             else if(mem_wr) begin
-                addr_r = addr + MAX_ROW;
+                addr_r = addr + mi_reg + 1'b1;
                 num_col_r = num_col + 1'b1;
             end
-	end
+    end
     end
 end
 
@@ -363,12 +366,12 @@ begin : mem_rd_d
         mem_rd <= #1 1'b0;
     else if(state_rs) begin
         if(num_col == 'd239)
-	mem_rd <= #1 1'b0;
+        mem_rd <= #1 1'b0;
         else if( rs_start | (rs_dec_end & !rs_end) ) 
-	mem_rd <= #1 1'b1;
+        mem_rd <= #1 1'b1;
         end
     else
-    	mem_rd <= #1 (state_rd & ts_en_rd );
+        mem_rd <= #1 (state_rd & ts_en_rd );
 end
 
 always @ (posedge clk or negedge reset_n)
@@ -376,7 +379,7 @@ begin : mem_rd_d1
     if(!reset_n)
         mem_rd_dly <= #1 1'b0;
     else
-	mem_rd_dly <= #1 mem_rd;
+        mem_rd_dly <= #1 mem_rd;
 end
 
 always @ (posedge clk or negedge reset_n)
@@ -384,7 +387,7 @@ begin : data_out_r
     if(!reset_n)
         data_out <= #1 8'h0;
     else if(mem_rd_dly)
-	data_out <= #1 mem_do;
+        data_out <= #1 mem_do;
 end
 /*
 always @ (posedge clk or negedge reset_n)
@@ -392,15 +395,15 @@ begin : rd2rs_d
     if(!reset_n)
         rd2rs <= #1 1'b0;
     else if(num_col == 'd239)
-	rd2rs <= #1 1'b0;
+        rd2rs <= #1 1'b0;
     else if( rs_start | rs_dec_end ) 
-	rd2rs <= #1 1'b1;
+        rd2rs <= #1 1'b1;
 end
 */
 always @ (posedge clk or negedge reset_n)
 begin : rs_start_d
     if(!reset_n)
-	rs_start <= #1 1'b0;
+        rs_start <= #1 1'b0;
     else
         rs_start <= #1  (fsm == WR_IN ) & ( next_fsm == RS_DEC);
 end
@@ -408,7 +411,7 @@ end
 always @ (posedge clk or negedge reset_n)
 begin : ts_en_d
     if(!reset_n)
-	ts_en_out <= #1 1'b0;
+        ts_en_out <= #1 1'b0;
     else
         ts_en_out <= #1 mem_rd_dly & state_rd_r;
 end
@@ -442,9 +445,9 @@ begin : wr_en_r
     if(!reset_n)	
         slot_wr_en <= #1 1'b0;
     else if(write_end)
-	slot_wr_en <= #1 1'b0;    
+        slot_wr_en <= #1 1'b0;    
     else if(slot_ini)
-	slot_wr_en <= #1 1'b1;
+        slot_wr_en <= #1 1'b1;
 end
 
 endmodule

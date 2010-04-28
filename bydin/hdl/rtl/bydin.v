@@ -23,7 +23,7 @@ module bydin (
  //     ts1_ldpc_rate ,
       ts1_en_rd     ,
 
-      rs_cor_fail   ,
+ //     rs_cor_fail   ,
       rs_row_finish ,
       rs_en_out     ,
       rs_dout       ,
@@ -33,10 +33,12 @@ module bydin (
       rs_din       ,
 
       ts0_int      ,
+      ts0_overflow ,
       ts0_en_out   ,
       ts0_dout     ,
 
       ts1_int      ,
+      ts1_overflow ,
       ts1_en_out   ,
       ts1_dout
  );
@@ -65,7 +67,7 @@ input            ts1_rs_ena    ;
 //input            ts1_ldpc_rate ;
 input            ts1_en_rd     ;
 // RS IF
-input            rs_cor_fail   ;
+//input            rs_cor_fail   ;
 input            rs_row_finish ;
 input            rs_en_out     ;
 input  [7:0]     rs_dout       ;
@@ -78,12 +80,14 @@ output [7:0]     rs_din        ;
 
 // TS0 IF
 output           ts0_int       ;
+output           ts0_overflow  ;
 output           ts0_en_out    ;
 output [7:0]     ts0_dout      ;
 
 // TS1 IF
 output           ts1_en_out    ;
 output           ts1_int       ;
+output           ts1_overflow  ;
 output [7:0]     ts1_dout      ;
 
 wire             byte_sync     ;
