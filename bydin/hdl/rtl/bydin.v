@@ -104,6 +104,7 @@ wire             ts0_en_rs         ;
 wire             ts0_rs_en_in      ;
 wire    [7:0]    ts0_rs_din        ;
 wire             ts0_new           ;
+wire             ts0_mdo_en        ;
 
 wire    [7:0]    ts1_mem_do        ;
 wire   [16:0]    ts1_mem_addr      ;
@@ -114,6 +115,17 @@ wire             ts1_en_rs         ;
 wire             ts1_rs_en_in      ;
 wire    [7:0]    ts1_rs_din        ;
 wire             ts1_new           ;
+wire             ts1_mdo_en        ;
+wire   [16:0]    m0_addr       ;
+wire     [7:0]   m0_di         ;
+wire             m0_en         ;
+wire             m0_wr         ;
+wire     [7:0]   m0_do         ;
+wire   [16:0]    m1_addr       ;
+wire     [7:0]   m1_di         ;
+wire             m1_en         ;
+wire             m1_wr         ;
+wire     [7:0]   m1_do         ;
 
 assign rs_mode  = ts0_en_rs ? ts0_rs_mode  :
 	          ts1_en_rs ? ts1_rs_mode  : 2'b00;
@@ -138,7 +150,7 @@ bit2byte u0_bit2byte(
       .ts1_new     ( ts1_new    )  
 );
 
-byte_mem ts0_by_mem(
+byte_man ts0_by_man(
     .clk        ( clk          ),
     .reset_n    ( reset_n      ),
     .byte_sync  ( byte_sync    ),
@@ -162,6 +174,7 @@ byte_mem ts0_by_mem(
     .mem_en     ( ts0_mem_en   ),
     .mem_di     ( ts0_mem_di   ),
     .mem_do     ( ts0_mem_do   ),
+    .mdo_en     ( ts0_mdo_en   ),
 
     .rs_en_in   ( ts0_rs_en_in ),
     .rs_din     ( ts0_rs_din   ),
@@ -174,7 +187,7 @@ byte_mem ts0_by_mem(
 
 );
 
-byte_mem ts1_by_mem(
+byte_man ts1_by_man(
     .clk        ( clk          ),
     .reset_n    ( reset_n      ),
     .byte_sync  ( byte_sync    ),
@@ -198,6 +211,7 @@ byte_mem ts1_by_mem(
     .mem_en     ( ts1_mem_en   ),
     .mem_di     ( ts1_mem_di   ),
     .mem_do     ( ts1_mem_do   ),
+    .mdo_en     ( ts1_mdo_en   ),
 
     .rs_en_in   ( ts1_rs_en_in ),
     .rs_din     ( ts1_rs_din   ),
@@ -209,6 +223,53 @@ byte_mem ts1_by_mem(
     .ts_dout    ( ts1_dout     )
 );
 
+byte_mem u0_byte_mem(
+    .clk        ( clk          ),
+    .reset_n    ( reset_n      ),
+
+    .ts0_mem_ad ( ts0_mem_addr ),
+    .ts0_mem_di ( ts0_mem_di   ),
+    .ts0_mem_do ( ts0_mem_do   ),
+    .ts0_mem_en ( ts0_mem_en   ),
+    .ts0_mem_wr ( ts0_mem_wr   ),
+    .ts0_mdo_en ( ts0_mdo_en   ),
+
+    .ts1_mem_ad ( ts1_mem_addr ),
+    .ts1_mem_di ( ts1_mem_di   ),
+    .ts1_mem_do ( ts1_mem_do   ),
+    .ts1_mem_en ( ts1_mem_en   ),
+    .ts1_mem_wr ( ts1_mem_wr   ),
+    .ts1_mdo_en ( ts1_mdo_en   ),
+    .m0_addr    ( m0_addr      ),
+    .m0_di      ( m0_di        ),
+    .m0_en      ( m0_en        ),
+    .m0_wr      ( m0_wr        ),
+    .m0_do      ( m0_do        ),
+    .m1_addr    ( m1_addr      ),
+    .m1_di      ( m1_di        ),
+    .m1_en      ( m1_en        ),
+    .m1_wr      ( m1_wr        ),
+    .m1_do      ( m1_do        )
+);
+
+sram69120x8 ts0_ram(
+    .A     (    m0_addr  ),
+    .CLK   (    clk      ),
+    .D     (    m0_di    ),
+    .Q     (    m0_do    ),
+    .CEN   (    ~m0_en   ),
+    .WEN   (    ~m0_wr   )
+);
+
+sram69120x8 ts1_ram(
+    .A     (    m1_addr  ),
+    .CLK   (    clk      ),
+    .D     (    m1_di    ),
+    .Q     (    m1_do    ),
+    .CEN   (    ~m1_en   ),
+    .WEN   (    ~m1_wr   )
+);
+/*
 sram69120x8 ts0_ram(
     .A     (ts0_mem_addr  ),
     .CLK   (clk           ),
@@ -226,5 +287,5 @@ sram69120x8 ts1_ram(
     .CEN   (~ts1_mem_en   ),
     .WEN   (~ts1_mem_wr   )
 );
-
+*/
 endmodule
