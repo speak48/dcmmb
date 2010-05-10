@@ -126,6 +126,8 @@ wire     [7:0]   m1_di         ;
 wire             m1_en         ;
 wire             m1_wr         ;
 wire     [7:0]   m1_do         ;
+wire             ts0_slot_ini  ;
+wire             ts1_slot_ini  ;
 
 assign rs_mode  = ts0_en_rs ? ts0_rs_mode  :
 	          ts1_en_rs ? ts1_rs_mode  : 2'b00;
@@ -133,6 +135,8 @@ assign rs_en_in = ts0_en_rs ? ts0_rs_en_in :
 	          ts1_en_rs ? ts1_rs_en_in : 1'b0;
 assign rs_din   = ts0_en_rs ? ts0_rs_din   :
 	          ts1_en_rs ? ts1_rs_din   : 8'h0;
+assign ts0_slot_ini = ts0_win & ts_slot_ini;
+assign ts1_slot_ini = ts1_win & ts_slot_ini;
 
 bit2byte u0_bit2byte(
       .clk         ( clk        ),
@@ -159,7 +163,7 @@ byte_man ts0_by_man(
 //    .ofdm_mode  ( ofdm_mode_in ),
 //    .ldpc_rate  ( ts0_ldpc_rate),
     .bydin_mode ( ts0_bydin_mode),
-    .slot_ini   ( ts_slot_ini  ),
+    .slot_ini   ( ts0_slot_ini ),
     .slot_num   ( ts0_slot_num ),
     .ts_en_rd   ( ts0_en_rd    ),
     .ts_new     ( ts0_new      ),
@@ -196,7 +200,7 @@ byte_man ts1_by_man(
 //    .ofdm_mode  ( ofdm_mode_in ),
 //    .ldpc_rate  ( ts1_ldpc_rate),
     .bydin_mode ( ts1_bydin_mode),
-    .slot_ini   ( ts_slot_ini  ),
+    .slot_ini   ( ts1_slot_ini ),
     .slot_num   ( ts1_slot_num ),
     .ts_en_rd   ( ts1_en_rd    ),
     .ts_new     ( ts1_new      ),

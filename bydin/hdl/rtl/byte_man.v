@@ -444,8 +444,10 @@ always @ (posedge clk or negedge reset_n)
 begin : rs_dec_end_d
     if(!reset_n)
         rs_dec_end <= #1 1'b0;
-    else
+    else if(state_rs)
         rs_dec_end <= #1 rs_finish;	    
+    else
+	rs_dec_end <= #1 1'b0;
 end
 
 always @ (posedge clk or negedge reset_n)
