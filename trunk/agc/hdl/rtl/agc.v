@@ -44,6 +44,10 @@ wire                 pwr_est_end ;
 wire   [7:0]         pwm_val     ;
 wire                 pwm_val_up  ;
 
+assign pwr_est_val = pwr_est_dB ;
+assign pwm_th_out  = pwm_val    ;
+assign pwm_out     = pwm_val_up ;
+
 power_est u_power_est(
     .clk        ( clk        ),
     .reset_n    ( reset_n    ),
@@ -68,6 +72,7 @@ pwm_gen u_pwm_gen(
     .pwm_th_ena ( pwm_th_ena ),
     .pwm_th_in  ( pwm_th_in  ),
     .pwm_max_val( pwm_max_val),
+    .agc_fix    ( agc_fix    ),
     .pwm_val    ( pwm_val    ),
     .pwm_val_up ( pwm_val_up )
 );
