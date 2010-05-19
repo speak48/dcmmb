@@ -9,6 +9,7 @@ module pwm_gen(
     pwm_inv,
     pwm_th_ena,
     pwm_th_in,
+    agc_fix,
     pwm_max_val,
     pwm_val,
     pwm_val_up
@@ -28,12 +29,15 @@ input  [7:0]         pwm_th_in  ; // pwm value 128 step
 input  [7:0]         pwm_max_val;
 output [7:0]         pwm_val    ;
 output               pwm_val_up ;
+output               agc_fix    ;
 
 reg                  pwm_dir    ;
 reg                  pwm_adj_en ;
 reg                  pwr_est_d1 ;
 reg    [7:0]         pwm_val    ;
 reg                  pwm_val_up ;
+reg    [3:0]         pwr_cnt    ;
+reg                  agc_fix    ;
 
 wire   [9:0]         delta_dB   ;
 wire   [8:0]         abs_delta_dB;
@@ -58,6 +62,27 @@ begin : pwm_dir_r
     else if(pwm_ena & pwr_est_end)
 	pwm_dir <= #1 delta_dB[9];
 end
+
+always @ (posedge clk or negedge reset_n)
+begin : pwr_cnt_r
+    if(!reset_n)
+        pwr_cnt <= #1 4'h0;
+    else if(pwr_est_end)
+    begin
+        if(!agc_fix & dB_in_range)
+        pwr_cnt <= #1 pwr_cnt + 1'b1;
+        else
+        pwr_cnt <= #1 4'h0;		
+    end
+end	    
+
+always @ (posedge clk or negedge reset_n)
+begin : agc_fix_r
+    if(!reset_n)
+        agc_fix <= #1 1'b0;
+    else if(pwr_cnt == 4'h4)
+        agc_fix <= #1 1'b1;	    
+end	    
 
 always @ (posedge clk or negedge reset_n)
 begin : pwm_adj_en_r	
