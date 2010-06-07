@@ -50,6 +50,7 @@ reg                    ecc_dec_end     ;
 wire   [1         :0]  asymfifo_wr     ;
 wire                   asymfifo_rd     ;
 wire   [DAT_WID-1 :0]  asymfifo_din    ;
+wire   [DAT_WID-1 :0]  asymfifo_dout   ;
 
 ///////////////////////////////////
 // ECC clk_2x clock domain

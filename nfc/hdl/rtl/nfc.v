@@ -94,7 +94,10 @@ wire          nf_ecc_len;
 wire   [13:0] nf_trn_cnt;
 wire   [15:0] memif_nfif_data;
 wire   [15:0] nfif_memif_data;
-
+wire          nf_edo_en;
+wire          nf_cmd_valid;
+wire          nf_dat_end;
+wire          nf_dat_inv;
 //wire   [7:0]  ecc_data;
 //wire   [12:0] ecc_addr;
 
@@ -139,6 +142,9 @@ wire   [13        :0]  nfc_spa_addr    ;
 wire   [2         :0]  rng_sel         ; 
 wire   [7         :0]  rng_dat         ; 
 wire   [31        :0]  nfc_rand_seed   ; 
+wire                   nfc_cmd_en      ;
+wire                   nfc_dat_end     ;
+wire                   nfc_dat_inv     ;
  
 assign rng_sel    = nf_rng_sel;
 assign nfc_if_cmd = nf_cmd;
@@ -150,7 +156,10 @@ assign nfc_addr_cnt = {nf_row_addr_cnt, nf_column_addr_cnt};
 assign nfc_col_addr = nf_column_addr;    
 assign nfc_row_addr = nf_row_addr;       
 assign nfc_rand_seed = nf_rand_seed;      
-
+assign nfc_dat_inv = nf_dat_inv;
+assign nfc_dat_end = nf_dat_end;
+assign nfc_cmd_en  = nf_cmd_valid;
+assign nfc_dat_dir = nf_dir;
 
 
 
@@ -171,7 +180,7 @@ nfc_sfr_if  u_nfc_sfr_if(
     .nf_cmd_valid        (nf_cmd_valid),
     .nf_rng_sel          (nf_rng_sel),
     .nf_dat_end          (nf_dat_end),
-    .nf_dir              (nf_dir),
+    .nf_dir              (nf_dat_dir),
     .nf_dat_inv          (nf_dat_inv),
     .nf_addr_en          (nf_addr_en),
     .nf_dat_en           (nf_dat_en),
@@ -213,6 +222,7 @@ nfc_mif u_nfc_mif(
                   
     .rng_sel        (rng_sel),
     .rng_dat        (rng_dat),
+    .rng_rd         (rng_rd ),
                
     .nfc_blk_len    (nfc_blk_len),
     .nfc_spa_len    (nfc_spa_len),

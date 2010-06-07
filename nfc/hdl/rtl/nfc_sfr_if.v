@@ -144,7 +144,7 @@ always @(posedge  clk or negedge rst_n)
 begin
   if(rst_n==1'b0)
     nf_cmd         <=   8'h00;
-  else if(mif_nfc_reg_wr && (mif_nfc_reg_addr = NFC_IF_CMD_OFFSET))
+  else if(mif_nfc_reg_wr && (mif_nfc_reg_addr == NFC_IF_CMD_OFFSET))
     nf_cmd         <=   mif_nfc_reg_din;
 end
 
@@ -153,7 +153,7 @@ always @(posedge  clk or negedge rst_n)
 begin
   if(rst_n==1'b0)
     nf_cmd_valid   <=  1'b0;
-  else if(mif_nfc_reg_wr && (mif_nfc_reg_addr = NFC_IF_CMD_OFFSET))
+  else if(mif_nfc_reg_wr && (mif_nfc_reg_addr == NFC_IF_CMD_OFFSET))
     nf_cmd_valid   <=  1'b1;
   else 
     nf_cmd_valid   <=  1'b0;
