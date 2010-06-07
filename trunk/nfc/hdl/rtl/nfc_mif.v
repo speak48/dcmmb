@@ -6,6 +6,7 @@ module nfc_mif(
      
     rng_sel        ,
     rng_dat        ,
+    rng_rd         ,
 
     nfc_blk_len    ,
     nfc_spa_len    ,
@@ -47,6 +48,7 @@ input                  rst_n           ;
 // RNG Interface
 input   [2        :0]  rng_sel         ;        
 input   [7        :0]  rng_dat         ;
+output                 rng_rd          ;
 
 // SFR interface
 input   [11       :0]  nfc_blk_len     ;
@@ -106,10 +108,16 @@ wire                   sta_rd_spa      ;
 wire                   sta_rd_ecc      ;
 wire                   sta_rd_idl      ;
 wire                   nxt_sta_rd_sta  ;
+wire                   rng_rd          ;
+wire                   dat_rd          ;
+wire                   ecc_rd          ;
+wire                   spa_rd          ;
+
 
 wire nfc_ecc_en = 1'b0;
 wire nfc_spa_en = 1'b0;
 
+assign mif_ecc_rd = ecc_rd;
 // FSM Active Signal
 assign sta_rd_idl = (mif_rd_sta == MIF_RD_IDLE);
 assign sta_rd_dat = (mif_rd_sta == MIF_RD_DAT);

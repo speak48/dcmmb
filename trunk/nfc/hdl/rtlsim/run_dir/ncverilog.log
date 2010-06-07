@@ -1,57 +1,119 @@
 ncverilog: 05.00-p001: (c) Copyright 1995-2003 Cadence Design Systems, Inc.
-TOOL:	ncverilog	05.00-p001: Started on Jun 04, 2010 at 09:38:20
+TOOL:	ncverilog	05.00-p001: Started on Jun 07, 2010 at 18:07:49
 ncverilog
 	-f ../debussy/hdl.f
 		+incdir+../../rtl
-		../../tb/nfc_if_tb.v
+		../../tb/nfc_tb.v
+		../../rtl/nfc.v
+		../../rtl/nfc_mif.v
+		../../rtl/nfc_rng_dat.v
+		../../rtl/nfc_sfr_if.v
 		../../rtl/nfc_if.v
+		../../rtl/nfc_ecc_cor.v
+		../../rtl/nfc_asynch_ram.v
+		../../rtl/pulse_sync.v
 	+nccoverage
 	+access+wrc
-Recompiling... reason: file 'D:\svn\nfc\hdl\tb\nfc_if_tb.v' is newer than expected.
-	expected: Fri Jun 04 09:35:18 2010
-	actual:   Fri Jun 04 09:38:18 2010
-file: ../../tb/nfc_if_tb.v
-	module worklib.nfc_if_tb:v
+file: ../../tb/nfc_tb.v
+	module worklib.nfc_tb:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../rtl/nfc.v
+	module worklib.nfc:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../rtl/nfc_mif.v
+	module worklib.nfc_mif:v
+		errors: 0, warnings: 0
+file: ../../rtl/nfc_rng_dat.v
+	module worklib.nfc_rng_dat:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../rtl/nfc_sfr_if.v
+	module worklib.nfc_sfr_if:v (up-to-date)
 		errors: 0, warnings: 0
 file: ../../rtl/nfc_if.v
 	module worklib.nfc_if:v (up-to-date)
 		errors: 0, warnings: 0
+file: ../../rtl/nfc_ecc_cor.v
+	module worklib.nfc_ecc_cor:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../rtl/nfc_asynch_ram.v
+	module worklib.nfc_asynch_ram:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../rtl/pulse_sync.v
+	module worklib.pulse_sync:v (up-to-date)
+		errors: 0, warnings: 0
 		Caching library 'worklib' ....... Done
 	Elaborating the design hierarchy:
+   .nf_sram_addr    (nfc_ram_addr), 
+                                |
+ncelab: *W,CUVMPW (D:\svn\nfc\hdl\tb\nfc_tb.v,126|32): port sizes differ in port connection.
+   .nf_sram_wen     (nfc_ram_wen ), 
+                               |
+ncelab: *W,CUVMPW (D:\svn\nfc\hdl\tb\nfc_tb.v,128|31): port sizes differ in port connection.
+   .nf_sram_wr_dat  (nfc_ram_din ), 
+                               |
+ncelab: *W,CUVMPW (D:\svn\nfc\hdl\tb\nfc_tb.v,129|31): port sizes differ in port connection.
+    .ecc_enc_dat    (ecc_enc_dat),    
+                               |
+ncelab: *W,CUVMPW (D:\svn\nfc\hdl\rtl\nfc.v,247|31): port sizes differ in port connection.
 	Building instance overlay tables: .................... Done
 	Generating native compiled code:
-		worklib.nfc_if_tb:v <0x7d72bef9>
-			streams:  34, words: 20615
+		worklib.nfc:v <0x67bacdb9>
+			streams:  17, words:  2329
+		worklib.nfc_mif:v <0x2e6757f5>
+			streams:  34, words: 15692
 	Loading native compiled code:     .................... Done
 	Building instance specific data structures.
+   .nf_sram_wr_dat  (nfc_ram_din ), 
+                               |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\tb\nfc_tb.v,129|31): implicit wire has no fanin (nfc_tb.nfc_ram_din).
+   .nf_sram_wen     (nfc_ram_wen ), 
+                               |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\tb\nfc_tb.v,128|31): implicit wire has no fanin (nfc_tb.nfc_ram_wen).
+   .nf_sram_cen     (nfc_ram_cen ), 
+                               |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\tb\nfc_tb.v,127|31): implicit wire has no fanin (nfc_tb.nfc_ram_cen).
+   .nf_sram_addr    (nfc_ram_addr), 
+                                |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\tb\nfc_tb.v,126|32): implicit wire has no fanin (nfc_tb.nfc_ram_addr).
+    .nfif_wr_rdy    (nfif_wr_rdy),
+                               |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,244|31): implicit wire has no fanin (nfc_tb.u_nfc.nfif_wr_rdy).
+    .nfif_rd_rdy    (nfif_rd_rdy),
+                               |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,239|31): implicit wire has no fanin (nfc_tb.u_nfc.nfif_rd_rdy).
+    .ecc_done     (ecc_done),
+                          |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,303|26): implicit wire has no fanin (nfc_tb.u_nfc.ecc_done).
+    .ecc_fifo_wr  (ecc_wr),
+                        |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,300|24): implicit wire has no fanin (nfc_tb.u_nfc.ecc_wr).
+    .nfc_ecc_opt  (nfc_ecc_opt),
+                             |
+ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,299|29): implicit wire has no fanin (nfc_tb.u_nfc.nfc_ecc_opt).
 	Design hierarchy summary:
-		                 Instances  Unique
-		Modules:                 2       2
-		Registers:              43      43
-		Scalar wires:           38       -
-		Vectored wires:         13       -
-		Always blocks:          15      15
-		Initial blocks:          2       2
-		Parallel blocks:         1       1
-		Cont. assignments:      15      24
-		Pseudo assignments:     18      30
-		Simulation timescale:  1ns
-	Writing initial simulation snapshot: worklib.nfc_if_tb:v
-Loading snapshot worklib.nfc_if_tb:v .................... Done
+		                  Instances  Unique
+		Modules:                 10       9
+		Registers:               87      85
+		Scalar wires:           141       -
+		Expanded wires:           3       1
+		Vectored wires:          60       -
+		Always blocks:           61      59
+		Initial blocks:           2       2
+		Parallel blocks:          1       1
+		Cont. assignments:       49      65
+		Pseudo assignments:      13      24
+		Simulation timescale:  10ps
+	Writing initial simulation snapshot: worklib.nfc_tb:v
+Loading snapshot worklib.nfc_tb:v .................... Done
 ncsim> source "C:/Program Files/Cadence Design Systems/LDV/tools/inca/files/ncsimrc"
 ncsim> run
 Novas FSDB Dumper for NC-Verilog/Verilog-XL, Release 5.4v9 (Win95/NT) 05/04/2005
 Copyright (C) 1996 - 2004 by Novas Software, Inc.
-*Novas* Create FSDB file '../debussy/nfif.fsdb'
-*Novas* Start dumping the top scope(nfc_if_tb), layer(0).
+*Novas* Create FSDB file '../debussy/nfc.fsdb'
+*Novas* Start dumping the top scope(nfc_tb), layer(0).
 *Novas* End of dumping.
 reset end
-command latch cycle end
-addr latch cycle end
-data write end
-data read end
-data read end
-Simulation complete via $finish(1) at time 7066 NS + 0
-D:\svn\nfc\hdl\tb\nfc_if_tb.v:162     $finish;
+Simulation complete via $finish(1) at time 6781 NS + 0
+D:\svn\nfc\hdl\tb\nfc_tb.v:94     $finish;
 ncsim> exit
-TOOL:	ncverilog	05.00-p001: Exiting on Jun 04, 2010 at 09:38:27  (total: 00:00:07)
+TOOL:	ncverilog	05.00-p001: Exiting on Jun 07, 2010 at 18:07:56  (total: 00:00:07)
