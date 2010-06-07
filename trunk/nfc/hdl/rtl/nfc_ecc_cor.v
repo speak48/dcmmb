@@ -15,7 +15,7 @@ module nfc_ecc_cor(
      mem_enc_dat ,    
      mem_dec_addr,
      ecc_enc_rdy ,
-     ecc_dec_rdy ,
+     ecc_dec_rdy 
 
 );
 

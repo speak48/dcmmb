@@ -83,15 +83,15 @@ output  [DAT_WID-1:0]  nfif_data_out   ;
 input                  nfif_wr_rdy     ;
 
 parameter      NFIF_IDLE     = 4'b0000 ,
-	       NFIF_CMD_PRE  = 4'b0001 ,
-	       NFIF_CMD_WR   = 4'b0010 ,
-	       NFIF_ADDR_PRE = 4'b0011 ,
-	       NFIF_ADDR_WR  = 4'b0100 ,
-	       NFIF_DAT_LD   = 4'b0101 ,
-	       NFIF_DAT_WR   = 4'b0110 ,
-	       NFIF_DAT_HD   = 4'b0111 ,
-	       NFIF_DAT_RD   = 4'b1000 ,
-	       NFIF_END      = 4'b1001 ;
+               NFIF_CMD_PRE  = 4'b0001 ,
+               NFIF_CMD_WR   = 4'b0010 ,
+               NFIF_ADDR_PRE = 4'b0011 ,
+               NFIF_ADDR_WR  = 4'b0100 ,
+               NFIF_DAT_LD   = 4'b0101 ,
+               NFIF_DAT_WR   = 4'b0110 ,
+               NFIF_DAT_HD   = 4'b0111 ,
+               NFIF_DAT_RD   = 4'b1000 ,
+               NFIF_END      = 4'b1001 ;
 
 // Internal register definition
 reg                     nf_cle         ;

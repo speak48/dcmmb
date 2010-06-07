@@ -1,5 +1,9 @@
 +incdir+../../rtl
-../../tb/nfc_if_tb.v
+../../tb/nfc_tb.v
+../../rtl/nfc.v
+../../rtl/nfc_mif.v
+../../rtl/nfc_rng_dat.v
+../../rtl/nfc_sfr_if.v
 ../../rtl/nfc_if.v
 ../../rtl/nfc_ecc_cor.v
 ../../rtl/nfc_asynch_ram.v
