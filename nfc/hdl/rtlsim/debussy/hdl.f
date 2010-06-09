@@ -1,5 +1,7 @@
 +incdir+../../rtl
 ../../tb/nfc_tb.v
+../../tb/dpram_4p5x16.v
+../../tb/SJ180_4608X8X2CM16.v
 ../../rtl/nfc.v
 ../../rtl/nfc_mif.v
 ../../rtl/nfc_rng_dat.v

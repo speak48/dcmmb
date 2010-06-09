@@ -39,7 +39,7 @@ begin
   if (rst_n==1'b0)
     en_dly <= 1'b0;
   else
-    en_dly <= en;
+    en_dly <= #1 en;
 end
 
 always @(posedge clk or negedge rst_n)
@@ -47,9 +47,9 @@ begin
   if (rst_n==1'b0)
     cnt[1:0] <= 2'b11;
   else if ((en==1'b1) && (en_dly==1'b1) && (mode == 2'b00) && rd)
-    cnt[1:0] <= cnt[1:0] + 1'b1;
+    cnt[1:0] <= #1 cnt[1:0] + 1'b1;
   else if(mode != 2'b00 || !en)
-    cnt[1:0] <= 2'b11;
+    cnt[1:0] <= #1 2'b11;
 end
 
 always @(posedge clk or negedge rst_n)
@@ -57,12 +57,12 @@ begin
   if (rst_n==1'b0)
     rng32[31:0] <= 32'h00000000;
   else if ((en==1'b1) && (en_dly==1'b0))
-      rng32[31:0] <= seed[31:0];
+      rng32[31:0] <= #1 seed[31:0];
   else if ((en==1'b1) && (en_dly==1'b1) && (cnt[1:0]==2'b11) && rd)
     case(mode)
-    2'b00: rng32[31:0] <= {rng32[30:0], rng32_xor};
-    2'b10: rng32[31:24]  <= rng32[31:24] + 1'b1;
-    2'b11: rng32[31:24]  <= rng32[31:24] - 1'b1;
+    2'b00: rng32[31:0]   <= #1 {rng32[30:0], rng32_xor};
+    2'b10: rng32[31:24]  <= #1 rng32[31:24] + 1'b1;
+    2'b11: rng32[31:24]  <= #1 rng32[31:24] - 1'b1;
     endcase
 end
 
