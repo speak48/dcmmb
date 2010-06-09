@@ -12,6 +12,12 @@ reg                    cpu_bfm_rd      ;
 reg                    cpu_bfm_wr      ; 
 reg   [7       :0]     cpu_bfm_din     ; 
 
+wire   [12        :0]  nfc_ram_addr    ;  
+wire                   nfc_ram_cen     ;  
+wire   [1         :0]  nfc_ram_wen     ;  
+wire   [15        :0]  nfc_ram_din     ;  
+wire   [15        :0]  ram_nfc_dout    ; 
+
 task clock_gen;
 begin	
    clk = 1'b0;
@@ -71,25 +77,32 @@ begin
     #1;
     #(100*CLK_PRD)
     // Latch Test
+    bfm_write(NFC_TIMING_CONFC_OFFSET,8'b0_110_0_011);
     bfm_write(NFC_IF_CMD_OFFSET, 8'h70);
     #(100*CLK_PRD)
     // Address Test
-    bfm_write(NFC_ROW_ADDR0_OFFSET,8'h00);
+    bfm_write(NFC_ROW_ADDR0_OFFSET,8'h55);
     bfm_write(NFC_ROW_ADDR1_OFFSET,8'h22);
     bfm_write(NFC_ROW_ADDR2_OFFSET,8'hcc);
-    bfm_write(NFC_ROW_ADDR3_OFFSET,8'h55);
+    bfm_write(NFC_ROW_ADDR3_OFFSET,8'h66);
     bfm_write(NFC_COLUMN_ADDR0_OFFSET,8'h02);
     bfm_write(NFC_COLUMN_ADDR1_OFFSET,8'h03);
     bfm_write(NFC_COLUMN_ADDR2_OFFSET,8'haa);
     bfm_write(NFC_COLUMN_ADDR3_OFFSET,8'h00);
-    bfm_write(NFC_ADDR_CNT_OFFSET,8'b00_011_010);
-    bfm_write(NFC_TIMING_CONFC_OFFSET,8'h36); 
+    bfm_write(NFC_ADDR_CNT_OFFSET,8'b00_010_011); // col, row
     bfm_write(NFC_IF_CTRL0_OFFSET,8'b0000_0010); 
     //bfm_write(,8'h); 
     //bfm_write(,8'h); 
     #(150*CLK_PRD)
-    bfm_write(NFC_TRN_CNT0_OFFSET,8'h10);
-    bfm_write(NFC_IF_CTRL0_OFFSET,8'b1100_1001);
+    bfm_write(NFC_BLK_LEN0_OFFSET,8'h10);
+    bfm_write(NFC_BLK_LEN1_OFFSET,8'h00);
+    bfm_write(NFC_RED_LEN_OFFSET,8'b00_0_00000);
+    bfm_write(NFC_ECC_CTRL_OFFSET,8'b000000_0_0);
+
+    bfm_write(NFC_TRN_CNT0_OFFSET,8'h20);
+    bfm_write(NFC_IF_CTRL0_OFFSET,8'b1110_1001); // random decrease
+    #(150*CLK_PRD)
+    bfm_write(NFC_IF_CTRL0_OFFSET,8'b0000_1001);
     #(300*CLK_PRD)
     $finish;
 end
@@ -127,8 +140,30 @@ nfc u_nfc(
    .nf_sram_cen     (nfc_ram_cen ), 
    .nf_sram_wen     (nfc_ram_wen ), 
    .nf_sram_wr_dat  (nfc_ram_din ), 
-//   .nf_sram_rd_dat  (ram_nfc_dout) 
-   .nf_sram_rd_dat  (16'h0 ) 
+   .nf_sram_rd_dat  (ram_nfc_dout) 
+//   .nf_sram_rd_dat  (16'h0 ) 
 );
 
+reg [15:0]  data;
+assign ram_nfc_dout = data;
+
+dpram_4p5x16 dpram_4p5x16(
+        .clka        (clk),
+        .dpram_dina (nfc_ram_din),
+        .dpram_addra (nfc_ram_addr[12:0]),
+        .dpram_cena  (nfc_ram_cen),
+        .dpram_wena  (nfc_ram_wen),
+//        .dpram_douta (ram_nfc_dout)
+        .dpram_douta  ()
+        );
+
+always @ (posedge clk)
+begin
+    if(nfc_ram_cen == 1'b0)	
+        data <= #1 $random;
+    else
+	data <= #1 16'hXX;
+end
+
+	    
 endmodule

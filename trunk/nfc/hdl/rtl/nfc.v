@@ -56,7 +56,7 @@ output [15:0] nf_dat_o;
 output        nf_io_ctrl;
 output        nf_reb_o;
 output [7:0]  nfc_mif_reg_dout;
-output [15:0] nf_sram_addr;
+output [12:0] nf_sram_addr;
 output        nf_sram_cen;
 output [1:0]  nf_sram_wen;
 output [15:0] nf_sram_wr_dat;
@@ -98,8 +98,12 @@ wire          nf_edo_en;
 wire          nf_cmd_valid;
 wire          nf_dat_end;
 wire          nf_dat_inv;
+wire          nf_dat_en;
+wire          nf_addr_en;
 //wire   [7:0]  ecc_data;
 //wire   [12:0] ecc_addr;
+
+
 
 wire   [SFR_WID-1 :0]  nfc_if_cmd      ;
 wire                   nfc_addr_en     ;
@@ -146,10 +150,16 @@ wire                   nfc_cmd_en      ;
 wire                   nfc_dat_end     ;
 wire                   nfc_dat_inv     ;
  
+assign  nf_sram_addr[12:0]   = nfc_ram_addr   ;
+assign  nf_sram_cen    = nfc_ram_cen    ;
+assign  nf_sram_wen    = nfc_ram_wen    ;
+assign  nf_sram_wr_dat = nfc_ram_din    ;
+assign  ram_nfc_dout   = nf_sram_rd_dat ; 
+ 
 assign rng_sel    = nf_rng_sel;
 assign nfc_if_cmd = nf_cmd;
 assign nfc_mode   = nf_mode;
-assign nfc_tconf  = { nf_edo_en, nf_high_cycle ,nf_total_cycle};
+assign nfc_tconf  = { nf_edo_en, nf_total_cycle, nf_high_cycle};
 assign nfc_dat_addr = nf_data_addr;      
 assign nfc_spa_addr = nf_spare_addr;     
 assign nfc_addr_cnt = {nf_row_addr_cnt, nf_column_addr_cnt};
@@ -159,14 +169,19 @@ assign nfc_rand_seed = nf_rand_seed;
 assign nfc_dat_inv = nf_dat_inv;
 assign nfc_dat_end = nf_dat_end;
 assign nfc_cmd_en  = nf_cmd_valid;
-assign nfc_dat_dir = nf_dir;
+//assign nfc_dat_dir = nf_dir;
+assign nfc_addr_en = nf_addr_en;
+assign nfc_dat_en  = nf_dat_en;
+assign nfc_blk_len = nf_blk_len;
+assign nfc_spa_len = nf_spare_len;
+assign nfc_dat_cnt = nfc_blk_len + nfc_spa_len + nfc_ecc_len;
 
-
+assign nfc_ecc_len = nf_ecc_en ?  (nf_ecc_len ? 'd24 : 'd13) : 'd0;
 
  
 nfc_sfr_if  u_nfc_sfr_if(
-    .clk                 (nfc_clk),
-    .rst_n               (rstb_nfc),
+    .nfc_clk             (nfc_clk),
+    .rstb_nfc            (rstb_nfc),
 
     .mif_nfc_reg_wr      (mif_nfc_reg_wr),
     .mif_nfc_reg_rd      (mif_nfc_reg_rd),
@@ -175,15 +190,19 @@ nfc_sfr_if  u_nfc_sfr_if(
     .nfc_mif_reg_dout    (nfc_mif_reg_dout),
 
     .rnb_i               (nf_rnb_i),
-
+    .addr_clear          (nfif_addr_done),
+    .data_clear          (nfif_dat_done ),
+    
     .nf_cmd              (nf_cmd),
     .nf_cmd_valid        (nf_cmd_valid),
     .nf_rng_sel          (nf_rng_sel),
     .nf_dat_end          (nf_dat_end),
-    .nf_dir              (nf_dat_dir),
+    .nf_dir              (nfc_dat_dir),
     .nf_dat_inv          (nf_dat_inv),
     .nf_addr_en          (nf_addr_en),
     .nf_dat_en           (nf_dat_en),
+    .nf_blk_len          (nf_blk_len),
+    .nf_trn_cnt          (nf_trn_cnt),
 
     .nf_mode             (nf_mode),
     .nf_ceb              (nf_ceb_o),
@@ -230,6 +249,7 @@ nfc_mif u_nfc_mif(
     .nfc_trn_cnt    (nfc_trn_cnt),
     .nfc_dat_addr   (nfc_dat_addr),
     .nfc_spa_addr   (nfc_spa_addr),
+    .nfc_mode       (nfc_mode    ),
                  
     .nfc_dat_dir    (nfc_dat_dir),
     .nfc_dat_en     (nfc_dat_en),

@@ -14,6 +14,7 @@ module nfc_mif(
     nfc_trn_cnt    ,
     nfc_dat_addr   ,
     nfc_spa_addr   ,
+    nfc_mode       ,
 
     nfc_dat_dir    ,
     nfc_dat_en     ,
@@ -60,6 +61,7 @@ input   [13       :0]  nfc_spa_addr    ;
 input                  nfc_dat_en      ;
 input                  nfc_dat_dir     ;
 input                  nfc_dat_end     ; // Reg/RAM
+input   [1        :0]  nfc_mode        ;
 
 // NF_IF Interface
 //input                  nfif_dat_done   ;
@@ -95,6 +97,9 @@ reg     [1        :0]  mif_rd_sta      ;
 reg     [DAT_WID-1:0]  nfif_data_in    ;
 reg     [13       :0]  mif_dat_addr    ;
 reg     [13       :0]  mif_spa_addr    ;
+reg                    nfif_rd_rdy     ;
+reg                    ram_rd_dly      ;
+reg                    ecc_rd_dly      ;
 
 reg     [1        :0]  mif_rd_nxt_sta  ;
 reg     [11       :0]  blk_len         ;
@@ -118,6 +123,10 @@ wire nfc_ecc_en = 1'b0;
 wire nfc_spa_en = 1'b0;
 
 assign mif_ecc_rd = ecc_rd;
+assign nfc_ram_addr = sta_rd_spa ? mif_spa_addr : mif_dat_addr;
+assign nfc_ram_cen  = !(dat_rd | spa_rd );
+assign nfc_ram_wen  = 2'b11;
+
 // FSM Active Signal
 assign sta_rd_idl = (mif_rd_sta == MIF_RD_IDLE);
 assign sta_rd_dat = (mif_rd_sta == MIF_RD_DAT);
@@ -127,8 +136,8 @@ assign nxt_sta_rd_dat = (mif_rd_nxt_sta == MIF_RD_DAT);
 
 // RNG/DAT/SPA/ECC Read Active signal
 assign rng_rd     = sta_rd_dat & rng_sel[2] & nfif_data_rd;
-assign dat_rd     = sta_rd_dat & nfif_data_rd;
-assign spa_rd     = sta_rd_spa & nfif_data_rd;
+assign dat_rd     = sta_rd_dat & (!rng_sel[2]) & nfif_data_rd;
+assign spa_rd     = sta_rd_spa & (!rng_sel[2]) & nfif_data_rd;
 assign ecc_rd     = sta_rd_ecc & nfif_data_rd;
 
 // read firt data imediately after en
@@ -180,26 +189,26 @@ begin
             mif_rd_nxt_sta = MIF_RD_DAT;
     MIF_RD_DAT:
         if(blk_end) begin
-            if( nfc_spa_en)
+          if( nfc_spa_en)
 	        mif_rd_nxt_sta = MIF_RD_SPA;
-            else if( nfc_ecc_en )
-		mif_rd_nxt_sta = MIF_RD_ECC;
-	    else
-		mif_rd_nxt_sta = MIF_RD_IDLE;
+          else if( nfc_ecc_en )
+            mif_rd_nxt_sta = MIF_RD_ECC;
+	      else
+		    mif_rd_nxt_sta = MIF_RD_IDLE;
         end
     MIF_RD_SPA:
         if(blk_end) begin
-	    if( nfc_ecc_en )
-                mif_rd_nxt_sta = MIF_RD_ECC;
-	    else
-		mif_rd_nxt_sta = MIF_RD_IDLE;
+	      if( nfc_ecc_en )
+              mif_rd_nxt_sta = MIF_RD_ECC;
+	      else
+		      mif_rd_nxt_sta = MIF_RD_IDLE;
         end
     MIF_RD_ECC:
 	if(blk_end) begin
 	    if( mif_cnt_rst )	    
-                mif_rd_nxt_sta = MIF_RD_IDLE;
+            mif_rd_nxt_sta = MIF_RD_IDLE;
 	    else
-		mif_rd_nxt_sta = MIF_RD_DAT;
+		    mif_rd_nxt_sta = MIF_RD_DAT;
 	end
     default: mif_rd_nxt_sta = MIF_RD_IDLE;
     endcase
@@ -222,14 +231,30 @@ begin
 end
 
 // Data Selection
+always @ (posedge clk or negedge rst_n)
+begin
+    if(rst_n == 1'b0)
+        ram_rd_dly <= 1'b0;
+    else
+        ram_rd_dly <= #1 dat_rd | spa_rd ; 
+end
+
+always @ (posedge clk or negedge rst_n)
+begin
+    if(rst_n == 1'b0)
+        ecc_rd_dly <= 1'b0;
+    else
+        ecc_rd_dly <= #1 ecc_rd ; 
+end
+
 always @ (*)
 begin
-    case({rng_rd,dat_rd,spa_rd,ecc_rd})
-    4'b1XXX: dat8_tmp = rng_dat ;
-    4'b010X: dat8_tmp = ram_nfc_dout;
-    4'b001X: dat8_tmp = ram_nfc_dout;
-    4'b0001: dat8_tmp = ecc_enc_dat;
-    default: dat8_tmp = 8'h00;
+    dat8_tmp = nfif_data_in;
+    casex({rng_rd,ram_rd_dly,ecc_rd_dly})
+    3'b1XX: dat8_tmp = rng_dat ;
+    3'b01X: dat8_tmp = ram_nfc_dout;
+    4'b001: dat8_tmp = ecc_enc_dat;
+    default: dat8_tmp = nfif_data_in;
     endcase
 end    
 
@@ -238,8 +263,16 @@ begin
     if(rst_n == 1'b0)
         nfif_data_in <= 16'h0;
     else
-	nfif_data_in <= #1 {8'h0, dat8_tmp }; // support 8 bit mode only
+        nfif_data_in <= #1 {8'h0, dat8_tmp }; // support 8 bit mode only
 end
+
+always @ (posedge clk or negedge rst_n)
+begin
+    if(rst_n == 1'b0)
+        nfif_rd_rdy <= 1'b0;
+    else 
+        nfif_rd_rdy <= rng_rd | ram_rd_dly | ecc_rd_dly;
+end	
 
 // MIF DAT ADDR
 always @ (posedge clk or negedge rst_n)
@@ -264,5 +297,7 @@ begin
 end
 
 // Last Byte In 195 bit mode
+
+
 
 endmodule
