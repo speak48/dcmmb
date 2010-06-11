@@ -4,7 +4,7 @@ parameter SFR_WID = 8;
 parameter DAT_WID = 16;
 parameter ECC_DWID = 8;
 parameter ECC_AWID = 13;
-parameter PRE_CYCLE = 3'h2;
+parameter PRE_CYCLE = 3'h3;
 
 parameter     NFC_ECC_CTRL_OFFSET       = 6'h00;
 parameter     NFC_IF_CMD_OFFSET         = 6'h10;
@@ -46,3 +46,12 @@ parameter     NFC_RAND_SEED1_OFFSET     = 6'h33;
 parameter     NFC_RAND_SEED2_OFFSET     = 6'h34;
 parameter     NFC_RAND_SEED3_OFFSET     = 6'h35;
 
+parameter     NFC_ECC_CFG0_OFFSET       = 6'h04;
+parameter     NFC_ECC_CFG1_OFFSET       = 6'h05;
+//parameter     NFC_ECC_CFG2_OFFSET       = 6'h06;
+//parameter     NFC_ECC_CFG3_OFFSET       = 6'h07;
+
+parameter     NFC_ECC_STA0_OFFSET       = 6'h08;
+//parameter     NFC_ECC_STA1_OFFSET       = 6'h09;
+//parameter     NFC_ECC_STA2_OFFSET       = 6'h0A;
+//parameter     NFC_ECC_STA3_OFFSET       = 6'h0B;

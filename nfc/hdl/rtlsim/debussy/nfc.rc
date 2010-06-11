@@ -1,12 +1,12 @@
 Magic 271485
-Revision 5.4v9
+Revision 2007.10
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort -4 -4 1160 842 185 65
+viewPort -4 27 1152 789 234 65
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / "" "D:\svn\nfc\hdl\rtlsim\debussy\nfc.fsdb"
+; openDirFile -d / "" "/export/home/project/chenzy/temp/nfc/hdl/rtlsim/debussy/nfc.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -16,16 +16,16 @@ signalSpacing 3
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 0.000000 8381000.000000
-cursor 5485000.000000
-marker 0.000000
+zoom 38868623.904623 41461364.600091
+cursor 39306000.000000
+marker 39246000.000000
 
 ; user define markers
 ; userMarker time_pos marker_name
 ; visible top row signal index
 top 0
 ; marker line index
-markerPos 25
+markerPos 38
 
 ; event list
 ; addEvent event_name event_expression
@@ -46,7 +46,7 @@ curSTATUS ByChange
 
 
 addGroup "SYS"
-activeDirFile "" "D:\svn\nfc\hdl\rtlsim\debussy\nfc.fsdb"
+; activeDirFile "" "/export/home/project/chenzy/temp/nfc/hdl/rtlsim/debussy/nfc.fsdb"
 addSignal -h 15 /nfc_tb/u_nfc/nfc_clk
 addSignal -h 15 -holdScope ecc_clk
 addSignal -h 15 -holdScope rstb_nfc
@@ -70,21 +70,53 @@ addSignal -h 15 -holdScope nfif_dat_done
 addSignal -h 15 -UNSIGNED -HEX /nfc_tb/u_nfc/u_nfc_mif/mif_dat_addr[13:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope mif_spa_addr[13:0]
 addSignal -h 15 -holdScope dat_rd
-addGroup "G3"
+addGroup "DATBC SRAM IF" -e FALSE
 addSignal -h 15 -UNSIGNED -HEX /nfc_tb/u_nfc/nf_sram_addr[12:0]
 addSignal -h 15 -holdScope nf_sram_cen
 addSignal -h 15 -UNSIGNED -HEX -holdScope nf_sram_wen[1:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope nf_sram_wr_dat[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope nf_sram_rd_dat[15:0]
-addGroup "G4"
+addGroup "MIF"
+addSignal -h 15 -UNSIGNED -HEX /nfc_tb/u_nfc/u_nfc_mif/blk_cnt[11:0]
+addSignal -h 15 -UNSIGNED -HEX /nfc_tb/u_nfc/u_nfc_if/data_cnt[13:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope nfc_dat_cnt[13:0]
+addSignal -h 15 -UNSIGNED -HEX /nfc_tb/u_nfc/u_nfc_mif/mif_rd_sta[1:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope mif_rd_nxt_sta[1:0]
 addGroup "G5"
-
-; grid status
-; gridSignal signal_name
-; gridEdge 0 | 1
-; gridCount
-; gridCycleTime from to cycleTime
-
-; getSignalForm Scope Hierarchy Status
-; active file of getSignalForm
+addSignal -h 15 /nfc_tb/u_nfc/nfif_rd_rdy
+addSignal -h 15 -UNSIGNED -HEX -holdScope nfif_data_in[15:0]
+addGroup "ECC IF" -e FALSE
+addSignal -h 15 /nfc_tb/u_nfc/u_nf_ecc/ecc_wr_i
+addSignal -h 15 -UNSIGNED -HEX -holdScope ecc_data_i[7:0]
+addSignal -h 15 -holdScope ecc_done_o
+addSignal -h 15 -holdScope ecc_wr_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope enc_data_o[7:0]
+addSignal -h 15 -holdScope sfr_en_i
+addSignal -h 15 -holdScope sfr_rd_i
+addSignal -h 15 -holdScope sfr_wr_i
+addSignal -h 15 -UNSIGNED -HEX -holdScope sfr_size_i[1:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope sfr_addr_i[3:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope sfr_wdata_i[31:0]
+addSignal -h 15 -UNSIGNED -HEX /nfc_tb/u_nfc/u_nf_ecc/u0_fsm/current_state[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ecc_cnt[11:0]
+addSignal -h 15 /nfc_tb/u_nfc/u_nf_ecc/u0_reg/clk
+addGroup "ECC_COR" -e FALSE
+addSignal -h 15 /nfc_tb/u_nfc/u_nfc_ecc_cor/ecc_fifo_wr
+addSignal -h 15 -UNSIGNED -HEX -holdScope ecc_enc_dat[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ecc_dec_addr[12:0]
+addSignal -h 15 -holdScope ecc_done
+addSignal -h 15 -holdScope ecc_wr1
+addSignal -h 15 -holdScope ecc_enc_rdy
+addSignal -h 15 -holdScope ecc_dec_end
+addSignal -h 15 /nfc_tb/u_nfc/u_nfc_mif/ecc_rd
+addSignal -h 15 /nfc_tb/u_nfc/u_nfc_ecc_cor/mem_if_rd
+addSignal -h 15 -UNSIGNED -HEX -holdScope mem_enc_dat[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope asymfifo_wr_addr[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope asymfifo_wr[1:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope asymfifo_din[15:0]
+addSignal -h 15 -holdScope asynfifo_rd_en
+addSignal -h 15 -UNSIGNED -HEX -holdScope asymfifo_rd_addr[3:0]
+addSignal -h 15 -holdScope asymfifo_rd
+addSignal -h 15 -UNSIGNED -HEX -holdScope asymfifo_dout[15:0]
+addGroup "G8"
 

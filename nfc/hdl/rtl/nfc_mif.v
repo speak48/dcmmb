@@ -10,7 +10,9 @@ module nfc_mif(
 
     nfc_blk_len    ,
     nfc_spa_len    ,
-    nfc_ecc_len    ,
+    nfc_spa_en     ,
+    nfc_ecc_opt    ,
+    nfc_ecc_en     ,
     nfc_trn_cnt    ,
     nfc_dat_addr   ,
     nfc_spa_addr   ,
@@ -33,6 +35,8 @@ module nfc_mif(
     ecc_dec_addr   ,
     ecc_enc_rdy    ,
     ecc_dec_rdy    ,
+    mif_ecc_wr     ,
+    mif_ecc_dat    ,
 
     nfc_ram_addr   ,
     nfc_ram_cen    ,
@@ -54,7 +58,9 @@ output                 rng_rd          ;
 // SFR interface
 input   [11       :0]  nfc_blk_len     ;
 input   [3        :0]  nfc_spa_len     ;
-input   [1        :0]  nfc_ecc_len     ;
+input                  nfc_ecc_opt     ;
+input                  nfc_ecc_en      ;
+input                  nfc_spa_en      ;
 input   [13       :0]  nfc_trn_cnt     ;
 input   [13       :0]  nfc_dat_addr    ;
 input   [13       :0]  nfc_spa_addr    ;
@@ -78,6 +84,8 @@ input   [15       :0]  ecc_enc_dat     ;
 input   [12       :0]  ecc_dec_addr    ;
 input                  ecc_enc_rdy     ;
 input                  ecc_dec_rdy     ;
+output                 mif_ecc_wr      ;
+output  [DAT_WID-1 :0] mif_ecc_dat     ;
 
 // RAM Interface
 output  [12       :0]  nfc_ram_addr    ;
@@ -100,6 +108,10 @@ reg     [13       :0]  mif_spa_addr    ;
 reg                    nfif_rd_rdy     ;
 reg                    ram_rd_dly      ;
 reg                    ecc_rd_dly      ;
+reg                    nfc_dat_en_dly  ;
+reg                    last_ecc_rdy    ;
+reg     [7        :0]  rng_dat_dly     ;
+reg                    last_ecc_rd_dly ;
 
 reg     [1        :0]  mif_rd_nxt_sta  ;
 reg     [11       :0]  blk_len         ;
@@ -117,15 +129,19 @@ wire                   rng_rd          ;
 wire                   dat_rd          ;
 wire                   ecc_rd          ;
 wire                   spa_rd          ;
+wire                   nfc_dat_ini     ;
+wire                   last_ecc_byte   ;
+wire                   last_ecc_rd     ;
 
+//wire nfc_ecc_en = 1'b0;
+//wire nfc_spa_en = 1'b0;
 
-wire nfc_ecc_en = 1'b0;
-wire nfc_spa_en = 1'b0;
-
-assign mif_ecc_rd = ecc_rd;
+assign mif_ecc_rd   = ecc_rd;
 assign nfc_ram_addr = sta_rd_spa ? mif_spa_addr : mif_dat_addr;
 assign nfc_ram_cen  = !(dat_rd | spa_rd );
 assign nfc_ram_wen  = 2'b11;
+assign mif_ecc_wr   = (nfif_rd_rdy & (sta_rd_dat | sta_rd_spa )) | last_ecc_rdy;
+assign mif_ecc_dat  = nfif_data_in;
 
 // FSM Active Signal
 assign sta_rd_idl = (mif_rd_sta == MIF_RD_IDLE);
@@ -135,22 +151,54 @@ assign sta_rd_ecc = (mif_rd_sta == MIF_RD_ECC);
 assign nxt_sta_rd_dat = (mif_rd_nxt_sta == MIF_RD_DAT);
 
 // RNG/DAT/SPA/ECC Read Active signal
-assign rng_rd     = sta_rd_dat & rng_sel[2] & nfif_data_rd;
-assign dat_rd     = sta_rd_dat & (!rng_sel[2]) & nfif_data_rd;
-assign spa_rd     = sta_rd_spa & (!rng_sel[2]) & nfif_data_rd;
+assign rng_rd     = sta_rd_dat & rng_sel[2]   &  ( nfif_data_rd | last_ecc_rd );
+assign dat_rd     = sta_rd_dat & (!rng_sel[2]) & ( nfif_data_rd | last_ecc_rd );
+assign spa_rd     = sta_rd_spa & (!rng_sel[2]) & ( nfif_data_rd | last_ecc_rd );
 assign ecc_rd     = sta_rd_ecc & nfif_data_rd;
 
 // read firt data imediately after en
 // read continued data while data have been read by NFC_IF
-assign mif_cnt_en = rng_rd | dat_rd | spa_rd | ecc_rd;
+//assign mif_cnt_en = ram_rd_dly | ecc_rd_dly | last_ecc_rdy;
+assign mif_cnt_en = rng_rd | ecc_rd | dat_rd | spa_rd ;
 // mif_cnt rst if all data are tranmitted
 assign mif_cnt_rst = ( mif_cnt == nfc_trn_cnt );
 
 assign blk_end = (blk_cnt == blk_len );
 
+assign nfc_dat_ini = (~nfc_dat_en_dly) & nfc_dat_en;
+
+assign last_ecc_byte = ((sta_rd_dat & (~nfc_spa_en) & nfc_ecc_en) | (sta_rd_spa & nfc_ecc_en)) & (blk_cnt == blk_len - 1'b1);
+
+assign last_ecc_rd  = nfc_ecc_opt & last_ecc_byte & ram_rd_dly;
+
+always @ (posedge clk or negedge rst_n)
+begin : last_ecc_rdy_r
+    if(rst_n == 1'b0)
+        last_ecc_rdy <= 1'b0;
+    else
+        last_ecc_rdy <= #1 last_ecc_rd_dly;
+end
+
+always @ (posedge clk or negedge rst_n)
+begin : last_ecc_rdy_d
+    if(rst_n == 1'b0)
+        last_ecc_rd_dly <= 1'b0;
+    else
+        last_ecc_rd_dly <= #1 last_ecc_rd;
+end
+
+
+always @ (posedge clk or negedge rst_n)
+begin : nfc_dat_en_d
+    if(rst_n == 1'b0)
+        nfc_dat_en_dly <= 1'b0;
+    else
+        nfc_dat_en_dly <= #1 nfc_dat_en;
+end
+
 // MIF counter 14 bit for max 9K size
 always @ (posedge clk or negedge rst_n)
-begin 
+begin : trn_cnt_r
     if(rst_n == 1'b0)
         mif_cnt <= 14'h0;
     else if(mif_cnt_rst)
@@ -161,7 +209,7 @@ end
 
 // Block counter 10 bit for max 512 size
 always @ (posedge clk or negedge rst_n)
-begin 
+begin : blk_cnt_r 
     if(rst_n == 1'b0)
         blk_cnt <= 12'h0;
     else if(blk_end)
@@ -172,7 +220,7 @@ end
 
 // Read FSM
 always @ (posedge clk or negedge rst_n)
-begin
+begin : rd_fsm
     if(rst_n == 1'b0)
         mif_rd_sta <= MIF_RD_IDLE;
     else
@@ -185,30 +233,30 @@ begin
     mif_rd_nxt_sta = mif_rd_sta;	
     case(mif_rd_sta)
     MIF_RD_IDLE:
-        if(nfc_dat_en & nfc_dat_dir)	    
+        if(nfc_dat_ini & nfc_dat_dir)	    
             mif_rd_nxt_sta = MIF_RD_DAT;
     MIF_RD_DAT:
         if(blk_end) begin
-          if( nfc_spa_en)
+            if( nfc_spa_en)
 	        mif_rd_nxt_sta = MIF_RD_SPA;
-          else if( nfc_ecc_en )
-            mif_rd_nxt_sta = MIF_RD_ECC;
-	      else
-		    mif_rd_nxt_sta = MIF_RD_IDLE;
+            else if( nfc_ecc_en )
+                mif_rd_nxt_sta = MIF_RD_ECC;
+            else
+	      mif_rd_nxt_sta = MIF_RD_IDLE;
         end
     MIF_RD_SPA:
         if(blk_end) begin
-	      if( nfc_ecc_en )
-              mif_rd_nxt_sta = MIF_RD_ECC;
-	      else
-		      mif_rd_nxt_sta = MIF_RD_IDLE;
+	    if( nfc_ecc_en )
+                mif_rd_nxt_sta = MIF_RD_ECC;
+	    else
+	        mif_rd_nxt_sta = MIF_RD_IDLE;
         end
     MIF_RD_ECC:
 	if(blk_end) begin
 	    if( mif_cnt_rst )	    
-            mif_rd_nxt_sta = MIF_RD_IDLE;
+                mif_rd_nxt_sta = MIF_RD_IDLE;
 	    else
-		    mif_rd_nxt_sta = MIF_RD_DAT;
+                mif_rd_nxt_sta = MIF_RD_DAT;
 	end
     default: mif_rd_nxt_sta = MIF_RD_IDLE;
     endcase
@@ -219,28 +267,22 @@ begin
     case(mif_rd_sta)
     MIF_RD_DAT : blk_len = nfc_blk_len;
     MIF_RD_SPA : blk_len = {8'h0, nfc_spa_len};
-    MIF_RD_ECC :  
-	case(nfc_ecc_len)
-        2'b00: blk_len = 12'h0;
-        2'b01: blk_len = 12'd18;
-        2'b10: blk_len = 12'd25;
-        default: blk_len = 12'h0;
-        endcase
-    default: blk_len = 12'h0;
+    MIF_RD_ECC : blk_len =  nfc_ecc_opt ? 'd25 : 'd13 ;
+    default:     blk_len = nfc_blk_len;
     endcase
 end
 
 // Data Selection
 always @ (posedge clk or negedge rst_n)
-begin
+begin : ram_rd_d
     if(rst_n == 1'b0)
         ram_rd_dly <= 1'b0;
     else
-        ram_rd_dly <= #1 dat_rd | spa_rd ; 
+        ram_rd_dly <= #1 dat_rd | spa_rd | rng_rd; 
 end
 
 always @ (posedge clk or negedge rst_n)
-begin
+begin : ecc_rd_d
     if(rst_n == 1'b0)
         ecc_rd_dly <= 1'b0;
     else
@@ -250,16 +292,17 @@ end
 always @ (*)
 begin
     dat8_tmp = nfif_data_in;
-    casex({rng_rd,ram_rd_dly,ecc_rd_dly})
-    3'b1XX: dat8_tmp = rng_dat ;
-    3'b01X: dat8_tmp = ram_nfc_dout;
-    4'b001: dat8_tmp = ecc_enc_dat;
+//    casex({(rng_rd | last_ecc_rd),(ram_rd_dly | last_ecc_rdy) ,ecc_rd_dly})
+    casex({sta_rd_ecc,rng_sel[2]})
+    2'b1X: dat8_tmp = ecc_enc_dat ;
+    2'b01: dat8_tmp = rng_dat_dly ;
+    2'b00: dat8_tmp = ram_nfc_dout;
     default: dat8_tmp = nfif_data_in;
     endcase
 end    
 
 always @ (posedge clk or negedge rst_n)
-begin
+begin : nfif_din_r
     if(rst_n == 1'b0)
         nfif_data_in <= 16'h0;
     else
@@ -267,11 +310,20 @@ begin
 end
 
 always @ (posedge clk or negedge rst_n)
-begin
+begin : rng_dat_d
+    if(!rst_n)
+        rng_dat_dly <= 8'h0;
+    else if(rng_rd)
+        rng_dat_dly <= #1 rng_dat;
+end
+
+
+always @ (posedge clk or negedge rst_n)
+begin : nfif_rdy_r
     if(rst_n == 1'b0)
         nfif_rd_rdy <= 1'b0;
     else 
-        nfif_rd_rdy <= rng_rd | ram_rd_dly | ecc_rd_dly;
+        nfif_rd_rdy <= #1  (ram_rd_dly & ~last_ecc_rd_dly) | ecc_rd_dly;
 end	
 
 // MIF DAT ADDR

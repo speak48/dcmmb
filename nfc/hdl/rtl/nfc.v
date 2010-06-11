@@ -33,7 +33,7 @@ module nfc(
    nf_sram_cen, 
    nf_sram_wen, 
    nf_sram_wr_dat, 
-   nf_sram_rd_dat, 
+   nf_sram_rd_dat 
 );
 
 `include "nfc_parameter.v"
@@ -138,7 +138,7 @@ wire   [15        :0]  ram_nfc_dout    ;
 
 wire   [11        :0]  nfc_blk_len     ;
 wire   [3         :0]  nfc_spa_len     ;
-wire   [1         :0]  nfc_ecc_len     ; 
+wire   [4         :0]  nfc_ecc_len     ; 
 wire   [13        :0]  nfc_trn_cnt     ; 
 wire   [13        :0]  nfc_dat_addr    ; 
 wire   [13        :0]  nfc_spa_addr    ; 
@@ -149,7 +149,13 @@ wire   [31        :0]  nfc_rand_seed   ;
 wire                   nfc_cmd_en      ;
 wire                   nfc_dat_end     ;
 wire                   nfc_dat_inv     ;
- 
+wire                   nfc_ecc_en      ;
+wire                   nfc_spa_en      ;
+wire                   ecc_cor_wr      ;
+wire   [7         :0]  ecc_cor_dat     ;
+wire                   mif_ecc_wr      ;
+wire   [DAT_WID-1 :0]  mif_ecc_dat     ;
+
 assign  nf_sram_addr[12:0]   = nfc_ram_addr   ;
 assign  nf_sram_cen    = nfc_ram_cen    ;
 assign  nf_sram_wen    = nfc_ram_wen    ;
@@ -173,8 +179,12 @@ assign nfc_cmd_en  = nf_cmd_valid;
 assign nfc_addr_en = nf_addr_en;
 assign nfc_dat_en  = nf_dat_en;
 assign nfc_blk_len = nf_blk_len;
+assign nfc_trn_cnt = nf_trn_cnt;
 assign nfc_spa_len = nf_spare_len;
-assign nfc_dat_cnt = nfc_blk_len + nfc_spa_len + nfc_ecc_len;
+assign nfc_dat_cnt = nfc_blk_len + (nfc_spa_en ? nfc_spa_len : 'd0 ) + nfc_ecc_len;
+assign nfc_ecc_en  = nf_ecc_en;
+assign nfc_spa_en  = nf_spare_en;
+assign nfc_ecc_opt = nf_ecc_len;
 
 assign nfc_ecc_len = nf_ecc_en ?  (nf_ecc_len ? 'd24 : 'd13) : 'd0;
 
@@ -245,7 +255,9 @@ nfc_mif u_nfc_mif(
                
     .nfc_blk_len    (nfc_blk_len),
     .nfc_spa_len    (nfc_spa_len),
-    .nfc_ecc_len    (nfc_ecc_len),
+    .nfc_spa_en     (nfc_spa_en ),
+    .nfc_ecc_opt    (nfc_ecc_opt),
+    .nfc_ecc_en     (nfc_ecc_en ),
     .nfc_trn_cnt    (nfc_trn_cnt),
     .nfc_dat_addr   (nfc_dat_addr),
     .nfc_spa_addr   (nfc_spa_addr),
@@ -264,10 +276,12 @@ nfc_mif u_nfc_mif(
     .nfif_wr_rdy    (nfif_wr_rdy),
                   
     .mif_ecc_rd     (mif_ecc_rd ),
-    .ecc_enc_dat    (ecc_enc_dat),    
-    .ecc_dec_addr   (ecc_dec_addr),
+    .ecc_enc_dat    (mem_enc_dat),    
+    .ecc_dec_addr   (mem_dec_addr),
     .ecc_enc_rdy    (ecc_enc_rdy),
     .ecc_dec_rdy    (ecc_dec_rdy),
+    .mif_ecc_wr     (mif_ecc_wr ),
+    .mif_ecc_dat    (mif_ecc_dat),
                   
     .nfc_ram_addr   (nfc_ram_addr),
     .nfc_ram_cen    (nfc_ram_cen),
@@ -317,6 +331,7 @@ nfc_ecc_cor u_nfc_ecc_cor(
     
     .nfc_dat_dir  (nfc_dat_dir),
     .nfc_ecc_opt  (nfc_ecc_opt),
+    .nfc_mode     (nfc_mode   ),
     .ecc_fifo_wr  (ecc_wr),
     .ecc_enc_dat  (ecc_enc_dat),
     .ecc_dec_addr (ecc_dec_addr),
@@ -326,10 +341,16 @@ nfc_ecc_cor u_nfc_ecc_cor(
     .mem_enc_dat  (mem_enc_dat),    
     .mem_dec_addr (mem_dec_addr),
     .ecc_enc_rdy  (ecc_enc_rdy),
-    .ecc_dec_rdy  (ecc_dec_rdy)
+    .ecc_dec_rdy  (ecc_dec_rdy),
+
+    .mif_ecc_wr   (mif_ecc_wr  ),
+    .mif_ecc_dat  (mif_ecc_dat ),
+
+    .ecc_cor_wr   (ecc_cor_wr  ),
+    .ecc_cor_dat  (ecc_cor_dat )
 );
 
-/*                                             
+                                           
 bchecc  u_nf_ecc(
     .rst_n        (rstb_nfc),
     .clk          (ecc_clk),
@@ -338,15 +359,17 @@ bchecc  u_nf_ecc(
     .sfr_wr_i     (mif_nfc_reg_wr),
     .sfr_size_i   (2'b00),
     .sfr_addr_i   (mif_nfc_reg_addr[3:0]),
-    .sfr_wdata_i  ({24'h0,mif_nfc_reg_din}),
-    .ecc_wr_i     (memif_ecc_wr),
-    .ecc_data_i   (memif_ecc_data),
+    .sfr_wdata_i  ({4{mif_nfc_reg_din}}),
+//    .ecc_wr_i     (memif_ecc_wr),
+//    .ecc_data_i   (memif_ecc_data),
+    .ecc_wr_i     (ecc_cor_wr       ),
+    .ecc_data_i   (ecc_cor_dat      ),
     .sfr_rdata_o  (),
     .ecc_wr_o     (ecc_wr),
     .enc_data_o   (ecc_enc_dat ),
     .dec_addr_o   (ecc_dec_addr),
     .ecc_done_o   (ecc_done)
 );
-*/
+
 
 endmodule
