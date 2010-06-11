@@ -36,9 +36,9 @@ reg [ADDR-1:0]  addr_rd_p1;
 always @(posedge wclk)
 begin
   if(write[0])
-    ram[addr_wr] =  data_in[7:0];
+    ram[addr_wr][7:0] <=  data_in[7:0];
   if(write[1])
-    ram[addr_wr] =  data_in[15:8];
+    ram[addr_wr][15:8] <=  data_in[15:8];
 end
 
 always @(posedge rclk)

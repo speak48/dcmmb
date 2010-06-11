@@ -2,7 +2,7 @@
 
 module nfc_tb;
 `include "nfc_parameter.v"
-parameter CLK_PRD = 10;
+parameter CLK_PRD = 20;
 
 reg                    clk             ;
 reg                    clk_2x          ;
@@ -28,6 +28,7 @@ endtask
 task clock_gen_x2;
 begin	
    clk_2x = 1'b0;
+   #(CLK_PRD/2) clk_2x = 1'b1;
    forever #(CLK_PRD/4) clk_2x = ~clk_2x; 
 end   
 endtask
@@ -73,11 +74,14 @@ endtask
 
 // bfm_write(,8'h); 
 task nfc_test;
+reg [15:0] block_size;
+reg [15:0] trn_size;
 begin
     #1;
+    block_size = 'd512;
     #(100*CLK_PRD)
     // Latch Test
-    bfm_write(NFC_TIMING_CONFC_OFFSET,8'b0_110_0_011);
+    bfm_write(NFC_TIMING_CONFC_OFFSET,8'b0_000_1_000);
     bfm_write(NFC_IF_CMD_OFFSET, 8'h70);
     #(100*CLK_PRD)
     // Address Test
@@ -93,17 +97,26 @@ begin
     bfm_write(NFC_IF_CTRL0_OFFSET,8'b0000_0010); 
     //bfm_write(,8'h); 
     //bfm_write(,8'h); 
-    #(150*CLK_PRD)
-    bfm_write(NFC_BLK_LEN0_OFFSET,8'h10);
-    bfm_write(NFC_BLK_LEN1_OFFSET,8'h00);
+    #(100*CLK_PRD)
+    bfm_write(NFC_BLK_LEN0_OFFSET,block_size[7:0]);
+    bfm_write(NFC_BLK_LEN1_OFFSET,block_size[9:8]);
     bfm_write(NFC_RED_LEN_OFFSET,8'b00_0_00000);
-    bfm_write(NFC_ECC_CTRL_OFFSET,8'b000000_0_0);
 
-    bfm_write(NFC_TRN_CNT0_OFFSET,8'h20);
-    bfm_write(NFC_IF_CTRL0_OFFSET,8'b1110_1001); // random decrease
-    #(150*CLK_PRD)
-    bfm_write(NFC_IF_CTRL0_OFFSET,8'b0000_1001);
-    #(300*CLK_PRD)
+// ECC set        
+    bfm_write(NFC_ECC_CFG0_OFFSET,block_size[7:0]);
+    bfm_write(NFC_ECC_CFG1_OFFSET,block_size[9:8]);   
+
+    bfm_write(NFC_ECC_CTRL_OFFSET,8'b0000_0_0_1_1); //{ ECC_ENC, ECC_8_bit ECC EN }
+    
+    trn_size = block_size + 'd13; // 'd13 'd25
+    bfm_write(NFC_TRN_CNT0_OFFSET,trn_size[7:0]);
+    bfm_write(NFC_TRN_CNT1_OFFSET,trn_size[15:8]);
+    bfm_write(NFC_RAND_SEED3_OFFSET,8'h55);
+    bfm_write(NFC_IF_CTRL0_OFFSET,8'b1110_1001); // Random Data from RND decrease
+//    bfm_write(NFC_IF_CTRL0_OFFSET,8'b0000_1001); // Read data from memory
+//    #(150*CLK_PRD)
+//    bfm_write(NFC_IF_CTRL0_OFFSET,8'b0000_1001); // Read data from memory
+    #(4300*CLK_PRD)
     $finish;
 end
 endtask 
@@ -161,8 +174,8 @@ always @ (posedge clk)
 begin
     if(nfc_ram_cen == 1'b0)	
         data <= #1 $random;
-    else
-	data <= #1 16'hXX;
+//    else
+//	data <= #1 16'hXX;
 end
 
 	    

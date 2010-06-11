@@ -142,6 +142,11 @@ wire                    data_wr_op     ;
 wire                    data_rd_op     ;
 wire                    edo_mode       ;
 wire                    edo_rd         ;
+wire  [2           :0]  col_addr_num   ;
+wire  [2           :0]  row_addr_num   ;
+
+assign col_addr_num = nfc_addr_cnt[2:0];
+assign row_addr_num = nfc_addr_cnt[5:3];
 
 //assign nfif_data_rd = load_dat;
 assign nf_web = half_cycle ? nf_web_neg : nf_web_pos;
@@ -175,12 +180,12 @@ assign nfif_dat_done  = (sta_dat_wr | sta_dat_rd ) & nxt_sta_end;
 assign load_cmd  = (nfif_sta == NFIF_CMD_PRE );
 assign load_addr = sta_addr_pre | (sta_addr_wr & t_cnt_rst);
 // 1st Load, 2~N start at total cycle - catch data time, for example 1 cycle 
-assign load_dat_cnt = (total_cycle > PRE_CYCLE) ? ( total_cycle - PRE_CYCLE ) : 3'h1 ;
+assign load_dat_cnt = (total_cycle > PRE_CYCLE) ? ( total_cycle - PRE_CYCLE ) : 3'h0 ;
 
 assign load_dat  = (sta_idle & (nfif_nxt_sta == NFIF_DAT_LD )) | ( sta_dat_wr & (t_cnt == load_dat_cnt) & ( data_cnt != nfc_dat_cnt ));
 
 
-assign addr_cnt_incr = (sta_addr_wr & (t_cnt == total_cycle - 1'b1 ) & ( addr_cnt != ( nfc_addr_cnt[5:3] + 2'b11 ))) ;
+assign addr_cnt_incr = (sta_addr_wr & (t_cnt == total_cycle - 1'b1 ) & ( addr_cnt != ( row_addr_num + 2'b11 ))) ;
 
 assign t_cnt_rst = ( t_cnt == total_cycle);
 assign t_cnt_en  = ( sta_cmd_wr | sta_addr_wr | sta_dat_wr | sta_dat_rd );
@@ -234,7 +239,7 @@ begin
     NFIF_ADDR_PRE:  
            nfif_nxt_sta = NFIF_ADDR_WR;
     NFIF_ADDR_WR:
-        if(t_cnt_rst & (addr_cnt_dly == (nfc_addr_cnt[5:3] + 2'b11)))
+        if(t_cnt_rst & (addr_cnt_dly == (row_addr_num + 2'b11)))
             nfif_nxt_sta = NFIF_END;
     NFIF_DAT_LD:
 	if(nfif_rd_rdy)
@@ -384,10 +389,10 @@ begin : addr_cnt_r
     if(rst_n == 1'b0)
         addr_cnt <= 3'h0;
     else if(sta_addr_pre)
-        addr_cnt <= (nfc_addr_cnt[2:0] == 3'b000) ? 3'b100 : 3'b000 ;
+        addr_cnt <= (col_addr_num == 3'b000) ? 3'b100 : 3'b000 ;
     else if(addr_cnt_incr) 
     begin
-	if(addr_cnt == (nfc_addr_cnt[2:0] - 1'b1))
+	if(addr_cnt == (col_addr_num - 1'b1))
 	    addr_cnt <= #1 3'b100;
     else    
         addr_cnt <= #1 addr_cnt + 1'b1;
@@ -441,7 +446,7 @@ begin : nfif_d_rd_r
     if(rst_n == 1'b0)
         nfif_data_rd <= 1'b0;
     else 
-	    nfif_data_rd <= #1 load_dat;
+        nfif_data_rd <= #1 load_dat;
 end
 
 always @ (posedge clk or negedge rst_n)

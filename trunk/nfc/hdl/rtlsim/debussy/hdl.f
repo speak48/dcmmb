@@ -10,3 +10,15 @@
 ../../rtl/nfc_ecc_cor.v
 ../../rtl/nfc_asynch_ram.v
 ../../rtl/pulse_sync.v
+
+../../ecc/bchecc_bma.v
+../../ecc/bchecc_chien.v
+../../ecc/bchecc_enc.v
+../../ecc/bchecc_fsm.v
+../../ecc/bchecc_gfmult15.v
+../../ecc/bchecc_gfmult.v
+../../ecc/bchecc_modgenpoly.v
+../../ecc/bchecc_reg.v
+../../ecc/bchecc_syndm.v
+../../ecc/bchecc.v
+
