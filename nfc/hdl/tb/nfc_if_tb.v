@@ -2,9 +2,10 @@
 
 module nfc_if_tb;
 `include "nfc_parameter.v"
-parameter CLK_PRD = 10;
+parameter CLK_PRD = 20;
 
 reg                    clk             ;
+reg                    clk_2x          ;
 reg                    rst_n           ;
 
 reg     [DAT_WID-1:0]  nf_din          ;
@@ -34,9 +35,9 @@ wire                   nfif_cmd_done   ;
 wire                   nfif_addr_done  ;
 wire                   nfif_dat_done   ;
 
-wire                   nfif_data_rd    ;
-reg                    nfif_rd_rdy     ;
-reg     [DAT_WID-1:0]  nfif_data_in    ;
+wire                   nfif_dat_rdy    ;
+reg                    mem_if_wr      ;
+reg     [DAT_WID-1:0]  mem_if_din     ;
 wire                   nfif_data_wr    ;
 wire    [DAT_WID-1:0]  nfif_data_out   ;
 reg                    nfif_wr_rdy    ;
@@ -53,6 +54,14 @@ begin
    rst_n = 1'b0;
    #(10*CLK_PRD) rst_n = 1'b1;
    $display("reset end");
+end   
+endtask
+
+task clock_gen_x2;
+begin	
+   clk_2x = 1'b0;
+   #(CLK_PRD/2) clk_2x = 1'b1;
+   forever #(CLK_PRD/4) clk_2x = ~clk_2x; 
 end   
 endtask
 
@@ -91,25 +100,27 @@ begin
     #(CLK_PRD)
     nfc_dat_en  = 1'b1;
     #(CLK_PRD)
-    nfc_dat_en = 1'b0;
+//    nfc_dat_en = 1'b0;
 //    for(i=0;i<nfc_dat_cnt;i=i+1)
     while(i<nfc_dat_cnt)
     begin
-        @ (posedge nfif_rd_rdy) begin
+        @ (posedge u_nfc_if.mem_wr_en ) begin
 	    tmp = $random;
 	    i = i + 1;    
-	    nfif_data_in = i;
-	    #(CLK_PRD);
+	    #(CLK_PRD/2)mem_if_din  = i;
+	    #(CLK_PRD/2);
 	    end
     end
     wait(nfif_dat_done)
+    nfc_dat_en = 1'b0;
     $display("data write end");
     #(CLK_PRD);
 end
 endtask
 
-always @ (nfif_data_rd)
-    nfif_rd_rdy <= #(CLK_PRD) nfif_data_rd;
+always @ (nfif_dat_rdy)
+//    mem_if_wr  = nfif_dat_rdy;
+   mem_if_wr  <= #(CLK_PRD) nfif_dat_rdy;
 
 task data_read;
 integer i;	
@@ -146,7 +157,7 @@ endtask
 
 task nf_test;
 begin
-    #1;
+    #(1+CLK_PRD/2);
     #(20*CLK_PRD)	
     cmd_latch;
     #(50*CLK_PRD)
@@ -175,10 +186,10 @@ begin
     {nfc_row_addr,nfc_col_addr}     = 64'h0  ;
     nfc_tconf    = 8'h00  ;
     nfc_mode     = 2'b00  ;
-    nfif_rd_rdy  = 8'h0   ;
-    nfif_data_in = 16'h0  ;    
+    mem_if_wr   = 8'h0   ;
+    mem_if_din  = 16'h0  ;    
 #(CLK_PRD)
-    nfc_tconf    = 8'h36  ;
+    nfc_tconf    = 8'h00  ;
 end
 
 task dump_fsdb;
@@ -192,6 +203,7 @@ endtask
 initial
     fork
 	clock_gen;
+	clock_gen_x2;
 	reset_gen;
 	dump_fsdb;
 	nf_test  ; 
@@ -199,6 +211,7 @@ initial
 
 nfc_if u_nfc_if(
     .clk            (clk),
+    .clk_2x         (clk_2x),
     .rst_n          (rst_n),
     .nf_din         (nf_din),
     .nf_dout        (nf_dout),
@@ -223,9 +236,9 @@ nfc_if u_nfc_if(
     .nfif_cmd_done  (nfif_cmd_done),
     .nfif_addr_done (nfif_addr_done),
     .nfif_dat_done  (nfif_dat_done),   
-    .nfif_data_rd   (nfif_data_rd),
-    .nfif_rd_rdy    (nfif_rd_rdy),
-    .nfif_data_in   (nfif_data_in),
+    .nfif_dat_rdy   (nfif_dat_rdy),
+    .mem_if_wr      (mem_if_wr ),
+    .mem_if_din     (mem_if_din ),
     .nfif_data_wr   (nfif_data_wr),
     .nfif_data_out  (nfif_data_out),
     .nfif_wr_rdy    (nfif_wr_rdy)

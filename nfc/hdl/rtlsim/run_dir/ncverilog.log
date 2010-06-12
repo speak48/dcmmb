@@ -1,119 +1,57 @@
 ncverilog: 05.00-p001: (c) Copyright 1995-2003 Cadence Design Systems, Inc.
-TOOL:	ncverilog	05.00-p001: Started on Jun 09, 2010 at 17:59:54
+TOOL:	ncverilog	05.00-p001: Started on Jun 12, 2010 at 18:14:53
 ncverilog
 	-f ../debussy/hdl.f
 		+incdir+../../rtl
-		../../tb/nfc_tb.v
-		../../tb/dpram_4p5x16.v
-		../../tb/SJ180_4608X8X2CM16.v
-		../../rtl/nfc.v
-		../../rtl/nfc_mif.v
-		../../rtl/nfc_rng_dat.v
-		../../rtl/nfc_sfr_if.v
+		../../tb/nfc_if_tb.v
 		../../rtl/nfc_if.v
-		../../rtl/nfc_ecc_cor.v
-		../../rtl/nfc_asynch_ram.v
-		../../rtl/pulse_sync.v
 	+nccoverage
 	+access+wrc
-Recompiling... reason: file 'D:\svn\nfc\hdl\tb\nfc_tb.v' is newer than expected.
-	expected: Wed Jun 09 17:35:42 2010
-	actual:   Wed Jun 09 17:59:44 2010
-file: ../../tb/nfc_tb.v
-	module worklib.nfc_tb:v
-		errors: 0, warnings: 0
-file: ../../tb/dpram_4p5x16.v
-	module worklib.dpram_4p5x16:v (up-to-date)
-		errors: 0, warnings: 0
-file: ../../tb/SJ180_4608X8X2CM16.v
-	module worklib.SJ180_4608X8X2CM16:v (up-to-date)
-		errors: 0, warnings: 0
-file: ../../rtl/nfc.v
-	module worklib.nfc:v (up-to-date)
-		errors: 0, warnings: 0
-file: ../../rtl/nfc_mif.v
-	module worklib.nfc_mif:v (up-to-date)
-		errors: 0, warnings: 0
-file: ../../rtl/nfc_rng_dat.v
-	module worklib.nfc_rng_dat:v (up-to-date)
-		errors: 0, warnings: 0
-file: ../../rtl/nfc_sfr_if.v
-	module worklib.nfc_sfr_if:v (up-to-date)
+Recompiling... reason: file 'D:\svn\nfc\hdl\tb\nfc_if_tb.v' is newer than expected.
+	expected: Sat Jun 12 17:53:36 2010
+	actual:   Sat Jun 12 18:14:52 2010
+file: ../../tb/nfc_if_tb.v
+	module worklib.nfc_if_tb:v
 		errors: 0, warnings: 0
 file: ../../rtl/nfc_if.v
 	module worklib.nfc_if:v (up-to-date)
 		errors: 0, warnings: 0
-file: ../../rtl/nfc_ecc_cor.v
-	module worklib.nfc_ecc_cor:v (up-to-date)
-		errors: 0, warnings: 0
-file: ../../rtl/nfc_asynch_ram.v
-	module worklib.nfc_asynch_ram:v (up-to-date)
-		errors: 0, warnings: 0
-file: ../../rtl/pulse_sync.v
-	module worklib.pulse_sync:v (up-to-date)
-		errors: 0, warnings: 0
 		Caching library 'worklib' ....... Done
 	Elaborating the design hierarchy:
-dpram_4p5x16 dpram_4p5x16(
-                        |
-ncelab: *W,CUVWSP (D:\svn\nfc\hdl\tb\nfc_tb.v,150|24): Too few module port connections.
-    .nf_blk_len          (nf_blk_len),
-                                   |
-ncelab: *W,CUVMPW (D:\svn\nfc\hdl\rtl\nfc.v,204|35): port sizes differ in port connection.
-    .nf_trn_cnt          (nf_trn_cnt),
-                                   |
-ncelab: *W,CUVMPW (D:\svn\nfc\hdl\rtl\nfc.v,205|35): port sizes differ in port connection.
-    .ecc_enc_dat    (ecc_enc_dat),    
-                               |
-ncelab: *W,CUVMPW (D:\svn\nfc\hdl\rtl\nfc.v,266|31): port sizes differ in port connection.
 	Building instance overlay tables: .................... Done
 	Generating native compiled code:
-		worklib.nfc:v <0x040b7114>
-			streams:  27, words:  4252
-		worklib.nfc_tb:v <0x645180c0>
-			streams:  24, words: 14913
+		worklib.nfc_if_tb:v <0x69928613>
+			streams:  37, words: 22350
 	Loading native compiled code:     .................... Done
 	Building instance specific data structures.
-    .nfif_wr_rdy    (nfif_wr_rdy),
-                               |
-ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,263|31): implicit wire has no fanin (nfc_tb.u_nfc.nfif_wr_rdy).
-    .ecc_done     (ecc_done),
-                          |
-ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,322|26): implicit wire has no fanin (nfc_tb.u_nfc.ecc_done).
-    .ecc_fifo_wr  (ecc_wr),
-                        |
-ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,319|24): implicit wire has no fanin (nfc_tb.u_nfc.ecc_wr).
-    .nfc_ecc_opt  (nfc_ecc_opt),
-                             |
-ncelab: *W,CSINFI (D:\svn\nfc\hdl\rtl\nfc.v,318|29): implicit wire has no fanin (nfc_tb.u_nfc.nfc_ecc_opt).
 	Design hierarchy summary:
 		                 Instances  Unique
-		Modules:                12      11
-		Primitives:            100       2
-		Timing outputs:         32      32
-		Registers:             263     261
-		Scalar wires:          190       -
-		Expanded wires:         98       8
-		Vectored wires:         65       -
-		Named events:            4       4
-		Always blocks:          75      73
-		Initial blocks:          3       3
+		Modules:                 2       2
+		Registers:              47      47
+		Scalar wires:           41       -
+		Vectored wires:         16       -
+		Always blocks:          20      20
+		Initial blocks:          2       2
 		Parallel blocks:         1       1
-		Cont. assignments:      78     104
-		Pseudo assignments:     13      37
-		Timing checks:         262      78
-		Simulation timescale:  1ps
-	Writing initial simulation snapshot: worklib.nfc_tb:v
-Loading snapshot worklib.nfc_tb:v .................... Done
+		Cont. assignments:      18      31
+		Pseudo assignments:     19      33
+		Simulation timescale:  1ns
+	Writing initial simulation snapshot: worklib.nfc_if_tb:v
+Loading snapshot worklib.nfc_if_tb:v .................... Done
 ncsim> source "C:/Program Files/Cadence Design Systems/LDV/tools/inca/files/ncsimrc"
 ncsim> run
 Novas FSDB Dumper for NC-Verilog/Verilog-XL, Release 5.4v9 (Win95/NT) 05/04/2005
 Copyright (C) 1996 - 2004 by Novas Software, Inc.
-*Novas* Create FSDB file '../debussy/nfc.fsdb'
-*Novas* Start dumping the top scope(nfc_tb), layer(0).
+*Novas* Create FSDB file '../debussy/nfif.fsdb'
+*Novas* Start dumping the top scope(nfc_if_tb), layer(0).
 *Novas* End of dumping.
 reset end
-Simulation complete via $finish(1) at time 8381 NS + 0
-D:\svn\nfc\hdl\tb\nfc_tb.v:107     $finish;
+command latch cycle end
+addr latch cycle end
+data write end
+Simulation interrupted at 15818420 NS + 0
+ncsim> ^C
+ncsim> 
+ncsim: *W,CNTREX: Control-Z/Control-C in interactive input - one more to exit.
+ncsim> ^C
 ncsim> exit
-TOOL:	ncverilog	05.00-p001: Exiting on Jun 09, 2010 at 18:00:03  (total: 00:00:09)
