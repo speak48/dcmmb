@@ -3,6 +3,7 @@ module pwm_gen(
     reset_n,
     pwr_req_val,
     pwr_est_dB,
+    pwr_range,
     pwr_est_end,
     pwm_step,
     pwm_ena,
@@ -11,6 +12,7 @@ module pwm_gen(
     pwm_th_in,
     agc_fix,
     pwm_max_val,
+    pwm_min_val,
     pwm_val,
     pwm_val_up
 );
@@ -19,6 +21,7 @@ input                clk        ;
 input                reset_n    ;
 input  [8:0]         pwr_req_val;
 input  [8:0]         pwr_est_dB ;
+input  [7:0]         pwr_range  ;
 input                pwr_est_end;
 
 input  [1:0]         pwm_step   ;
@@ -27,6 +30,7 @@ input                pwm_inv    ;
 input                pwm_th_ena ;
 input  [7:0]         pwm_th_in  ; // pwm value 128 step
 input  [7:0]         pwm_max_val;
+input  [7:0]         pwm_min_val;
 output [7:0]         pwm_val    ;
 output               pwm_val_up ;
 output               agc_fix    ;
@@ -49,11 +53,11 @@ wire   [7:0]         pwm_val_sub;
 
 assign delta_dB = {1'b0,pwr_req_val} - {1'b0,pwr_est_dB};
 assign abs_delta_dB = delta_dB[9] ? (~delta_dB[8:0] + 1'b1):delta_dB[8:0];
-assign dB_in_range = abs_delta_dB <= 9'b000000_101; // 0.625dB
+assign dB_in_range = abs_delta_dB <= {1'b0, pwr_range }; // 9'b000000_101; // 0.625dB
 assign pwm_val_add_tmp = {1'b0, pwm_val} + pwm_step ;
 assign pwm_val_sub_tmp = {1'b0, pwm_val} - pwm_step ;
 assign pwm_val_add =  pwm_val_add_tmp[8] ? pwm_max_val : pwm_val_add_tmp[7:0];
-assign pwm_val_sub =  pwm_val_sub_tmp[8] ? 7'h0 : pwm_val_sub_tmp[7:0];
+assign pwm_val_sub =  pwm_val_sub_tmp[8] ? pwm_min_val : pwm_val_sub_tmp[7:0];
 
 always @ (posedge clk or negedge reset_n)
 begin : pwm_dir_r

@@ -7,6 +7,7 @@ reg clk;
 reg reset_n;
 reg [9:0] data_I_in;
 reg [9:0] data_Q_in;
+reg agc_en;
 
 task clock_gen;
 begin	
@@ -67,8 +68,10 @@ reg  pwm_ena;
 initial
 begin
     pwm_ena = 0;
+    agc_en = 0;
     #(40*CLK_PRD)    
     pwm_ena = 1'b1;
+    agc_en = 1'b1;
 end
 
 agc u_agc(
@@ -76,9 +79,10 @@ agc u_agc(
     .reset_n    (reset_n),
     .data_I_in  (data_I_in),
     .data_Q_in  (data_Q_in),
-    .agc_en     (1'b1),
+    .agc_en     (agc_en),
     .pwr_req_val(9'b10_1101_001),
     .pwr_est_prd(2'b00),
+    .pwr_range  (8'b00000_101),
     .pwr_est_val(),
     .agc_fix    (),
     .pwm_step   (2'b1),
@@ -87,6 +91,7 @@ agc u_agc(
     .pwm_th_ena (1'b0),
     .pwm_th_in  (8'h3f),
     .pwm_max_val(8'h7f),
+    .pwm_min_val(8'h00),
     .pwm_th_out ()
 );
 
