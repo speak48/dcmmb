@@ -9,6 +9,7 @@ module power_est(
     data_q,
     agc_en,
     pwr_est_prd,
+    pwr_req_val,
     pwr_est_dB,
     pwr_est_end
 );
@@ -19,6 +20,7 @@ input   [6:0]        data_i     ;
 input   [6:0]        data_q     ;
 input                agc_en     ;
 input   [1:0]        pwr_est_prd;
+input   [8:0]        pwr_req_val;
 
 output  [8:0]        pwr_est_dB ;
 output               pwr_est_end;
@@ -40,7 +42,10 @@ reg                  pwr_est_end;
 reg     [10:0]       log_start_d;
 reg                  log_start  ;
 reg    [13:0]        pwr_est_cnt;
+reg                  est_end    ;
+reg     [8:0]        est_dB     ;
 
+wire    [9:0]        pwr_est_dB_w;
 wire   [13:0]        pwr_est_time;
 wire                 pwr_rst_cnt ;
 wire    [6:0]        abs_i_data ;
@@ -68,6 +73,8 @@ assign dbm = $unsigned(data_y_n) * $unsigned(13'h1815);
 assign pwr_est_time = pwr_est_prd[1] ? (pwr_est_prd[0] ? 14'h3fff : 14'h1fff )
                                      : (pwr_est_prd[0] ? 14'hfff  : 14'h7ff  );
 assign pwr_rst_cnt = ( pwr_est_time == pwr_est_cnt );
+assign pwr_est_dB_w = pwr_est_dB - { 3'h0, pwr_est_dB[8:3] } + { 3'h0, est_dB[8:3] };
+
 
 // Log start control
 always @ (posedge clk or negedge reset_n)
@@ -244,20 +251,38 @@ end
 
 // Indicate a new Pwr_est_val
 always @ (posedge clk or negedge reset_n)
+begin : est_end_r
+    if(!reset_n)
+        est_end <= #1 1'b0;
+    else
+	est_end <= #1 log_start_d[10];
+end
+
+always @ (posedge clk or negedge reset_n)
 begin : pwr_est_end_r
     if(!reset_n)
         pwr_est_end <= #1 1'b0;
     else
-	pwr_est_end <= #1 log_start_d[10];
+	pwr_est_end <= #1 est_end;
 end
 
 // Power Estimation Result Unit : dB
 always @ (posedge clk or negedge reset_n)
+begin : est_db_r
+    if(!reset_n)
+        est_dB <= #1 9'h0;
+    else if(log_start_d[10]) 
+        est_dB <= #1 dbm[14] ? (dbm[23:15]+1'b1) : dbm[23:15];
+end
+
+always @ (posedge clk or negedge reset_n)
 begin : pwr_est_db_r
     if(!reset_n)
         pwr_est_dB <= #1 9'h0;
-    else if(log_start_d[10]) 
-        pwr_est_dB <= #1 dbm[14] ? (dbm[23:15]+1'b1) : dbm[23:15];
+    else if(~agc_en)
+        pwr_est_dB <= #1 pwr_req_val;
+    else if(est_end) 
+        pwr_est_dB <= #1 pwr_est_dB_w;
 end
 
 endmodule
