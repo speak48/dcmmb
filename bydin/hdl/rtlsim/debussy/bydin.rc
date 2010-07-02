@@ -1,0 +1,98 @@
+Magic 271485
+Revision 5.4v9
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort -4 -4 1160 842 159 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / -i 0 "" "D:\svn\bydin\hdl\rtlsim\debussy\bydin.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 3
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 115.250864 594.627649
+cursor 226.000000
+marker 0.000000
+
+; visible top row signal index
+top 0
+; marker line index
+markerPos 40
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByValue
+
+
+addGroup "G1"
+activeDirFile "" "D:\svn\bydin\hdl\rtlsim\debussy\bydin.fsdb"
+addSignal -h 15 -UNSIGNED -UDEC /bidin_sim/read_data_in/i
+addSignal -h 15 -UNSIGNED -UDEC -holdScope j
+addSignal -h 15 /bidin_sim/u_bydin/u0_bit2byte/ldpc_en_out
+addSignal -h 15 -holdScope ldpc_dout
+addSignal -h 15 -holdScope ts0_win
+addSignal -h 15 -holdScope ts1_win
+addSignal -h 15 -holdScope byte_sync
+addSignal -h 15 -UNSIGNED -HEX -holdScope byte_data[7:0]
+addSignal -h 15 -holdScope byte_win0
+addSignal -h 15 -holdScope byte_win1
+addSignal -h 15 /bidin_sim/u_bydin/ts0_by_mem/ts_en_rd
+addSignal -h 15 -UNSIGNED -HEX /bidin_sim/int_deal/i
+addSignal -h 15 /bidin_sim/u_bydin/ts0_by_mem/byte_read
+addSignal -h 15 -holdScope ts_en_out
+addSignal -h 15 -UNSIGNED -HEX -holdScope ts_dout[7:0]
+addGroup "G2"
+addSignal -h 15 -UNSIGNED -HEX /bidin_sim/u_bydin/ts0_by_mem/fsm[3:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope addr[16:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope num_row[8:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope num_col[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope addr_r[16:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope num_row_r[8:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope num_col_r[7:0]
+addSignal -h 15 -holdScope read_end
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -holdScope write_end
+addSignal -h 15 -holdScope ts_int
+addGroup "G3"
+addSignal -h 15 -UNSIGNED -UDEC /bidin_sim/u_bydin/ts0_by_mem/mem_addr[16:0]
+addSignal -h 15 -holdScope mem_wr
+addSignal -h 15 -holdScope mem_en
+addSignal -h 15 -UNSIGNED -HEX -holdScope mem_di[7:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope mem_do[7:0]
+addGroup "G4"
+addSignal -h 15 /bidin_sim/u_bydin/ts0_by_mem/rs_en_in
+addSignal -h 15 -UNSIGNED -HEX -holdScope rs_din[7:0]
+addSignal -h 15 -holdScope rs_finish
+addSignal -h 15 -holdScope rs_en_out
+addSignal -h 15 -UNSIGNED -HEX -holdScope rs_dout[7:0]
+addSignal -h 15 -holdScope rs_end
+addGroup "G5"
+
+; grid status
+; gridSignal signal_name
+; gridEdge 0 | 1
+; gridCount
+; gridCycleTime from to cycleTime
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+
