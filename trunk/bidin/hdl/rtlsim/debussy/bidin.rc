@@ -1,0 +1,116 @@
+Magic 271485
+Revision 5.4v9
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort -4 -4 1160 842 185 67
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "D:\svn\bidin\hdl\rtlsim\debussy\bidin.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 3
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 6474767.303468 7351520.276360
+cursor 6583996.000000
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name
+; visible top row signal index
+top 0
+; marker line index
+markerPos 25
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByValue
+
+
+addGroup "G1"
+activeDirFile "" "D:\svn\bidin\hdl\rtlsim\debussy\bidin.fsdb"
+addSignal -h 15 /bidin_sim/u_bidin/clk6
+addSignal -h 15 -holdScope rst_n
+addSignal -h 15 -holdScope bidin_sync_in
+addSignal -h 15 -UNSIGNED -UDEC /bidin_sim/read_data_in/j
+addSignal -h 15 /bidin_sim/u_bidin/bidin_ena_in
+addSignal -h 15 -UNSIGNED -HEX -holdScope bidin_din[5:0]
+addSignal -h 15 -holdScope ldpc_req
+addGroup "G2"
+addSignal -h 15 -UNSIGNED -UDEC /bidin_sim/u_bidin/u_main_man/wr_addr_r[17:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope wr_addr[17:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope num_col[8:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope num_row[8:0]
+addSignal -h 15 -holdScope rst_count
+addSignal -h 15 -UNSIGNED -UDEC -holdScope count[17:0]
+addSignal -h 15 -holdScope wr_hv
+addSignal -h 15 -holdScope rd_hv
+addGroup "G3"
+addSignal -h 15 /bidin_sim/u_bidin/u_main_man/main_wr
+addSignal -h 15 -UNSIGNED -HEX -holdScope main_data_i[5:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope main_addr[17:0]
+addGroup "G4"
+addSignal -h 15 /bidin_sim/u_bidin/u_main_man/bidin_rdy
+addSignal -h 15 /bidin_sim/u_bidin/ldpc_req
+addSignal -h 15 -UNSIGNED -HEX /bidin_sim/ldpc_read/i
+addSignal -h 15 -UNSIGNED -UDEC -holdScope j
+addGroup "G5" -e FALSE
+addSignal -h 15 /bidin_sim/u_bidin/u_main_man/bidin_full
+addSignal -h 15 -UNSIGNED -HEX /bidin_sim/data_in[5:0]
+addSignal -h 15 -holdScope sync_in
+addSignal -h 15 -UNSIGNED -UDEC /bidin_sim/fifo_buffer/read_ptr[12:0]
+addSignal -h 15 -UNSIGNED -UDEC -holdScope write_ptr[12:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ptr_gap[13:0]
+addSignal -h 15 /bidin_sim/stack_empty
+addSignal -h 15 -holdScope stack_ae
+addSignal -h 15 -holdScope fifo_rd
+addSignal -h 15 /BLANK
+addSignal -h 15 -UNSIGNED -HEX /bidin_sim/fifo_dout[5:0]
+addSignal -h 15 -holdScope fifo_rd_d
+addSignal -h 15 /BLANK
+addGroup "G6"
+
+; grid status
+; gridSignal signal_name
+; gridEdge 0 | 1
+; gridCount
+; gridCycleTime from to cycleTime
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+activeDirFile "" "D:\svn\bidin\hdl\rtlsim\debussy\bidin.fsdb"
+
+GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
+getSignalForm close
+
+"/bidin_sim"
+"/bidin_sim/ldpc_read"
+"/bidin_sim/read_data_in"
+
+SCOPE_LIST_BEGIN
+"/bidin_sim/read_data_in"
+"/bidin_sim"
+"/bidin_sim/ldpc_read"
+SCOPE_LIST_END
+
+GETSIGNALFORM_SCOPE_HIERARCHY_END
+
+

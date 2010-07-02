@@ -7,4 +7,4 @@
 ../../rtl/sram147456x6.v     
 ../../rtl/sram8192x48.v     
 ../../rtl/sram2048x48.v     
-/ecad/synopsys/synthesis_z2007.03_sp1/dw/sim_ver/DW_fifoctl_s1_sf.v
+///ecad/synopsys/synthesis_z2007.03_sp1/dw/sim_ver/DW_fifoctl_s1_sf.v
