@@ -94,6 +94,7 @@ parameter      NFIF_IDLE     = 4'b0000 ,
                NFIF_DAT_HD   = 4'b0111 ,
                NFIF_DAT_RD   = 4'b1000 ,
                NFIF_END      = 4'b1001 ;
+//             NFIF_DAT_EDO  = 4'b1010 ;
 
 // Internal register definition
 reg                     nf_cle         ;
@@ -104,17 +105,18 @@ reg                     nf_reb_neg     ;
 reg                     nf_web_neg     ;
 reg    [DAT_WID-1  :0]  nf_dout        ;
 reg    [DAT_WID-1  :0]  nfif_data_out  ;
-reg                     nfif_data_wr   ;
+//reg                     nfif_data_wr   ;
 reg                     nfif_dat_rdy   ;
 
 reg    [3          :0]  nfif_sta       ;
 reg    [2          :0]  addr_cnt       ;
 reg    [13         :0]  data_cnt       ;
-//reg    [2          :0]  t_cnt          ;
 reg    [3          :0]  t_cnt          ;
 reg    [2          :0]  addr_cnt_dly   ;
 reg                     addr_cnt_incr  ;
 reg                     mem_wr_en      ;
+reg                     edo_rd_dly     ;
+reg                     edo_rd_dly2    ;
 
 // Internal Varible defintion
 reg    [3          :0]  nfif_nxt_sta   ;
@@ -125,6 +127,7 @@ reg                     nf_reb_nxt     ;
 reg   [7           :0]  nfc_addr_dat   ;
 reg   [DAT_WID-1   :0]  nf_dout_nxt    ;
 
+wire                    nfif_data_wr   ;
 wire                    load_cmd       ;
 wire                    load_addr      ;
 wire                    load_dat       ;
@@ -147,28 +150,27 @@ wire                    data_wr_op     ;
 wire                    data_rd_op     ;
 wire                    edo_mode       ;
 wire                    edo_rd         ;
-wire  [2           :0]  col_addr_num   ;
-wire  [2           :0]  row_addr_num   ;
+//wire  [2           :0]  col_addr_num   ;
+//wire  [2           :0]  row_addr_num   ;
 wire                    addr_done      ;
 wire                    dat_done       ;
+wire                    dat_fetch_done ;
+wire                    dat_rd_done    ;
 
-assign col_addr_num = nfc_addr_cnt[2:0];
-assign row_addr_num = nfc_addr_cnt[5:3];
-
-//assign nfif_dat_rdy = load_dat;
 assign nf_web = nf_web_pos;
 assign nf_reb = nf_reb_pos;
-//assign nf_dir = nfc_dat_dir;
-assign nf_dir = data_rd_op ? 1'b0 : 1'b1; 
+assign nf_dir = sta_cmd_wr | sta_addr_wr | data_wr_op;
+//assign nf_dir = data_rd_op ? 1'b0 : 1'b1; 
+assign nfif_data_wr = edo_rd_dly | edo_rd_dly2;
 
-//assign nfc_addr_num = nfc_addr_cnt[5:3] + nfc_addr_cnt[2:0];
+//assign col_addr_num = nfc_addr_cnt[2:0];
+//assign row_addr_num = nfc_addr_cnt[5:3];
 assign total_cycle  = nfc_tconf[6:4];
-//assign high_cycle    = nfc_tconf[2:0];
 assign high_cycle   = nfc_tconf[3:0]; // nfc_tconf max 1110
-assign half_cycle   = nfc_tconf[0];
-assign edo_mode     = nfc_tconf[7];
+assign half_cycle   = nfc_tconf[0]  ;
+assign edo_mode     = nfc_tconf[7]  ;
 
-// NFC CMD/ADDR/DATA operation end flag 
+// NFC CMD/ADDR/DATA operation flag 
 assign nxt_sta_end  =  (nfif_nxt_sta == NFIF_END );
 assign sta_idle     =  (nfif_sta == NFIF_IDLE    );
 assign sta_cmd_wr   =  (nfif_sta == NFIF_CMD_WR  );
@@ -181,12 +183,18 @@ assign data_wr_op   =  (nfif_sta == NFIF_DAT_LD ) | sta_dat_wr;
 assign data_rd_op   =  (nfif_sta == NFIF_DAT_HD ) | sta_dat_rd;
 
 //assign sta_dat_ld   =  (nfif_sta == NFIF_DAT_LD  );
-assign addr_done    =  (addr_cnt_dly == (row_addr_num + 2'b11));
-assign dat_done     =  (data_cnt == nfc_dat_cnt);
+assign addr_done    =  (addr_cnt_dly == nfc_addr_cnt - 1'b1);
+assign dat_done     =  (data_cnt == nfc_dat_cnt - 1'b1 );
+assign dat_fetch_done = (nfc_dat_cnt > 14'h2 ) ? (data_cnt > (nfc_dat_cnt - 14'h2)) : 1'b1;
+
+assign dat_rd_done  =  (total_cycle == 3'h0) ? (data_cnt == (nfc_dat_cnt - 1'b1)) : 
+	               ( edo_mode ? ( data_cnt == (nfc_dat_cnt - 1'b1)) :
+		       ( data_cnt == nfc_dat_cnt )) & ( t_cnt[3:1] == total_cycle) ;
 
 assign nfif_cmd_done  = sta_cmd_wr  & ( t_cnt[3:1] == total_cycle);
 assign nfif_addr_done = sta_addr_wr & ( t_cnt[3:1] == total_cycle) & addr_done;
-assign nfif_dat_done  = (sta_dat_wr | sta_dat_rd ) & ( t_cnt[3:1] == total_cycle) & dat_done;
+//assign nfif_dat_done  = edo_mode ?  nfif_edo_done : (((sta_dat_wr & dat_done ) | ( sta_dat_rd & dat_done)) &  ( t_cnt[3:1] == total_cycle) )  ;
+assign nfif_dat_done  = ((sta_dat_wr & dat_done ) | ( sta_dat_rd & dat_done)) &  ( t_cnt[3:1] == total_cycle) ;
 
 assign load_cmd  = (nfif_sta == NFIF_CMD_PRE );
 assign load_addr = sta_addr_pre | (sta_addr_wr & t_cnt_rst);
@@ -195,7 +203,6 @@ assign load_dat_cnt = (total_cycle > PRE_CYCLE) ? ( total_cycle - PRE_CYCLE ) : 
 
 //assign load_dat  = (sta_idle & (nfif_nxt_sta == NFIF_DAT_LD )) | ( sta_dat_wr & (t_cnt[3:1] == load_dat_cnt) & ( data_cnt != nfc_dat_cnt )); // high 3 bit
 assign load_dat =  ( sta_dat_wr & (t_cnt[3:1] == load_dat_cnt) & ( data_cnt != nfc_dat_cnt ));
-
 
 //assign addr_cnt_incr = load_addr & ( addr_cnt != ( row_addr_num + 2'b11 )) ;
 
@@ -210,24 +217,8 @@ begin: addr_incr_r
     if(rst_n == 1'b0)
         addr_cnt_incr <= 1'b0;
     else 
-        addr_cnt_incr <= load_addr & ( addr_cnt != ( row_addr_num + 2'b11 ));
+        addr_cnt_incr <= load_addr & ~addr_done;
 end	
-
-// Address transfer selection
-always @ (*)
-    begin
-        case(addr_cnt)	
-        3'b000: nfc_addr_dat = nfc_col_addr[7 : 0];
-        3'b001: nfc_addr_dat = nfc_col_addr[15: 8];
-        3'b010: nfc_addr_dat = nfc_col_addr[23:16];
-        3'b011: nfc_addr_dat = nfc_col_addr[31:24];
-        3'b100: nfc_addr_dat = nfc_row_addr[7 : 0];
-        3'b101: nfc_addr_dat = nfc_row_addr[15: 8];
-        3'b110: nfc_addr_dat = nfc_row_addr[23:16];
-        3'b111: nfc_addr_dat = nfc_row_addr[31:24];
-        default: nfc_addr_dat = 8'h0;
-        endcase
-    end
 
 // NFC_IF_FSM
 always @ (posedge clk_2x or negedge rst_n)
@@ -275,7 +266,9 @@ begin
         end
     NFIF_DAT_HD:	
         if(nfif_wr_rdy)
-            nfif_nxt_sta = NFIF_DAT_RD;	
+	begin 
+                nfif_nxt_sta = NFIF_DAT_RD;	
+        end
     NFIF_DAT_RD:
         if(t_cnt_rst)
         begin
@@ -291,6 +284,10 @@ begin
     endcase
 end    
 
+////////////////////////////////////////////
+// Nandflash Interface Control Signal
+////////////////////////////////////////////
+// CLE, ALE
 always @ (posedge clk_2x or negedge rst_n)
 begin : cle_ale_r
     if(rst_n == 1'b0)
@@ -305,6 +302,7 @@ begin : cle_ale_r
     end
 end    
 
+// WEB, REB
 always @ (posedge clk_2x or negedge rst_n)
 begin : web_reb_r
     if(rst_n == 1'b0)	
@@ -353,7 +351,7 @@ begin
         begin
         if(t_cnt_rst) 
             nf_web_nxt = 1'b0;
-        else if(t_cnt_en & (t_cnt[3:1] >= high_cycle[3:1]) )
+        else if(t_cnt_en & (t_cnt >= high_cycle) )
             nf_web_nxt = 1'b1;
         else
 	    nf_web_nxt = 1'b0;
@@ -373,7 +371,7 @@ begin
         begin
         if(t_cnt_rst) 
             nf_reb_nxt = 1'b0;
-        else if(t_cnt[3:1] >= high_cycle[3:1] )
+        else if(t_cnt_en & (t_cnt >= high_cycle) )
             nf_reb_nxt = 1'b1;
         else
             nf_reb_nxt = 1'b0;
@@ -382,25 +380,15 @@ begin
     endcase
 end
 
-// NFC Dout Mux & Register
-always @ ( * )
-begin
-    nf_dout_nxt = nf_dout;
-    casex({load_cmd,load_addr,mem_wr_en ,nfc_dat_inv})    
-    4'b1000: nf_dout_nxt = { 8'h0, nfc_if_cmd };
-    4'b0100: nf_dout_nxt = { 8'h0, nfc_addr_dat };
-    4'b0010: nf_dout_nxt = mem_if_din  ;
-    4'b0011: nf_dout_nxt = ~mem_if_din  ;
-    default: nf_dout_nxt = nf_dout;
-    endcase
-end
-
 always @ (posedge clk_2x or negedge rst_n)
 begin : addr_cnt_r	
     if(rst_n == 1'b0)
         addr_cnt <= 3'h0;
+    else if(addr_cnt_incr)
+        addr_cnt <= #1 addr_cnt + 1'b1;
+/*	    
     else if(sta_addr_pre)
-        addr_cnt <= (col_addr_num == 3'b000) ? 3'b100 : 3'b000 ;
+        addr_cnt <= #1 (col_addr_num == 3'b000) ? 3'b100 : 3'b000 ;
     else if(addr_cnt_incr) 
     begin
         if(addr_cnt == (col_addr_num - 1'b1))
@@ -408,6 +396,7 @@ begin : addr_cnt_r
     else    
         addr_cnt <= #1 addr_cnt + 1'b1;
     end
+*/    
     else if(!sta_addr_wr)
         addr_cnt <= #1 3'h0;	   
 end
@@ -417,8 +406,12 @@ always @ (posedge clk_2x or negedge rst_n)
 begin
     if(rst_n == 1'b0)
         addr_cnt_dly <= 3'b000;
-    else
+//    else if(sta_addr_pre)
+//        addr_cnt_dly <= #1 (col_addr_num == 3'b000) ? 3'b100 : 3'b000 ;	
+    else if(load_addr)
         addr_cnt_dly <= #1 addr_cnt;
+    else if(!sta_addr_wr)
+        addr_cnt_dly <= #1 3'h0;	
 end
 
 // Data counter
@@ -426,35 +419,37 @@ always @ (posedge clk_2x or negedge rst_n)
 begin : data_cnt_r	
     if(rst_n == 1'b0)
         data_cnt <= 3'h0;
-    else if(mem_wr_en  | nfif_data_wr)
-        data_cnt <= #1 data_cnt + 1'b1;
+//    else if(mem_wr_en  | nfif_data_wr)
+//        data_cnt <= #1 data_cnt + 1'b1;
     else if(data_wr_op | data_rd_op )
-        data_cnt <= #1 data_cnt;
+        begin
+            if(t_cnt_rst)
+                data_cnt <= #1 data_cnt + 1'b1;
+            else
+                data_cnt <= #1 data_cnt;
+        end
     else
         data_cnt <= #1 3'h0;	   
 end
 
-/*
-always @ (posedge clk or negedge rst_n)
-begin : timing_cnt_r
+always @ (posedge clk_2x or negedge rst_n)
+begin : edo_rd_d
     if(rst_n == 1'b0)
-        t_cnt <= 3'b0;
-    else if(t_cnt_rst)
-        t_cnt <= #1 3'b0;
-    else if(t_cnt_en)
-        t_cnt <= #1 t_cnt + 1'b1;
-end 
-*/
+        edo_rd_dly <= 1'b0;
+    else if(data_rd_op)
+        edo_rd_dly <= #1 edo_rd ;
+    else
+        edo_rd_dly <= #1 1'b0;
+end
 
 always @ (posedge clk_2x or negedge rst_n)
-begin : nfif_d_wr_r
+begin : edo_rd_d2
     if(rst_n == 1'b0)
-        nfif_data_wr <= 1'b0;
-    else if(data_rd_op)
-        nfif_data_wr <= #1 edo_rd ;
-    else
-        nfif_data_wr <= #1 1'b0;
+        edo_rd_dly2 <= 1'b0;
+    else 
+        edo_rd_dly2 <= #1 edo_rd_dly;
 end
+
 
 always @ (posedge clk_2x or negedge rst_n)
 begin : nfif_d_out_r
@@ -484,8 +479,10 @@ begin : mem_wr_en_r
         mem_wr_en <= #1 mem_if_wr;
 end
 
-
+/////////////////////////////////////////////////
+// Transmit DATA to Nandflash 
 // All date need to aligment to clk 1x domain
+/////////////////////////////////////////////////
 always @ (posedge clk or negedge rst_n)
 begin : nf_dout_r
     if(rst_n == 1'b0)
@@ -494,37 +491,55 @@ begin : nf_dout_r
         nf_dout <= #1 nf_dout_nxt;
 end
 
-/*
-always @ (posedge clk or negedge rst_n)
-begin : nfif_d_rd_r
-    if(rst_n == 1'b0)
-        nfif_dat_rdy <= 1'b0;
-    else if(sta_dat_wr & load_dat)
-	nfif_dat_rdy <= #1 1'b1; 
-    else if(mem_if_wr)
-	nfif_dat_rdy <= #1 1'b0;
-    else if(nfc_dat_en)
-        nfif_dat_rdy <= #1 1'b1;
+// Address data transfer selection
+always @ (*)
+    begin
+        case(addr_cnt)	
+        3'b000: nfc_addr_dat = nfc_col_addr[7 : 0];
+        3'b001: nfc_addr_dat = nfc_col_addr[15: 8];
+        3'b010: nfc_addr_dat = nfc_col_addr[23:16];
+        3'b011: nfc_addr_dat = nfc_col_addr[31:24];
+        3'b100: nfc_addr_dat = nfc_row_addr[7 : 0];
+        3'b101: nfc_addr_dat = nfc_row_addr[15: 8];
+        3'b110: nfc_addr_dat = nfc_row_addr[23:16];
+        3'b111: nfc_addr_dat = nfc_row_addr[31:24];
+        default: nfc_addr_dat = 8'h0;
+        endcase
+    end
+
+// NFC Dout Mux & Register
+// Load Command
+// Load Address
+// Load Data or Data inverter
+always @ ( * )
+begin
+    nf_dout_nxt = nf_dout;
+    casex({load_cmd,load_addr,mem_wr_en}) // ,nfc_dat_inv})    
+    3'b100: nf_dout_nxt = { 8'h0, nfc_if_cmd };
+    3'b010: nf_dout_nxt = { 8'h0, nfc_addr_dat };
+    3'b001: nf_dout_nxt = mem_if_din  ;
+    default: nf_dout_nxt = nf_dout;
+    endcase
 end
-*/
+
 always @ (*)
 begin
     if(~nfc_dat_en)	
-	nfif_dat_rdy = 1'b0;
-    else if(dat_done)
-	nfif_dat_rdy = 1'b0;
+        nfif_dat_rdy = 1'b0;
+    else if(dat_fetch_done)
+        nfif_dat_rdy = 1'b0;
     else if(mem_if_wr) begin
-	if(total_cycle==3'b000)
-	    nfif_dat_rdy = 1'b1;
+        if(total_cycle==3'b000)
+            nfif_dat_rdy = 1'b1;
         else
-	    nfif_dat_rdy = 1'b0;
+            nfif_dat_rdy = 1'b0;
         end
     else if(load_dat)
-	nfif_dat_rdy = 1'b1;	
+        nfif_dat_rdy = 1'b1;	
     else if(sta_dat_wr)
         nfif_dat_rdy = 1'b0;
     else
-	nfif_dat_rdy = nfc_dat_en;
+        nfif_dat_rdy = nfc_dat_en & nfc_dat_dir;
 end
 
 endmodule

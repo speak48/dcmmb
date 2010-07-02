@@ -165,7 +165,7 @@ always @ (posedge clk or negedge rst_n)
 begin : mem_if_rd_addr
     if(rst_n == 1'b0)
         asymfifo_rd_addr <= 4'h0;
-    else if(ecc_dec_rdy)
+    else if(ecc_dec_rdy | ecc_enc_rdy)
         asymfifo_rd_addr <= #1 4'h0;
     else if(asymfifo_rd)
         asymfifo_rd_addr <= #1 asymfifo_rd_addr + 1'b1;
