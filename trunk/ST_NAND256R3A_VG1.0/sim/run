@@ -1,0 +1,24 @@
+#!/bin/csh -f
+
+set PRJDIR  = ..
+set CODEDIR = $PRJDIR/code
+set INCDIR  = $PRJDIR/code
+set STIMDIR = $PRJDIR/stim
+set HDLPATH = hdl.var
+set CDSPATH = cds.lib
+
+mkdir worklib
+
+#CODE Compile
+ncvlog -work worklib -cdslib $CDSPATH -hdlvar $HDLPATH -messages -logfile ncvlog.log -linedebug -status $CODEDIR/NAND_PARAM.v
+ncvlog -work worklib -cdslib $CDSPATH -hdlvar $HDLPATH -messages -logfile ncvlog.log -linedebug -status -INCDIR $INCDIR $CODEDIR/NAND256R3A.v
+
+#STIM Compile
+ncvlog -work worklib -cdslib $CDSPATH -hdlvar $HDLPATH -messages -logfile ncvlog.log -linedebug -status $STIMDIR/NAND_TEST.v
+
+
+# Elaborate
+ncelab -work worklib -cdslib $CDSPATH -hdlvar $HDLPATH -messages -nowarn -IEEE1364 worklib.test_bench -access +r
+
+# Simulate
+ncsim -cdslib $CDSPATH -hdlvar $HDLPATH worklib.test_bench
