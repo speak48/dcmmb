@@ -1,3 +1,18 @@
+//+File Header//////////////////////////////////////////////////////////////////
+//Copyright 2009, shhic. All rights reserved
+//Filename    : bchecc_syndm.v
+//Module name : bchecc_syndm
+//Department  : security
+//Author      : Xu Yunxiu
+//Author's mail : xuyx@shhic.com
+//------------------------------------------------------------------------ 
+// Release history 
+// VERSION  Date       AUTHOR       DESCRIPTION 
+// 1.0      2010-6-1   Xun Yunxiu   Initial version
+//------------------------------------------------------------------------ 
+// Other: The IP is based on ECC_V100.
+//-File Header//////////////////////////////////////////////////////////////////
+
 `timescale 1ns/100ps
 module  bchecc_syndm(
                 rst_n,

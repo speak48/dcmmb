@@ -1,3 +1,18 @@
+//+File Header//////////////////////////////////////////////////////////////////
+//Copyright 2009, shhic. All rights reserved
+//Filename    : bchecc_fsm.v
+//Module name : bchecc_fsm
+//Department  : security
+//Author      : Xu Yunxiu
+//Author's mail : xuyx@shhic.com
+//------------------------------------------------------------------------ 
+// Release history 
+// VERSION  Date       AUTHOR       DESCRIPTION 
+// 1.0      2010-6-1   Xun Yunxiu   Initial version
+//------------------------------------------------------------------------ 
+// Other: The IP is based on ECC_V100.
+//-File Header//////////////////////////////////////////////////////////////////
+
 `timescale 1ns/100ps
 module  bchecc_fsm(
                 rst_n,
@@ -85,8 +100,8 @@ output          bma_en_o;
 output          bma_end_o;
 
 output  [4:0]   bma_cnt_o;
-output  [4:0]   delta_cnt_o;
-output  [4:0]   bma_sel_cnt_o;
+output  [3:0]   delta_cnt_o;
+output  [3:0]   bma_sel_cnt_o;
 
 output          chien_load_o;
 output          chien_en_o;
@@ -96,23 +111,23 @@ output  [1:0]   over_cnt_o;
 output  [3:0]   error_cnt_o;
 
 ////////////////FSM coding
-parameter       IDLE        = 5'b00000;
-parameter       ENC_CALC    = 5'b00001;
-parameter       ENC_OUT     = 5'b00011;
-parameter       ENC_DONE    = 5'b00010;
-parameter       DEC_CALC    = 5'b00100;
-parameter       DEC_DONE    = 5'b00110;
+parameter       IDLE        = 3'b000;
+parameter       ENC_CALC    = 3'b001;
+parameter       ENC_OUT     = 3'b011;
+parameter       ENC_DONE    = 3'b010;
+parameter       DEC_CALC    = 3'b100;
+parameter       DEC_DONE    = 3'b110;
 
-parameter       BMA_IDLE    = 5'b01000;
-parameter       BMA_SYNDM   = 5'b01001;
-parameter       BMA_CALC1   = 5'b01011;
-parameter       BMA_CALC2   = 5'b01010;
-parameter       BMA_DONE    = 5'b01110;
+parameter       BMA_IDLE    = 3'b000;
+parameter       BMA_SYNDM   = 3'b001;
+parameter       BMA_CALC1   = 3'b011;
+parameter       BMA_CALC2   = 3'b010;
+parameter       BMA_DONE    = 3'b110;
 
-parameter       CHIEN_IDLE  = 5'b10000;
-parameter       CHIEN_CALC  = 5'b10001;
-parameter       CHIEN_OUT   = 5'b10011;
-parameter       CHIEN_DONE  = 5'b10010;
+parameter       CHIEN_IDLE  = 2'b00;
+parameter       CHIEN_CALC  = 2'b01;
+parameter       CHIEN_OUT   = 2'b11;
+parameter       CHIEN_DONE  = 2'b10;
 
 ////////////////sfr signals
 wire            ecc_en;
@@ -123,10 +138,11 @@ wire            correct_en;
 wire    [11:0]  enc_outcnt;
 wire    [11:0]  dec_incnt;
 wire    [3:0]   correct_cap;
+wire    [3:0]   correct_cap_sub1;
 
 ////////////////FSM
-reg     [4:0]   current_state;
-reg     [4:0]   next_state;
+reg     [2:0]   current_state;
+reg     [2:0]   next_state;
 
 wire            init_en;
 wire            idle_st;
@@ -138,8 +154,8 @@ wire            dec_done_st;
 reg     [11:0]  ecc_cnt;
 
 ////////////////BMA_FSM
-reg     [4:0]   current_bma_state;
-reg     [4:0]   next_bma_state;
+reg     [2:0]   current_bma_state;
+reg     [2:0]   next_bma_state;
 
 wire            bma_idle_st;
 wire            bma_syndm_st;
@@ -148,24 +164,22 @@ wire            bma_calc2_st;
 wire            bma_done_st;
 
 reg     [4:0]   bma_cnt;
-reg     [4:0]   delta_cnt;
-reg     [4:0]   bma_sel_cnt;
+reg     [3:0]   delta_cnt;
+reg     [3:0]   bma_sel_cnt;
 
 wire            bma_load;
-wire    [4:0]   bma2_num;
 reg             bma_opt;
 reg             bma_correct_en;
 
 ////////////////CHIEN_FSM
-reg     [4:0]   current_chien_state;
-reg     [4:0]   next_chien_state;
+reg     [1:0]   current_chien_state;
+reg     [1:0]   next_chien_state;
 
 wire            chien_idle_st;
 wire            chien_calc_st;
 wire            chien_out_st;
 wire            chien_done_st;
-reg             chien_calc_d1;
-wire            chien_first;
+reg             chien_first;
 
 reg     [11:0]  chien_cnt_tmp0;
 reg     [11:0]  chien_cnt_tmp1;
@@ -178,7 +192,7 @@ reg     [12:0]  error_addr;
 
 wire            chien_load;
 reg             chien_correct_en;
-reg     [3:0]   chien_expt;
+reg     [4:0]   chien_expt;
 reg             chien_error;
 
 ////////////////ecc data
@@ -194,11 +208,11 @@ assign  ecc_opt    = ecc_ctrl_i[1];
 assign  enc_dec    = ecc_ctrl_i[2];
 assign  correct_en = ecc_ctrl_i[3];
 
-//assign  enc_outcnt  = ecc_opt ? 12'h019 : 12'h00D;
 assign  enc_outcnt  = ecc_opt ? 12'h018 : 12'h00C;
 assign  dec_incnt   = ecc_opt ? ({2'b00,ecc_cfg_i} + 12'h018) 
                               : ({2'b00,ecc_cfg_i} + 12'h00D);
-assign  correct_cap = ecc_opt ? 4'hE : 4'h7;
+assign  correct_cap = ecc_opt ? 4'hF : 4'h8;
+assign  correct_cap_sub1 = ecc_opt ? 4'hE : 4'h7;
 
 ////////////////FSM
 always  @(negedge rst_n or posedge clk)
@@ -438,7 +452,7 @@ begin
                             begin
                                 if(bma_opt)
                                     begin
-                                        if(bma_cnt < 5'h0D)
+                                        if(bma_cnt < 5'h06)
                                             begin
                                                 next_bma_state = BMA_SYNDM;
                                             end
@@ -449,7 +463,7 @@ begin
                                     end
                                 else
                                     begin
-                                        if(bma_cnt < 5'h06)
+                                        if(bma_cnt < 5'h03)
                                             begin
                                                 next_bma_state = BMA_SYNDM;
                                             end
@@ -473,7 +487,7 @@ begin
             begin
                 if(ecc_en)
                     begin
-                        if(delta_cnt < bma_expt_i)
+                        if(delta_cnt < bma_expt_i[4:1])
                             begin
                                 next_bma_state = BMA_CALC1;
                             end
@@ -491,13 +505,13 @@ begin
             begin
                 if(ecc_en)
                     begin
-                        if(delta_cnt < bma2_num)
+                        if(delta_cnt < correct_cap)
                             begin
                                 next_bma_state = BMA_CALC2;
                             end
                         else
                             begin
-                                if(bma_cnt[4:1] < correct_cap)
+                                if(bma_cnt[4:1] < correct_cap_sub1)
                                     begin
                                         next_bma_state = BMA_CALC1;
                                     end
@@ -543,8 +557,6 @@ assign  bma_calc1_st = (current_bma_state==BMA_CALC1);
 assign  bma_calc2_st = (current_bma_state==BMA_CALC2);
 assign  bma_done_st  = (current_bma_state==BMA_DONE);
 
-assign  bma2_num = {bma_expt_i[3:0],1'b1} + 5'b00010;
-
 always  @(negedge rst_n or posedge clk)
 begin
     if(!rst_n)
@@ -575,11 +587,15 @@ begin
         begin
             bma_cnt <= 5'h00;
         end
+    else if(bma_load)
+        begin
+            bma_cnt <= 5'h00;
+        end
     else if(bma_syndm_st)
         begin
             if(bma_opt)
                 begin
-                    if(bma_cnt < 5'h0D)
+                    if(bma_cnt < 5'h06)
                         begin
                             bma_cnt <= bma_cnt + 5'h01;
                         end
@@ -590,7 +606,7 @@ begin
                 end
             else
                 begin
-                    if(bma_cnt < 5'h06)
+                    if(bma_cnt < 5'h03)
                         begin
                             bma_cnt <= bma_cnt + 5'h01;
                         end
@@ -604,9 +620,9 @@ begin
         begin
             if(bma_calc2_st)
                 begin
-                    if(delta_cnt == bma2_num)
+                    if(delta_cnt == correct_cap)
                         begin
-                            if(bma_cnt[4:1] < correct_cap)
+                            if(bma_cnt[4:1] < correct_cap_sub1)
                                 begin
                                     bma_cnt <= bma_cnt + 5'h02;
                                 end
@@ -627,33 +643,37 @@ always  @(negedge rst_n or posedge clk)
 begin
     if(!rst_n)
         begin
-            delta_cnt <= 5'h00;
+            delta_cnt <= 4'h0;
+        end
+    else if(bma_load)
+        begin
+            delta_cnt <= 4'h0;
         end
     else if(bma_calc1_st)
         begin
-            if(delta_cnt < bma_expt_i)
+            if(delta_cnt < bma_expt_i[4:1])
                 begin
-                    delta_cnt <= delta_cnt + 5'h01;
+                    delta_cnt <= delta_cnt + 4'h1;
                 end
             else
                 begin
-                    delta_cnt <= 5'h00;
+                    delta_cnt <= 4'h0;
                 end
         end
     else if(bma_calc2_st)
         begin
-            if(delta_cnt < bma2_num)
+            if(delta_cnt < correct_cap)
                 begin
-                    delta_cnt <= delta_cnt + 5'h01;
+                    delta_cnt <= delta_cnt + 4'h1;
                 end
             else
                 begin
-                    delta_cnt <= 5'h00;
+                    delta_cnt <= 4'h0;
                 end
         end
     else
         begin
-            delta_cnt <= 5'h00;
+            delta_cnt <= 4'h0;
         end
 end
 
@@ -661,19 +681,23 @@ always  @(negedge rst_n or posedge clk)
 begin
     if(!rst_n)
         begin
-            bma_sel_cnt <= 5'h00;
+            bma_sel_cnt <= 4'h0;
+        end
+    else if(bma_load)
+        begin
+            bma_sel_cnt <= 4'h0;
         end
     else if(bma_calc1_st)
         begin
-            bma_sel_cnt <= bma_sel_cnt - 5'h01;
+            bma_sel_cnt <= bma_sel_cnt - 4'h1;
         end
     else if(bma_calc2_st)
         begin
-            bma_sel_cnt <= bma_cnt + 5'h02;
+            bma_sel_cnt <= bma_cnt[4:1] + 4'h1;
         end
     else
         begin
-            bma_sel_cnt <= 5'h00;
+            bma_sel_cnt <= 4'h0;
         end
 end
 
@@ -717,20 +741,17 @@ begin
             begin
                 if(ecc_en)
                     begin
-                        if(chien_error && chien_correct_en)
+                        if(chien_error && chien_correct_en && (chien_expt<5'h10))
                             begin
-                                if(error_cnt < chien_expt)
+                                if({1'b0,error_cnt} < chien_expt)
                                     begin
-                                        if(chien_cnt > 12'h000)
+                                    	  if(detect_error_i)
                                             begin
-                                                if(detect_error_i)
-                                                    begin
-                                                        next_chien_state = CHIEN_OUT;
-                                                    end
-                                                else
-                                                    begin
-                                                        next_chien_state = CHIEN_CALC;
-                                                    end
+                                                next_chien_state = CHIEN_OUT;
+                                            end
+                                        else if(chien_cnt > 12'h000)
+                                            begin
+                                                next_chien_state = CHIEN_CALC;
                                             end
                                         else
                                             begin
@@ -760,6 +781,10 @@ begin
                             begin
                                 next_chien_state = CHIEN_OUT;
                             end
+                        else if(chien_cnt==12'h000)
+                            begin
+                                next_chien_state = CHIEN_DONE;
+                            end
                         else
                             begin
                                 next_chien_state = CHIEN_CALC;
@@ -785,7 +810,6 @@ assign  chien_idle_st = (current_chien_state==CHIEN_IDLE);
 assign  chien_calc_st = (current_chien_state==CHIEN_CALC);
 assign  chien_out_st  = (current_chien_state==CHIEN_OUT);
 assign  chien_done_st = (current_chien_state==CHIEN_DONE);
-assign  chien_first   = chien_calc_st && ~chien_calc_d1;
 
 always  @(negedge rst_n or posedge clk)
 begin
@@ -815,11 +839,11 @@ always  @(negedge rst_n or posedge clk)
 begin
     if(!rst_n)
         begin
-            chien_expt <= 4'h0;
+            chien_expt <= 5'h00;
         end
     else if(chien_load)
         begin
-            chien_expt <= bma_expt_i[3:0];
+            chien_expt <= bma_expt_i;
         end
 end
 
@@ -901,11 +925,11 @@ always  @(negedge rst_n or posedge clk)
 begin
     if(!rst_n)
         begin
-            chien_calc_d1 <= 1'b0;
+            chien_first <= 1'b0;
         end
     else
         begin
-            chien_calc_d1 <= chien_calc_st;
+            chien_first <= chien_load;
         end
 end
 
@@ -921,7 +945,7 @@ begin
         end
     else if(chien_calc_st || chien_out_st)
         begin
-            if(chien_calc_st)
+            if(!detect_error_i)
                 begin
                     if(chien_cnt > 12'h000)
                         begin
@@ -951,7 +975,7 @@ begin
         end
     else if(chien_out_st)
         begin
-            if(error_cnt < chien_expt)
+            if({1'b0,error_cnt} < chien_expt)
                 begin
                     error_cnt <= error_cnt + 4'h1;
                 end
@@ -1022,6 +1046,14 @@ begin
                 begin
                     enc_data_avail <= ecc_wr_i;
                 end
+            else
+                begin
+                    enc_data_avail <= 1'b0;
+                end
+        end
+    else
+        begin
+            enc_data_avail <= 1'b0;
         end
 end
 
@@ -1037,6 +1069,14 @@ begin
                 begin
                     dec_data_avail <= ecc_wr_i;
                 end
+            else
+                begin
+                    dec_data_avail <= 1'b0;
+                end
+        end
+    else
+        begin
+            dec_data_avail <= 1'b0;
         end
 end
 
@@ -1077,7 +1117,7 @@ assign  init_en_o  = init_en;
 assign  ecc_data_o = ecc_data;
 assign  enc_data_avail_o = enc_data_avail;
 assign  dec_data_avail_o = dec_data_avail;
-assign  enc_last_o      = enc_calc_st && (ecc_cnt == {2'b00,ecc_cfg_i} - 12'h001);
+assign  enc_last_o      = enc_calc_st && (ecc_cnt == {2'b00,ecc_cfg_i});
 assign  enc_out_en_o    = enc_out_st;
 assign  enc_out_first_o = enc_out_st && (ecc_cnt==12'h000);
 
@@ -1090,7 +1130,7 @@ assign  bma_load_o = bma_load;
 assign  syndm_en_o = bma_syndm_st;
 assign  delta_en_o = bma_calc1_st;
 assign  bma_en_o   = bma_calc2_st;
-assign  bma_end_o  = bma_calc2_st && (delta_cnt == bma2_num);
+assign  bma_end_o  = bma_calc2_st && (delta_cnt == correct_cap);
 
 assign  bma_cnt_o     = bma_cnt;
 assign  delta_cnt_o   = delta_cnt;
@@ -1107,8 +1147,8 @@ assign  error_addr_o = error_addr;
 
 assign  change_stat_o  = chien_done_st;
 assign  ecc_busy_o     = ~(idle_st & bma_idle_st & chien_idle_st);
-assign  ecc_block_o    = dec_done_st;
+assign  ecc_block_o    = (dec_calc_st && (ecc_cnt>=dec_incnt-12'h001)) || (dec_done_st && ~bma_idle_st);
 assign  ecc_error_o    = chien_error;
-assign  correct_fail_o = chien_correct_en && (error_cnt < chien_expt);
+assign  correct_fail_o = chien_correct_en && ({1'b0,error_cnt} < chien_expt);
 
 endmodule

@@ -1,3 +1,18 @@
+//+File Header//////////////////////////////////////////////////////////////////
+//Copyright 2009, shhic. All rights reserved
+//Filename    : bchecc_chien.v
+//Module name : bchecc_chien
+//Department  : security
+//Author      : Xu Yunxiu
+//Author's mail : xuyx@shhic.com
+//------------------------------------------------------------------------ 
+// Release history 
+// VERSION  Date       AUTHOR       DESCRIPTION 
+// 1.0      2010-6-1   Xun Yunxiu   Initial version
+//------------------------------------------------------------------------ 
+// Other: The IP is based on ECC_V100.
+//-File Header//////////////////////////////////////////////////////////////////
+
 `timescale 1ns/100ps
 module  bchecc_chien(
                 rst_n,
@@ -338,8 +353,9 @@ begin
         end
     else if(chien_en_i)
         begin
-            current_err_cnt <= ({2'b00,error_data_tmp[0]} + {2'b00,error_data_tmp[1]} + {2'b00,error_data_tmp[2]})
-                             + ({2'b00,error_data_tmp[3]} + {2'b00,error_data_tmp[4]} + {2'b00,error_data_tmp[5]});
+            current_err_cnt <= ({2'b00,error_data_tmp[0]} + {2'b00,error_data_tmp[1]})
+                             + ({2'b00,error_data_tmp[2]} + {2'b00,error_data_tmp[3]})
+                             + ({2'b00,error_data_tmp[4]} + {2'b00,error_data_tmp[5]});
         end
     else if(chien_out_i)
         begin
@@ -393,15 +409,15 @@ end
 assign  detect_error = chien_en_i ? (|error_data_tmp) : (current_err_cnt > 3'b001);
 
 ////////////////logic 
-assign  errdata[0] = ~(|((chien_ex0  ^ chien_ex1  ^ chien_ex2  ^ chien_ex3 ) 
-                       ^ (chien_ex4  ^ chien_ex5  ^ chien_ex6  ^ chien_ex7 )
-                       ^ (chien_ex8  ^ chien_ex9  ^ chien_ex10 ^ chien_ex11) 
-                       ^ (chien_ex12 ^ chien_ex13 ^ chien_ex14 ^ chien_ex15)));
+assign  errdata[0] = ~(|((((chien_ex0 ^ chien_ex1)  ^ (chien_ex2  ^ chien_ex3)) 
+                       ^ ((chien_ex4  ^ chien_ex5)  ^ (chien_ex6  ^ chien_ex7)))
+                       ^(((chien_ex8  ^ chien_ex9)  ^ (chien_ex10 ^ chien_ex11)) 
+                       ^ ((chien_ex12 ^ chien_ex13) ^ (chien_ex14 ^ chien_ex15)))));
                        
-assign  errdata[1] = ~(|((chien_ex0 ^ mult1_s  ^ mult2_s  ^ mult3_s ) 
-                        ^ (mult4_s  ^ mult5_s  ^ mult6_s  ^ mult7_s )
-                        ^ (mult8_s  ^ mult9_s  ^ mult10_s ^ mult11_s) 
-                        ^ (mult12_s ^ mult13_s ^ mult14_s ^ mult15_s)));
+assign  errdata[1] = ~(|((((chien_ex0 ^ mult1_s)  ^ (mult2_s  ^ mult3_s)) 
+                        ^ ((mult4_s   ^ mult5_s)  ^ (mult6_s  ^ mult7_s)))
+                        ^(((mult8_s   ^ mult9_s)  ^ (mult10_s ^ mult11_s)) 
+                        ^ ((mult12_s  ^ mult13_s) ^ (mult14_s ^ mult15_s)))));
                        
 assign  errdata[2] = ~(|((((chien_ex0 ^ mult16_s) ^ (mult17_s ^ mult18_s)) 
                          ^ ((mult19_s ^ mult20_s) ^ (mult21_s ^ mult22_s)))

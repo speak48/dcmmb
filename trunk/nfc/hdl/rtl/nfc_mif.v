@@ -171,8 +171,8 @@ assign nfc_ram_wen[1] = ~(dat_wr & dat_wr_en);
 assign nfc_ram_wen[0] = ~(dat_wr & ~dat_wr_en);
 assign nfc_ram_din  = mif_data_out;
 
-assign mif_ecc_wr   = nfc_ecc_en & ( sta_rd_dat | sta_rd_spa | sta_ecc_enc ) & ecc_rd_en; // last ecc byte 2 cycles later
-assign mif_ecc_dat  = mem_if_din;
+assign mif_ecc_wr   = nfc_ecc_en & ((( sta_rd_dat | sta_rd_spa | sta_ecc_enc ) & ecc_rd_en) | dat_wr); // last ecc byte 2 cycles later
+assign mif_ecc_dat  = nfc_dat_dir ? mem_if_din : mif_data_out;
 
 // FSM Active Signal
 assign sta_rd_idl = (mif_rd_sta == MIF_RD_IDLE);

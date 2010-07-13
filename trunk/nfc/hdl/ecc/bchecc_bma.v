@@ -1,3 +1,18 @@
+//+File Header//////////////////////////////////////////////////////////////////
+//Copyright 2009, shhic. All rights reserved
+//Filename    : bchecc_bma.v
+//Module name : bchecc_bma
+//Department  : security
+//Author      : Xu Yunxiu
+//Author's mail : xuyx@shhic.com
+//------------------------------------------------------------------------ 
+// Release history 
+// VERSION  Date       AUTHOR       DESCRIPTION 
+// 1.0      2010-6-1   Xun Yunxiu   Initial version
+//------------------------------------------------------------------------ 
+// Other: The IP is based on ECC_V100.
+//-File Header//////////////////////////////////////////////////////////////////
+
 `timescale 1ns/100ps
 module  bchecc_bma(
                 rst_n,
@@ -56,8 +71,8 @@ input           delta_en_i;
 input           bma_en_i;
 input           bma_end_i;
 input   [4:0]   bma_cnt_i;
-input   [4:0]   delta_cnt_i;
-input   [4:0]   bma_sel_cnt_i;
+input   [3:0]   delta_cnt_i;
+input   [3:0]   bma_sel_cnt_i;
 
 input   [12:0]  syndm1_i; 
 input   [12:0]  syndm3_i; 
@@ -187,6 +202,10 @@ reg     [12:0]  mult1_a;
 reg     [12:0]  mult1_b;
 wire    [12:0]  mult1_s;
 
+reg     [12:0]  mult2_a;
+reg     [12:0]  mult2_b;
+wire    [12:0]  mult2_s;
+
 ////////////////load and calculate syndm
 always  @(negedge rst_n or posedge clk)
 begin
@@ -261,22 +280,60 @@ begin
             syndm26 <= 13'h0000;
             syndm28 <= 13'h0000;
         end
+    else if(bma_load_i)
+        begin
+            syndm2  <= 13'h0000;
+            syndm4  <= 13'h0000;
+            syndm6  <= 13'h0000;
+            syndm8  <= 13'h0000;
+            syndm10 <= 13'h0000;
+            syndm12 <= 13'h0000;
+            syndm14 <= 13'h0000;
+            syndm16 <= 13'h0000;
+            syndm18 <= 13'h0000;
+            syndm20 <= 13'h0000;
+            syndm22 <= 13'h0000;
+            syndm24 <= 13'h0000;
+            syndm26 <= 13'h0000;
+            syndm28 <= 13'h0000;
+        end
     else if(syndm_en_i)
         case(bma_cnt_i[3:0])
-            4'h0: syndm2  <= mult1_s;
-            4'h1: syndm4  <= mult1_s;
-            4'h2: syndm6  <= mult1_s;
-            4'h3: syndm8  <= mult1_s;
-            4'h4: syndm10 <= mult1_s;
-            4'h5: syndm12 <= mult1_s;
-            4'h6: syndm14 <= mult1_s;
-            4'h7: syndm16 <= mult1_s;
-            4'h8: syndm18 <= mult1_s;
-            4'h9: syndm20 <= mult1_s;
-            4'hA: syndm22 <= mult1_s;
-            4'hB: syndm24 <= mult1_s;
-            4'hC: syndm26 <= mult1_s;
-            4'hD: syndm28 <= mult1_s;
+            4'h0:
+                begin
+                    syndm2  <= mult1_s;
+                    syndm6  <= mult2_s;
+                end
+            4'h1:
+                begin
+                    syndm4  <= mult1_s;
+                    syndm10 <= mult2_s;
+                end
+            4'h2:
+                begin
+                    syndm8  <= mult1_s;
+                    syndm12 <= mult2_s;
+                end
+            4'h3:
+                begin
+                    syndm14 <= mult1_s;
+                    syndm16 <= mult2_s;
+                end
+            4'h4:
+                begin
+                    syndm18 <= mult1_s;
+                    syndm20 <= mult2_s;
+                end
+            4'h5:
+                begin
+                    syndm22 <= mult1_s;
+                    syndm24 <= mult2_s;
+                end
+            4'h6:
+                begin
+                    syndm26 <= mult1_s;
+                    syndm28 <= mult2_s;
+                end
             default:
                 begin
                     syndm2  <= 13'h0000;
@@ -310,7 +367,7 @@ begin
         end
     else if(delta_en_i)
         begin
-            delta <= delta ^ mult1_s;
+            delta <= delta ^ mult1_s ^ mult2_s;
         end
 end
 
@@ -390,82 +447,43 @@ begin
         end
     else if(bma_en_i)
         begin
-            if(delta_cnt_i[0] == 1'b0)
-                case(delta_cnt_i[4:1])
-                    4'h0: bma_ex0  <= mult1_s;
-                    4'h1: bma_ex1  <= mult1_s;
-                    4'h2: bma_ex2  <= mult1_s;
-                    4'h3: bma_ex3  <= mult1_s;
-                    4'h4: bma_ex4  <= mult1_s;
-                    4'h5: bma_ex5  <= mult1_s;
-                    4'h6: bma_ex6  <= mult1_s;
-                    4'h7: bma_ex7  <= mult1_s;
-                    4'h8: bma_ex8  <= mult1_s;
-                    4'h9: bma_ex9  <= mult1_s;
-                    4'ha: bma_ex10 <= mult1_s;
-                    4'hb: bma_ex11 <= mult1_s;
-                    4'hc: bma_ex12 <= mult1_s;
-                    4'hd: bma_ex13 <= mult1_s;
-                    4'he: bma_ex14 <= mult1_s;
-                    4'hf: bma_ex15 <= mult1_s;
-                    default: 
-                        begin
-                            bma_ex0  <= 13'h0000;
-                            bma_ex1  <= 13'h0000;
-                            bma_ex2  <= 13'h0000;
-                            bma_ex3  <= 13'h0000;
-                            bma_ex4  <= 13'h0000;
-                            bma_ex5  <= 13'h0000;
-                            bma_ex6  <= 13'h0000;
-                            bma_ex7  <= 13'h0000;
-                            bma_ex8  <= 13'h0000;
-                            bma_ex9  <= 13'h0000;
-                            bma_ex10 <= 13'h0000;
-                            bma_ex11 <= 13'h0000;
-                            bma_ex12 <= 13'h0000;
-                            bma_ex13 <= 13'h0000;
-                            bma_ex14 <= 13'h0000;
-                            bma_ex15 <= 13'h0000;
-                        end
-                endcase
-            else
-                case(delta_cnt_i[4:1])
-                    4'h0: bma_ex0  <= bma_ex0  ^ mult1_s;
-                    4'h1: bma_ex1  <= bma_ex1  ^ mult1_s;
-                    4'h2: bma_ex2  <= bma_ex2  ^ mult1_s;
-                    4'h3: bma_ex3  <= bma_ex3  ^ mult1_s;
-                    4'h4: bma_ex4  <= bma_ex4  ^ mult1_s;
-                    4'h5: bma_ex5  <= bma_ex5  ^ mult1_s;
-                    4'h6: bma_ex6  <= bma_ex6  ^ mult1_s;
-                    4'h7: bma_ex7  <= bma_ex7  ^ mult1_s;
-                    4'h8: bma_ex8  <= bma_ex8  ^ mult1_s;
-                    4'h9: bma_ex9  <= bma_ex9  ^ mult1_s;
-                    4'ha: bma_ex10 <= bma_ex10 ^ mult1_s;
-                    4'hb: bma_ex11 <= bma_ex11 ^ mult1_s;
-                    4'hc: bma_ex12 <= bma_ex12 ^ mult1_s;
-                    4'hd: bma_ex13 <= bma_ex13 ^ mult1_s;
-                    4'he: bma_ex14 <= bma_ex14 ^ mult1_s;
-                    4'hf: bma_ex15 <= bma_ex15 ^ mult1_s;
-                    default:
-                        begin
-                            bma_ex0  <= 13'h0000;
-                            bma_ex1  <= 13'h0000;
-                            bma_ex2  <= 13'h0000;
-                            bma_ex3  <= 13'h0000;
-                            bma_ex4  <= 13'h0000;
-                            bma_ex5  <= 13'h0000;
-                            bma_ex6  <= 13'h0000;
-                            bma_ex7  <= 13'h0000;
-                            bma_ex8  <= 13'h0000;
-                            bma_ex9  <= 13'h0000;
-                            bma_ex10 <= 13'h0000;
-                            bma_ex11 <= 13'h0000;
-                            bma_ex12 <= 13'h0000;
-                            bma_ex13 <= 13'h0000;
-                            bma_ex14 <= 13'h0000;
-                            bma_ex15 <= 13'h0000;
-                        end
-                endcase
+            case(delta_cnt_i[3:0])
+                4'h0: bma_ex0  <= mult1_s ^ mult2_s;
+                4'h1: bma_ex1  <= mult1_s ^ mult2_s;
+                4'h2: bma_ex2  <= mult1_s ^ mult2_s;
+                4'h3: bma_ex3  <= mult1_s ^ mult2_s;
+                4'h4: bma_ex4  <= mult1_s ^ mult2_s;
+                4'h5: bma_ex5  <= mult1_s ^ mult2_s;
+                4'h6: bma_ex6  <= mult1_s ^ mult2_s;
+                4'h7: bma_ex7  <= mult1_s ^ mult2_s;
+                4'h8: bma_ex8  <= mult1_s ^ mult2_s;
+                4'h9: bma_ex9  <= mult1_s ^ mult2_s;
+                4'ha: bma_ex10 <= mult1_s ^ mult2_s;
+                4'hb: bma_ex11 <= mult1_s ^ mult2_s;
+                4'hc: bma_ex12 <= mult1_s ^ mult2_s;
+                4'hd: bma_ex13 <= mult1_s ^ mult2_s;
+                4'he: bma_ex14 <= mult1_s ^ mult2_s;
+                4'hf: bma_ex15 <= mult1_s ^ mult2_s;
+                default: 
+                    begin
+                        bma_ex0  <= 13'h0000;
+                        bma_ex1  <= 13'h0000;
+                        bma_ex2  <= 13'h0000;
+                        bma_ex3  <= 13'h0000;
+                        bma_ex4  <= 13'h0000;
+                        bma_ex5  <= 13'h0000;
+                        bma_ex6  <= 13'h0000;
+                        bma_ex7  <= 13'h0000;
+                        bma_ex8  <= 13'h0000;
+                        bma_ex9  <= 13'h0000;
+                        bma_ex10 <= 13'h0000;
+                        bma_ex11 <= 13'h0000;
+                        bma_ex12 <= 13'h0000;
+                        bma_ex13 <= 13'h0000;
+                        bma_ex14 <= 13'h0000;
+                        bma_ex15 <= 13'h0000;
+                    end
+            endcase
         end
 end
 
@@ -568,6 +586,23 @@ begin
             bma_r13 <= 13'h0000;
             bma_r14 <= 13'h0000;
         end
+    else if(bma_load_i)
+        begin
+            bma_r1  <= 13'h0000;
+            bma_r2  <= 13'h0000;
+            bma_r3  <= 13'h0000;
+            bma_r4  <= 13'h0000;
+            bma_r5  <= 13'h0000;
+            bma_r6  <= 13'h0000;
+            bma_r7  <= 13'h0000;
+            bma_r8  <= 13'h0000;
+            bma_r9  <= 13'h0000;
+            bma_r10 <= 13'h0000;
+            bma_r11 <= 13'h0000;
+            bma_r12 <= 13'h0000;
+            bma_r13 <= 13'h0000;
+            bma_r14 <= 13'h0000;
+        end
     else if(delta_en_i)
         begin
             bma_r1  <= bma_ex0;
@@ -587,30 +622,33 @@ begin
         end
 end
 
-
 always  @(*)
 begin
     if(syndm_en_i)
         case(bma_cnt_i[3:0])
             4'h0: mult1_a = syndm1;
             4'h1: mult1_a = syndm2;
-            4'h2: mult1_a = syndm3;
-            4'h3: mult1_a = syndm4;
-            4'h4: mult1_a = syndm5;
-            4'h5: mult1_a = syndm6;
-            4'h6: mult1_a = syndm7;
-            4'h7: mult1_a = syndm8;
-            4'h8: mult1_a = syndm9;
-            4'h9: mult1_a = syndm10;
-            4'hA: mult1_a = syndm11;
-            4'hB: mult1_a = syndm12;
-            4'hC: mult1_a = syndm13;
-            4'hD: mult1_a = syndm14;
-            4'hE: mult1_a = syndm15;
+            4'h2: mult1_a = syndm4;
+            4'h3: mult1_a = syndm7;
+            4'h4: mult1_a = syndm9;
+            4'h5: mult1_a = syndm11;
+            4'h6: mult1_a = syndm13;
             default: mult1_a = 13'h0000;
         endcase
     else if(delta_en_i)
-        case(delta_cnt_i[3:0])
+        case(delta_cnt_i)
+            4'h0: mult1_a = bma_ex0;
+            4'h1: mult1_a = bma_ex2;
+            4'h2: mult1_a = bma_ex4;
+            4'h3: mult1_a = bma_ex6;
+            4'h4: mult1_a = bma_ex8;
+            4'h5: mult1_a = bma_ex10;
+            4'h6: mult1_a = bma_ex12;
+            4'h7: mult1_a = bma_ex14;
+            default: mult1_a = 13'h0000;
+        endcase
+    else
+        case(delta_cnt_i)
             4'h0: mult1_a = bma_ex0;
             4'h1: mult1_a = bma_ex1;
             4'h2: mult1_a = bma_ex2;
@@ -627,46 +665,55 @@ begin
             4'hD: mult1_a = bma_ex13;
             4'hE: mult1_a = bma_ex14;
             4'hF: mult1_a = bma_ex15;
-            default: mult1_a = 13'h0000;
+            default:  mult1_a = 13'h0000;
+        endcase
+end
+
+always  @(*)
+begin
+    if(syndm_en_i)
+        case(bma_cnt_i[3:0])
+            4'h0: mult2_a = syndm3;
+            4'h1: mult2_a = syndm5;
+            4'h2: mult2_a = syndm6;
+            4'h3: mult2_a = syndm8;
+            4'h4: mult2_a = syndm10;
+            4'h5: mult2_a = syndm12;
+            4'h6: mult2_a = syndm14;
+            default: mult2_a = 13'h0000;
+        endcase
+    else if(delta_en_i)
+        case(delta_cnt_i)
+            4'h0: mult2_a = bma_ex1;
+            4'h1: mult2_a = bma_ex3;
+            4'h2: mult2_a = bma_ex5;
+            4'h3: mult2_a = bma_ex7;
+            4'h4: mult2_a = bma_ex9;
+            4'h5: mult2_a = bma_ex11;
+            4'h6: mult2_a = bma_ex13;
+            4'h7: mult2_a = bma_ex15;
+            default: mult2_a = 13'h0000;
         endcase
     else
-        begin
-            case(delta_cnt_i[4:0])
-                5'b00000: mult1_a = bma_ex0;
-                5'b00010: mult1_a = bma_ex1;
-                5'b00100: mult1_a = bma_ex2;
-                5'b00110: mult1_a = bma_ex3;
-                5'b01000: mult1_a = bma_ex4;
-                5'b01010: mult1_a = bma_ex5;
-                5'b01100: mult1_a = bma_ex6;
-                5'b01110: mult1_a = bma_ex7;
-                5'b10000: mult1_a = bma_ex8;
-                5'b10010: mult1_a = bma_ex9;
-                5'b10100: mult1_a = bma_ex10;
-                5'b10110: mult1_a = bma_ex11;
-                5'b11000: mult1_a = bma_ex12;
-                5'b11010: mult1_a = bma_ex13;
-                5'b11100: mult1_a = bma_ex14;
-                5'b11110: mult1_a = bma_ex15;
-                5'b00001: mult1_a = 13'h0000;
-                5'b00011: mult1_a = bma_dx0;
-                5'b00101: mult1_a = bma_dx1;
-                5'b00111: mult1_a = bma_dx2;
-                5'b01001: mult1_a = bma_dx3;
-                5'b01011: mult1_a = bma_dx4;
-                5'b01101: mult1_a = bma_dx5;
-                5'b01111: mult1_a = bma_dx6;
-                5'b10001: mult1_a = bma_dx7;
-                5'b10011: mult1_a = bma_dx8;
-                5'b10101: mult1_a = bma_dx9;
-                5'b10111: mult1_a = bma_dx10;
-                5'b11001: mult1_a = bma_dx11;
-                5'b11011: mult1_a = bma_dx12;
-                5'b11101: mult1_a = bma_dx13;
-                5'b11111: mult1_a = bma_dx14;
-                default:  mult1_a = 13'h0000;
-            endcase
-        end
+        case(delta_cnt_i)
+            4'h0: mult2_a = 13'h0000;
+            4'h1: mult2_a = bma_dx0;
+            4'h2: mult2_a = bma_dx1;
+            4'h3: mult2_a = bma_dx2;
+            4'h4: mult2_a = bma_dx3;
+            4'h5: mult2_a = bma_dx4;
+            4'h6: mult2_a = bma_dx5;
+            4'h7: mult2_a = bma_dx6;
+            4'h8: mult2_a = bma_dx7;
+            4'h9: mult2_a = bma_dx8;
+            4'hA: mult2_a = bma_dx9;
+            4'hB: mult2_a = bma_dx10;
+            4'hC: mult2_a = bma_dx11;
+            4'hD: mult2_a = bma_dx12;
+            4'hE: mult2_a = bma_dx13;
+            4'hF: mult2_a = bma_dx14;
+            default:  mult2_a = 13'h0000;
+        endcase
 end
 
 always  @(*)
@@ -675,66 +722,73 @@ begin
         case(bma_cnt_i[3:0])
             4'h0: mult1_b = syndm1;
             4'h1: mult1_b = syndm2;
-            4'h2: mult1_b = syndm3;
-            4'h3: mult1_b = syndm4;
-            4'h4: mult1_b = syndm5;
-            4'h5: mult1_b = syndm6;
-            4'h6: mult1_b = syndm7;
-            4'h7: mult1_b = syndm8;
-            4'h8: mult1_b = syndm9;
-            4'h9: mult1_b = syndm10;
-            4'hA: mult1_b = syndm11;
-            4'hB: mult1_b = syndm12;
-            4'hC: mult1_b = syndm13;
-            4'hD: mult1_b = syndm14;
-            4'hE: mult1_b = syndm15;
+            4'h2: mult1_b = syndm4;
+            4'h3: mult1_b = syndm7;
+            4'h4: mult1_b = syndm9;
+            4'h5: mult1_b = syndm11;
+            4'h6: mult1_b = syndm13;
             default: mult1_b = 13'h0000;
         endcase
     else if(delta_en_i)
-        begin
-            case(bma_sel_cnt_i)
-                5'b00000: mult1_b = syndm1;
-                5'b00001: mult1_b = syndm2;
-                5'b00010: mult1_b = syndm3;
-                5'b00011: mult1_b = syndm4;
-                5'b00100: mult1_b = syndm5;
-                5'b00101: mult1_b = syndm6;
-                5'b00110: mult1_b = syndm7;
-                5'b00111: mult1_b = syndm8;
-                5'b01000: mult1_b = syndm9;
-                5'b01001: mult1_b = syndm10;
-                5'b01010: mult1_b = syndm11;
-                5'b01011: mult1_b = syndm12;
-                5'b01100: mult1_b = syndm13;
-                5'b01101: mult1_b = syndm14;
-                5'b01110: mult1_b = syndm15;
-                5'b01111: mult1_b = syndm16;
-                5'b10000: mult1_b = syndm17;
-                5'b10001: mult1_b = syndm18;
-                5'b10010: mult1_b = syndm19;
-                5'b10011: mult1_b = syndm20;
-                5'b10100: mult1_b = syndm21;
-                5'b10101: mult1_b = syndm22;
-                5'b10110: mult1_b = syndm23;
-                5'b10111: mult1_b = syndm24;
-                5'b11000: mult1_b = syndm25;
-                5'b11001: mult1_b = syndm26;
-                5'b11010: mult1_b = syndm27;
-                5'b11011: mult1_b = syndm28;
-                5'b11100: mult1_b = syndm29;
-                default:  mult1_b = 13'h0000;
-            endcase
-        end
+        case(bma_sel_cnt_i)
+            4'h0: mult1_b = syndm1;
+            4'h1: mult1_b = syndm3;
+            4'h2: mult1_b = syndm5;
+            4'h3: mult1_b = syndm7;
+            4'h4: mult1_b = syndm9;
+            4'h5: mult1_b = syndm11;
+            4'h6: mult1_b = syndm13;
+            4'h7: mult1_b = syndm15;
+            4'h8: mult1_b = syndm17;
+            4'h9: mult1_b = syndm19;
+            4'hA: mult1_b = syndm21;
+            4'hB: mult1_b = syndm23;
+            4'hC: mult1_b = syndm25;
+            4'hD: mult1_b = syndm27;
+            4'hE: mult1_b = syndm29;
+            default:  mult1_b = 13'h0000;
+        endcase
     else
         begin
-            if(delta_cnt_i[0])
-                begin
-                    mult1_b = delta;
-                end
-            else
-                begin
-                    mult1_b = theta;
-                end
+            mult1_b = theta;
+        end
+end
+
+always  @(*)
+begin
+    if(syndm_en_i)
+        case(bma_cnt_i[3:0])
+            4'h0: mult2_b = syndm3;
+            4'h1: mult2_b = syndm5;
+            4'h2: mult2_b = syndm6;
+            4'h3: mult2_b = syndm8;
+            4'h4: mult2_b = syndm10;
+            4'h5: mult2_b = syndm12;
+            4'h6: mult2_b = syndm14;
+            default: mult2_b = 13'h0000;
+        endcase
+    else if(delta_en_i)
+        case(bma_sel_cnt_i)
+            4'h0: mult2_b = 13'h0000;
+            4'h1: mult2_b = syndm2;
+            4'h2: mult2_b = syndm4;
+            4'h3: mult2_b = syndm6;
+            4'h4: mult2_b = syndm8;
+            4'h5: mult2_b = syndm10;
+            4'h6: mult2_b = syndm12;
+            4'h7: mult2_b = syndm14;
+            4'h8: mult2_b = syndm16;
+            4'h9: mult2_b = syndm18;
+            4'hA: mult2_b = syndm20;
+            4'hB: mult2_b = syndm22;
+            4'hC: mult2_b = syndm24;
+            4'hD: mult2_b = syndm26;
+            4'hE: mult2_b = syndm28;
+            default:  mult2_b = 13'h0000;
+        endcase
+    else
+        begin
+            mult2_b = delta;
         end
 end
 
@@ -742,6 +796,12 @@ bchecc_gfmult u1_gfmult(
                 .a_i    (mult1_a),
                 .b_i    (mult1_b),
                 .s_o    (mult1_s)
+                );
+              
+bchecc_gfmult u2_gfmult(
+                .a_i    (mult2_a),
+                .b_i    (mult2_b),
+                .s_o    (mult2_s)
                 );
                 
 ////////////////output

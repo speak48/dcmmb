@@ -1,3 +1,18 @@
+//+File Header//////////////////////////////////////////////////////////////////
+//Copyright 2009, shhic. All rights reserved
+//Filename    : bchecc_reg.v
+//Module name : bchecc_reg
+//Department  : security
+//Author      : Xu Yunxiu
+//Author's mail : xuyx@shhic.com
+//------------------------------------------------------------------------ 
+// Release history 
+// VERSION  Date       AUTHOR       DESCRIPTION 
+// 1.0      2010-6-1   Xun Yunxiu   Initial version
+//------------------------------------------------------------------------ 
+// Other: The IP is based on ECC_V100.
+//-File Header//////////////////////////////////////////////////////////////////
+
 `timescale 1ns/100ps
 module  bchecc_reg(
                 rst_n,
@@ -256,33 +271,11 @@ begin
             end
         4'b0001:
             begin
-                if(sfr_size_i==2'b00)
-                    begin
-                        sfr_rdata = {4{ecc_cfg[7:0]}};
-                    end
-                else if(sfr_size_i==2'b01)
-                    begin
-                        sfr_rdata = {2{8'h00,ecc_cfg[7:0]}};
-                    end
-                else
-                    begin
-                        sfr_rdata = {24'h000000,ecc_cfg[7:0]};
-                    end
+                sfr_rdata = {4{ecc_cfg[7:0]}};
             end
         4'b0010:
             begin
-                if(sfr_size_i==2'b00)
-                    begin
-                        sfr_rdata = {4{6'b000000,ecc_cfg[9:8]}};
-                    end
-                else if(sfr_size_i==2'b01)
-                    begin
-                        sfr_rdata = {2{6'b000000,ecc_cfg[9:8],8'h00}};
-                    end
-                else
-                    begin
-                        sfr_rdata = {{22{1'b0}},ecc_cfg[9:8],8'h00};
-                    end
+                sfr_rdata = {4{6'b000000,ecc_cfg[9:8]}};
             end
         4'b0011:
             begin

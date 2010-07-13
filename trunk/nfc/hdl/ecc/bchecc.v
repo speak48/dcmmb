@@ -10,7 +10,7 @@
 // VERSION  Date       AUTHOR       DESCRIPTION 
 // 1.0      2010-6-1   Xun Yunxiu   Initial version
 //------------------------------------------------------------------------ 
-// Other: The basis of this IP is ECC_V100 designed by Feng Huang.
+// Other: The IP is based on ECC_V100.
 //-File Header//////////////////////////////////////////////////////////////////
 
 `timescale 1ns/100ps
@@ -76,8 +76,8 @@ wire            bma_en;
 wire            bma_end;
 
 wire    [4:0]   bma_cnt;
-wire    [4:0]   delta_cnt;
-wire    [4:0]   bma_sel_cnt;
+wire    [3:0]   delta_cnt;
+wire    [3:0]   bma_sel_cnt;
 
 wire            chien_load;
 wire            chien_en;

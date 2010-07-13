@@ -139,7 +139,27 @@ begin
   //  READ(8'h00,8'hff,8'h00,8'h00,(256+16+2),1);   //area a,read block 0,page 0,column 255 ~ block 0,page 1,column 0
   //  READ_B;
     READ(8'h01,8'h00,8'h00,8'h00,(256),1);
-  //   #(6300*CLK_PRD)
+    $display("****************************************************************");
+    $display("** use ecc 108 bit mode ");
+//    bfm_write(NFC_IF_CTRL1_OFFSET,8'bx100_1110); 
+//    #(20*CLK_PRD);
+    READ_A;
+    bfm_write(NFC_RAND_SEED2_OFFSET,8'hff);
+    bfm_write(NFC_RAND_SEED3_OFFSET,8'hff);
+    bfm_write(NFC_DATA_ADDR0_OFFSET,8'h00);
+    bfm_write(NFC_DATA_ADDR1_OFFSET,8'h03);
+//    ECC set        
+    block_size = 'd256;
+    bfm_write(NFC_ECC_CFG0_OFFSET,block_size[7:0]);
+    bfm_write(NFC_ECC_CFG1_OFFSET,block_size[9:8]);   
+    bfm_write(NFC_ECC_CTRL_OFFSET,8'b0000_0_0_0_1); //{ ECC_ENC, ECC_8_bit ECC EN }
+    PROGRAM(8'h00,8'h01,8'h00,(256),1);
+    #600e3;
+//    READ_SR;
+    $display("****************************************************************");
+    bfm_write(NFC_ECC_CTRL_OFFSET,8'b0000_0_1_0_1); //{ ECC_DEC, ECC_8_bit ECC EN }
+    READ(8'h00,8'h00,8'h01,8'h00,(256),1);
+    #(300*CLK_PRD)
     $finish;
 end
 endtask 
