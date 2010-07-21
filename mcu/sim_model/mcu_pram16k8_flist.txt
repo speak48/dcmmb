@@ -1,0 +1,7 @@
+# Output products list for <mcu_pram16k8>
+mcu_pram16k8.ngc
+mcu_pram16k8.v
+mcu_pram16k8.veo
+mcu_pram16k8.xco
+mcu_pram16k8_flist.txt
+mcu_pram16k8_xmdf.tcl
