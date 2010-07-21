@@ -1,0 +1,7 @@
+# Output products list for <mcu_sprf256x8>
+mcu_sprf256x8.ngc
+mcu_sprf256x8.v
+mcu_sprf256x8.veo
+mcu_sprf256x8.xco
+mcu_sprf256x8_flist.txt
+mcu_sprf256x8_xmdf.tcl

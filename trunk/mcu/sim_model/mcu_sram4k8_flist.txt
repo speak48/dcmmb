@@ -1,0 +1,7 @@
+# Output products list for <mcu_sram4k8>
+mcu_sram4k8.ngc
+mcu_sram4k8.v
+mcu_sram4k8.veo
+mcu_sram4k8.xco
+mcu_sram4k8_flist.txt
+mcu_sram4k8_xmdf.tcl

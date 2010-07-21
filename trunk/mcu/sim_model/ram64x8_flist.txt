@@ -1,0 +1,7 @@
+# Output products list for <ram64x8>
+ram64x8.ngc
+ram64x8.v
+ram64x8.veo
+ram64x8.xco
+ram64x8_flist.txt
+ram64x8_xmdf.tcl

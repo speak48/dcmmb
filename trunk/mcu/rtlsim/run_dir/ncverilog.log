@@ -1,0 +1,183 @@
+ncverilog: 05.00-p001: (c) Copyright 1995-2003 Cadence Design Systems, Inc.
+TOOL:	ncverilog	05.00-p001: Started on May 24, 2010 at 10:10:01
+ncverilog
+	-f ../debussy/hdl.f
+		-v
+		L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v
+		../tb/mcu_hq_tb.v
+		../../hdl2/mcu/mcu_hq_top.v
+		../../hdl2/mcu/pram_if.v
+		../../hdl2/mcu/arbiter.v
+		../../hdl2/mcu/dram_if.v
+		../../hdl2/mcu/cen_wen.v
+		../../hdl2/mcu/hq_reg_file.v
+		../../hdl2/mcu/i2cs/i2cs_top.v
+		../../hdl2/mcu/i2cs/i2cs_serial.v
+		../../hdl2/mcu/i2cm/i2cm_bit_ctrl.v
+		../../hdl2/mcu/i2cm/i2cm_byte_ctrl.v
+		../../hdl2/mcu/i2cm/i2cm_regfile.v
+		../../hdl2/mcu/i2cm/i2cm_sfifo.v
+		../../hdl2/mcu/i2cm/i2cm_top.v
+		../../sim_model/mcu_sprf256x8.v
+		../../sim_model/mcu_sram4k8.v
+		../../sim_model/mcu_pram16k8.v
+		../../hdl2/mcu/8051/r80515.v
+		../../hdl2/mcu/8051/alu.v
+		../../hdl2/mcu/8051/ccuport.v
+		../../hdl2/mcu/8051/clkctrl.v
+		../../hdl2/mcu/8051/cpu.v
+		../../hdl2/mcu/8051/isr.v
+		../../hdl2/mcu/8051/mdu.v
+		../../hdl2/mcu/8051/memctrl.v
+		../../hdl2/mcu/8051/pmu.v
+		../../hdl2/mcu/8051/ports.v
+		../../hdl2/mcu/8051/ramsfrctrl.v
+		../../hdl2/mcu/8051/serial0.v
+		../../hdl2/mcu/8051/serial1.v
+		../../hdl2/mcu/8051/timer2.v
+		../../hdl2/mcu/8051/timer.v
+		../../hdl2/mcu/8051/watchdog.v
+		+incdir+../../hdl2/mcu/i2cm
+		+incdir+../../hdl2/mcu/8051
+		+incdir+../../hdl2/mcu/i2cs
+		+incdir+../../hdl2/mcu
+	+nccoverage
+	+access+wrc
+	+nowarn+PARRNG
+file: ../tb/mcu_hq_tb.v
+	module worklib.mcu_hq_tb:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/mcu_hq_top.v
+	module worklib.mcu_hq_top:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/pram_if.v
+	module worklib.pram_if:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/arbiter.v
+	module worklib.arbiter:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/dram_if.v
+	module worklib.dram_if:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/cen_wen.v
+	module worklib.cen_wen:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/hq_reg_file.v
+	module worklib.hq_reg_file:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/i2cs/i2cs_top.v
+	module worklib.i2cs_top:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/i2cs/i2cs_serial.v
+	module worklib.i2cs_serial:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/i2cm/i2cm_bit_ctrl.v
+	module worklib.i2cm_bit_ctrl:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/i2cm/i2cm_byte_ctrl.v
+	module worklib.i2cm_byte_ctrl:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/i2cm/i2cm_regfile.v
+	module worklib.i2cm_regfile:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/i2cm/i2cm_sfifo.v
+	module worklib.i2cm_sfifo:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/i2cm/i2cm_top.v
+	module worklib.i2cm_top:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../sim_model/mcu_sprf256x8.v
+	module worklib.mcu_sprf256x8:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../sim_model/mcu_sram4k8.v
+	module worklib.mcu_sram4k8:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../sim_model/mcu_pram16k8.v
+	module worklib.mcu_pram16k8:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/r80515.v
+	module worklib.R80515:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/alu.v
+	module worklib.ALU:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/ccuport.v
+	module worklib.CCU_PORT:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/clkctrl.v
+	module worklib.CLOCK_CONTROL:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/cpu.v
+	module worklib.CONTROL_UNIT:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/isr.v
+	module worklib.ISR:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/mdu.v
+	module worklib.MDU:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/memctrl.v
+	module worklib.MEMORY_CONTROL:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/pmu.v
+	module worklib.PMU:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/ports.v
+	module worklib.PORTS:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/ramsfrctrl.v
+	module worklib.RAM_SFR_CONTROL:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/serial0.v
+	module worklib.SERIAL_0:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/serial1.v
+	module worklib.SERIAL_1:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/timer2.v
+	module worklib.TIMER_2:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/timer.v
+	module worklib.TIMER_0_1:v (up-to-date)
+		errors: 0, warnings: 0
+file: ../../hdl2/mcu/8051/watchdog.v
+	module worklib.WATCHDOG_TIMER:v (up-to-date)
+		errors: 0, warnings: 0
+file: L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v
+  generate if (num_stages == 0) begin : zero_stages
+            |
+ncvlog: *E,EXPLPA (L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v,107|12): expecting a left parenthesis ('(') [12.1.2][7.1(IEEE)].
+  generate if (num_stages == 0) begin : zero_stages
+                                    |
+ncvlog: *E,EXPSMC (L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v,107|36): expecting a semicolon (';') [12.1.2][7.1(IEEE)].
+    always @* begin
+         |
+ncvlog: *E,EXPLPA (L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v,108|9): expecting a left parenthesis ('(') [12.1.2][7.1(IEEE)].
+  end
+    |
+ncvlog: *E,EXPENM (L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v,111|4): expecting the keyword 'endmodule' [12.1(IEEE)].
+	module BLK_MEM_GEN_V2_1.BLK_MEM_GEN_V2_1_output_stage:v
+		errors: 4, warnings: 0
+  generate if (C_COMMON_CLK) begin : common_clk_scheduling
+            |
+ncvlog: *E,EXPLPA (L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v,664|12): expecting a left parenthesis ('(') [12.1.2][7.1(IEEE)].
+  generate if (C_COMMON_CLK) begin : common_clk_scheduling
+                                 |
+ncvlog: *E,EXPSMC (L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v,664|33): expecting a semicolon (';') [12.1.2][7.1(IEEE)].
+      always @(posedge CLKA) begin
+           |
+ncvlog: *E,EXPLPA (L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v,667|11): expecting a left parenthesis ('(') [12.1.2][7.1(IEEE)].
+  end else begin : asynch_clk_scheduling
+    |
+ncvlog: *E,EXPENM (L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v,732|4): expecting the keyword 'endmodule' [12.1(IEEE)].
+	module BLK_MEM_GEN_V2_1.BLK_MEM_GEN_V2_1:v
+		errors: 4, warnings: 0
+ncvlog: *W,LIBNOU: Library "L:/xilinx/src/XilinxCoreLib/BLK_MEM_GEN_V2_1.v" given but not used.
+ncvlog: *W,UNBINS: Unbound instance found: inst::BLK_MEM_GEN_V2_1 in unit worklib.mcu_sprf256x8:v.
+ncvlog: *W,UNBINS: Unbound instance found: inst::BLK_MEM_GEN_V2_1 in unit worklib.mcu_sram4k8:v.
+ncvlog: *W,UNBINS: Unbound instance found: inst::BLK_MEM_GEN_V2_1 in unit worklib.mcu_pram16k8:v.
+ncvlog: *E,UNBERR: (3) unbound instance(s).
+	Total errors/warnings found outside modules and primitives:
+		errors: 1, warnings: 4
+ncverilog: *E,VLGERR: Error during parsing (status 1), exiting.
+TOOL:	ncverilog	05.00-p001: Exiting on May 24, 2010 at 10:10:04  (total: 00:00:03)

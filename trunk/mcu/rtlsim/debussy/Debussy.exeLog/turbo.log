@@ -1,0 +1,5 @@
+Command Line: Debussy -f ../debussy/hdl.f -2001
+uname(WinNT SHHIC-E2D3EB3A8 5.1.2600 Service Pack 3 Intel Pentium)
+hbReload time 0 0.0 0.0 delta 96736 348160 total 20792024 25243648
+Disabled AskUser2 Message (Response 0): Close all windows and exit Debussy.exe?
+au time 2768 0.0 0.0 delta 28179960 27791360 total 28520448 28520448
