@@ -32,13 +32,27 @@ output [WIDTH-1:0] data_out;
 
 reg [WIDTH-1:0] ram [0:DEPTH-1];
 reg [ADDR-1:0]  addr_rd_p1;
+reg [WIDTH-1:0] dummy;
+reg             LAST_CLK;
 
-always @(posedge wclk)
+always @( wclk)
 begin
-  if(write[0])
-    ram[addr_wr][7:0] <=  data_in[7:0];
-  if(write[1])
-    ram[addr_wr][15:8] <=  data_in[15:8];
+    casez({LAST_CLK,wclk})	
+      2'b01: begin	    
+           dummy = ram[addr_wr];
+           case(write[1:0])
+           2'b01: ram[addr_wr] = { dummy[15:8], data_in[7:0] };
+           2'b10: ram[addr_wr] = { data_in[15:8], dummy[7:0] };
+           2'b11: ram[addr_wr] = data_in;
+           default:ram[addr_wr] = dummy;
+           endcase
+           end	   
+      2'b10,
+      2'bx?,
+      2'b00,
+      2'b11: ;
+      endcase      
+      LAST_CLK =wclk;
 end
 
 always @(posedge rclk)
